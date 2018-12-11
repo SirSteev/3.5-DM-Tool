@@ -1,0 +1,10 @@
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\bin\Debug\DM Tool.exe
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\bin\Debug\DM Tool.pdb
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\obj\Debug\DM_Tool.DiceRolls.resources
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\obj\Debug\DM_Tool.StartNewCampaignForm.resources
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\obj\Debug\DM_Tool.DMToolForm.resources
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\obj\Debug\DM_Tool.Properties.Resources.resources
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\obj\Debug\DM Tool.csproj.GenerateResource.Cache
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\obj\Debug\DM Tool.exe
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\obj\Debug\DM Tool.pdb
+C:\Users\Steev\Documents\Visual Studio 2015\Projects\DM Tool\DM Tool\obj\Debug\DM Tool.csprojResolveAssemblyReference.cache
