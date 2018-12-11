@@ -9,7 +9,6 @@ using System.Windows.Forms;
 
 namespace DM_Tool
 {
-    // test change
     public partial class DMToolForm : Form
     {
         Random rand;
@@ -104,7 +103,7 @@ namespace DM_Tool
             UpdateXP(EXPCalculator.getLevel);
         }
 
-        private void UpdateXP(Level level)
+        private void UpdateXP(Level level) // pulls all into from class and fills the boxes
         {
             addedXP1to3Bx.Text = level._1to3.addedXP;
             totalXP1to3Bx.Text = level._1to3.totalXP;
@@ -211,6 +210,8 @@ namespace DM_Tool
             TbInformation.Font = new Font(FontFamily.GenericMonospace, informationTBFontSize);
         }
 
+        // all the searches highlight the keyword in the text box
+
         private void tbPlantSearchKeyword_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char)Keys.Enter)
@@ -229,7 +230,7 @@ namespace DM_Tool
                 btnFeatsSearchName_Click(sender, e);
         }
 
-        private void btnPlantNameSearch_Click(object sender, EventArgs e)
+        private void btnPlantNameSearch_Click(object sender, EventArgs e) // this search im still not sure if i like, something about it feels off but im not sure what
         {
             lbPlants.Items.Clear();
             foreach (var plant in InformationLibrary.PlantNameSearch(tbPlantSearchKeyword.Text))
@@ -819,6 +820,8 @@ namespace DM_Tool
         #endregion
 
         #region Initiative Tracker
+
+        // needs play test, found bugs in last session and i beleive them to be fixed
 
         private void btnInitTrackEndTurn_Click(object sender, EventArgs e)
         {

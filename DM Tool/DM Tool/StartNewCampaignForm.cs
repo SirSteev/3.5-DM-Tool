@@ -9,6 +9,8 @@ using System.Windows.Forms;
 
 namespace DM_Tool
 {
+    // *WIP* alot of theis has to do with players and the calander both of which still arnt done yet
+
     public partial class StartNewCampaignForm : Form
     {
         private List<Player> players;

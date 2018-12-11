@@ -11,6 +11,7 @@ namespace DM_Tool
 {
     public partial class DiceRolls : Form
     {
+        // just a window to see the dice rolls seperate from the main form
         public DiceRolls()
         {
             InitializeComponent();
