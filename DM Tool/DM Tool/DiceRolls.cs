@@ -15,7 +15,7 @@ namespace DM_Tool
         public DiceRolls()
         {
             InitializeComponent();
-            tbDiceBox.Text = DiceRoller.diceRolls;
+            tbDiceBox.Text = DiceRoller.DiceRolls;
         }
     }
 }

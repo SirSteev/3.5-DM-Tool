@@ -939,7 +939,7 @@ namespace DM_Tool
             if (windStrengthRoll <= 50)
             {
                 windStrength = WindStrength.Light;
-                if (reroll) windSpeed = DiceRoller.RandomNum(0, 10);
+                if (reroll) windSpeed = DiceRoller.RandomRangeNumber(0, 10);
                 windCheckSize = CharacterSize.None;
                 windBlownAwaySize = CharacterSize.None;
                 windSkillCheckPenalty = 0;
@@ -947,7 +947,7 @@ namespace DM_Tool
             else if (windStrengthRoll >= 51 && windStrengthRoll <= 80)
             {
                 windStrength = WindStrength.Moderate;
-                if (reroll) windSpeed = DiceRoller.RandomNum(11, 20);
+                if (reroll) windSpeed = DiceRoller.RandomRangeNumber(11, 20);
                 windCheckSize = CharacterSize.None;
                 windBlownAwaySize = CharacterSize.None;
                 windSkillCheckPenalty = 0;
@@ -955,7 +955,7 @@ namespace DM_Tool
             else if (windStrengthRoll >= 81 && windStrengthRoll <= 90)
             {
                 windStrength = WindStrength.Strong;
-                if (reroll) windSpeed = DiceRoller.RandomNum(21, 30);
+                if (reroll) windSpeed = DiceRoller.RandomRangeNumber(21, 30);
                 windCheckSize = CharacterSize.Tiny;
                 windBlownAwaySize = CharacterSize.None;
                 windSkillCheckPenalty = -2;
@@ -963,7 +963,7 @@ namespace DM_Tool
             else if (windStrengthRoll >= 91 && windStrengthRoll <= 95)
             {
                 windStrength = WindStrength.Severe;
-                if (reroll) windSpeed = DiceRoller.RandomNum(31, 50);
+                if (reroll) windSpeed = DiceRoller.RandomRangeNumber(31, 50);
                 windCheckSize = CharacterSize.Small;
                 windBlownAwaySize = CharacterSize.Tiny;
                 windSkillCheckPenalty = -4;
@@ -971,7 +971,7 @@ namespace DM_Tool
             else if (windStrengthRoll >= 96 && windStrengthRoll <= 100)
             {
                 windStrength = WindStrength.Windstorm;
-                if (reroll) windSpeed = DiceRoller.RandomNum(51, 300);
+                if (reroll) windSpeed = DiceRoller.RandomRangeNumber(51, 300);
                 windCheckSize = CharacterSize.Medium;
                 windBlownAwaySize = CharacterSize.Small;
                 windSkillCheckPenalty = -8;

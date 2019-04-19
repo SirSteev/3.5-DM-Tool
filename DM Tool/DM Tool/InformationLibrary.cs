@@ -4,222 +4,134 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
-namespace DM_Tool
+public class LibraryEntry
 {
-    // this is my answer to not wanting to use a database and keep it contained so anyone could use it at any time
-
-    public class Player
+    private string name;
+    public string Name
     {
-        // add way to track current exp and save player to text doc
-        // this way i done have to re type in all the player info
+        get { return name; }
+    }
+    private string description;
+    public string Description
+    {
+        get { return description; }
+    }
 
-        private string name;
-        private int hpMax;
-        private int hpCurrent;
-        public int Initiative;
+    public LibraryEntry(string _name, string _description)
+    {
+        name = _name;
+        description = _description;
+    }
+}
 
-        private List<Feat> feats;
+public class Feat : LibraryEntry
+{
+    private string source;
+    private string prerequisite;
 
-        public string Name
-        {
-            get { return name; }
-        }
+    public string Source
+    {
+        get { return source; }
+    }
 
-        public List<Feat> Feats
-        {
-            get { return feats; }
-        }
+    public string Prerequisite
+    {
+        get { return prerequisite; }
+    }
 
-        public int HPMax
-        {
-            get { return hpMax; }
-        }
-        public int HPCurrent
-        {
-            get { return hpCurrent; }
-            set { hpCurrent = value; }
-        }
+    public Feat(string _name, string _source, string _prerequisite, string _description) :
+        base(_name, _description)
+    {
+        source = _source;
+        prerequisite = _prerequisite;
+    }
+}
 
-        public Player(string _name, int _hp)
-        {
-            name = _name;
-            hpMax = _hp;
-            Initiative = 0;
-            feats = new List<Feat>();
-            hpCurrent = _hp;
-        }
+public class Plant : LibraryEntry
+{
+    private RarityType rarity;
+    private List<RegionSubTypes> regions;
 
-        public Player(string _name, int _hp, int _initiative)
-        {
-            name = _name;
-            hpMax = _hp;
-            Initiative = _initiative;
-            feats = new List<Feat>();
-            hpCurrent = _hp;
-        }
+    public RarityType Rarity
+    {
+        get { return rarity; }
+    }
+    public List<RegionSubTypes> Regions
+    {
+        get { return regions; }
+    }
 
-        public void SetName(string _name)
-        {
-            name = _name;
-        }
-        public void AddFeat(Feat _feat)
-        {
-            feats.Add(_feat);
-        }
+    public Plant(string _name, string _description, RarityType _rarity, params RegionSubTypes[] _regions) :
+        base(_name, _description)
+    {
+        regions = new List<RegionSubTypes>();
 
-        public void SetHP(int _hp)
+        rarity = _rarity;
+        foreach (var region in _regions)
         {
-            hpMax = _hp;
+            regions.Add(region);
         }
     }
 
-    public class LibraryEntry
-    {
-        private string name;
-        public string Name
-        {
-            get { return name; }
-        }
-        private string description;
-        public string Description
-        {
-            get { return description; }
-        }
+}
 
-        public LibraryEntry(string _name, string _description)
-        {
-            name = _name;
-            description = _description;
-        }
+public enum RegionSubTypes // plants
+{
+    Arctic,
+    Cities,
+    Coastal,
+    Deserts,
+    Forests,
+    Jungles,
+    Mountains,
+    Oceans,
+    Plains,
+    Rivers,
+    Swamps,
+    UnderdarkCaves,
+    Unknown
+}
+
+public enum RarityType // plants
+{
+    VeryCommon,
+    Common,
+    Uncommon,
+    Rare,
+    VeryRare,
+    Legendary
+}
+
+static class InformationLibrary
+{
+    public static string WorldMapLocation;
+    
+    public static void InitializeLibrary()
+    {
+        InitializePlants();
+        InitializeWeather();
+        InitializeFeats();
     }
 
-    public class Feat : LibraryEntry
-    {
-        private string source;
-        private string prerequisite;
-
-        public string Source
-        {
-            get { return source; }
-        }
-
-        public string Prerequisite
-        {
-            get { return prerequisite; }
-        }
-
-        public Feat(string _name, string _source, string _prerequisite, string _description) :
-            base(_name, _description)
-        {
-            source = _source;
-            prerequisite = _prerequisite;
-        }
-    }
-
-    public class Plant : LibraryEntry
-    {
-        private RarityType rarity;
-        private List<RegionSubTypes> regions;
-
-        public RarityType Rarity
-        {
-            get { return rarity; }
-        }
-        public List<RegionSubTypes> Regions
-        {
-            get { return regions; }
-        }
-
-        public Plant(string _name, string _description, RarityType _rarity, params RegionSubTypes[] _regions) :
-            base(_name, _description)
-        {
-            regions = new List<RegionSubTypes>();
-
-            rarity = _rarity;
-            foreach (var region in _regions)
-            {
-                regions.Add(region);
-            }
-        }
-
-    }
-
-    public enum RegionSubTypes // plants
-    {
-        Arctic,
-        Cities,
-        Coastal,
-        Deserts,
-        Forests,
-        Jungles,
-        Mountains,
-        Oceans,
-        Plains,
-        Rivers,
-        Swamps,
-        UnderdarkCaves,
-        Unknown
-    }
-
-    public enum RarityType // plants
-    {
-        VeryCommon,
-        Common,
-        Uncommon,
-        Rare,
-        VeryRare,
-        Legendary
-    }
-
-    static class InformationLibrary
-    {
-        private static List<Player> currentPlayers;
-        private static List<Player> initiativeList;
-
-        public static string WorldMapLocation;
-
-        public static List<Player> InitiativeList
-        {
-            get { return initiativeList; }
-            set { initiativeList = value; }
-        }
-
-        public static List<Player> Players
-        {
-            get { return currentPlayers; }
-        }
-
-        public static void InitLibrary()
-        {
-            currentPlayers = new List<Player>();
-            initiativeList = new List<Player>();
-
-            InitPlants();
-            InitWeather();
-            InitFeats();
-        }
-
-        #region Calander Events
+    #region Calander Events
 
 
 
         #endregion // Calander Events not done
-        
-        #region Plants
-        private static List<Plant> plantEntries;
+    
+    #region Plants
 
-        public static List<Plant> PlantEntries
-        {
-            get { return plantEntries; }
-        }
-        private static void InitPlants() // all information pulled offline from PDF
-        {
-            plantEntries = new List<Plant>();
+    private static List<Plant> plantEntries;
 
-            //plants.FindAll(plnt => plnt.regions.Contains(RegionSubTypes.Plains)); 
-            //plants.FindAll(plnt => plnt.rarity == Rarity.Common);
+    public static List<Plant> PlantEntries
+    {
+        get { return plantEntries; }
+    }
+    private static void InitializePlants() // all information pulled offline from PDF
+    {
+        plantEntries = new List<Plant>();
 
-            #region A
+        #region A
             plantEntries.Add(new Plant("Aadarna", "A tough plant that grows on the edges of swamps, the stem grows symmetrical pairs of stiff oval leaves.During warmer months the plant blossoms into violet flowers.The large roots of the plant can be ground into a powder and is the main ingredient in a potion that allows other people to see into other realms, often referred to as Sight Beyond.For the next hour after drinking, the vision of the character shifts to the Astral Realm.They may perceive what happens from a position that corresponds to their location in the Material Realm.During that time, they are blind to everything that happens in the Material Realm, including combat.", RarityType.Rare, RegionSubTypes.Swamps));
             plantEntries.Add(new Plant("Abyssal Blackgrass", "Thick black weed native to the Underdark that propagates via tiny seeds.On the surface it appears as 1 - foot diamater clumps, but its roots extend in a 50 ft diamater just beneath the surface.Natural healing is prevented when standing above its roots, and magical healing only heals half the normal HP.If the clump is pulled out, the plant survives and regrows the clump in 1d4 days.Only digging up the whole root system or the use of a Blight - type spell can truly kill it.Has taint - mechanic boosting effects.", RarityType.Uncommon, RegionSubTypes.UnderdarkCaves));
             plantEntries.Add(new Plant("Acacia Tree", "A tall tree growing in warmer plain environments with large, sharp thorns on the branches and small, oval shaped leaves.The acacia has long been associated with rituals surrounding the burying and preservation of the dead, and as well as in rituals designed to contact and speak with the dead.If acacia is combined with a solution of melted iron and poured into the hand of a person who is has recently died, the time period in which Raise Dead works is increased to a period of 30 days instead of 10.", RarityType.Common, RegionSubTypes.Plains, RegionSubTypes.Jungles));
@@ -282,7 +194,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Azure Leaves", "These tenacious vines grow in the darkest parts of deep forests, winding and wrapping their way around tree trunks and branches. While the vines are a deep shade of green, the leaves are an odd shade of blue. Drying the leaves and then smoking them provides the smoker a sense of euphoria and calmness that lasts for 1d4+4 minutes.However, smoking the leaves is often addicting, and requires a DC 10 Wisdom saving throw each time to avoid becoming addicted to the feeling of euphoria that the leaves bring.Withdrawal from Azure Leaves includes a heightened sense of paranoia, meaning a -4 penalty to Wisdom or Intelligence saves against fear until the next consumption.", RarityType.Rare, RegionSubTypes.Forests));
             #endregion
 
-            #region B
+        #region B
             plantEntries.Add(new Plant("Balm", "Balm is a plant about 2 to 3 feet tall with squarish stems.It has oval, serrated leaves. It has small flowers which can be any shade from white to blue, which form small clusters at the base of the leaves.It reputedly has properties of bestowing longevity and uses as an aphrodisiac, and so could be used as an ingredient in 'Potions of Longevity' as well as love potions.", RarityType.Common, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Balon’s Plant", "Growing close to the ground in areas with minimal water, the plant only sprouts a trio of wide, thick leaves which spread outward to absorb as much moisture as possible and provide as much shade to the sandy soil below as possible.Below the sand the root system delves deep to find hidden reservoirs of water that are not evident on the surface. Also known as “bread of the desert”, this plant develops large spherical fruits nearly the size of a man’s head. These fruits have a tough and leathery exterior, but when cut open, the fruit has the consistency of fluffy bread or cake. The seeds of the fruit are quite small. Each fruit contains enough nutrients to sustain four people for a day. Unfortunately, farming the plant seems to be near impossible.The seeds must be within a medium - size creature when it dies, at which point the release of certain gasses causes the seeds to mature and greedily absorb as much moisture and nutrients from the corpse as possible.This rich bounty allows the plant to develop a strong root system.", RarityType.Rare, RegionSubTypes.Deserts));
             plantEntries.Add(new Plant("Barberry", "The Barberry plant has thin, sharp thorns on its twigs that very easily snap off and become embedded in flesh.It can obtain a height in excess of six feet.It has roughly oval shaped leaves, which are smooth with toothed edges.It has pale yellow flowers which produce ovalur red berries, with a small black dot at their tip.Barberries should be ground up in cold water and be left to stand in cold water, and then boiled quickly.This mixture should be drunk as a cure for liver disorders such as jaundice.If successfully administered the cure should take effect within two weeks.However, three failed applications mean that there is never any hope of cure by this method.", RarityType.VeryCommon, RegionSubTypes.Plains, RegionSubTypes.Forests));
@@ -334,7 +246,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Butterspice Weed", "A short leafy plant, the top sprouts large yellow flowers upon reaching maturity.The plant is quite hardy and can grow in a surprising wide variety of places. The most renown quality of the plant is that the leaves can be harvested and cured, becoming crumbly, brown flakes, which can be smoked. It is quite well known among halflings, which often grow it in small patches along with other crops. Those that smoke the weed claim that it has a smooth spicy flavor.Upon smoking spice weed, a wave of euphoria slowly washes over the smoker, lasting for 2d6+10 minutes. During that time, the smoker suffers a -2 penalty to Dexterity saving throws.Halflings are affected for double the duration.", RarityType.Uncommon, RegionSubTypes.Forests, RegionSubTypes.Jungles));
             #endregion
 
-            #region C
+        #region C
             plantEntries.Add(new Plant("Caffar", "A small, brown nut that grows from short, green, leafy understory plants in tropical forests, typically ground into powder and brewed into a dark, sweet-smelling beverage, traditionally with a goat's milk base. The drink is renowned by shaman and psionics for its boon to their all-seeing abilities. (+1 to all wisdom checks until the next long rest. If more than three cups are imbibed, causes a -2 to rolls to hit as the imbiber is too jumpy and caffeinated to focus.)", RarityType.Common, RegionSubTypes.Jungles));
             plantEntries.Add(new Plant("Cachuga Pepper", "Cachuga Peppers can only be found on growing in or around plains that are home to hot springs or geysers.Cachuga peppers are vaguely pyramidal shaped woody bushes with profuse foliage that bear clusters of small, fragrant yellow blooms which eventually give way to fiery peppers of a marbled red - orange.The bushes bloom continually in the tropical climes of the Swordfish Islands causing Cachuga bushes to produce large numbers of these firey peppers. The peppers themselves are 2 - 4 inches long and hang from the bushes by thick, green, vein-like structures.Cachuga Peppers are exceptionally spicy and flavorful, and the skin of these peppers is leathery and can be mashed into a paste, then shaped and dried into chips or a flavorful yet non - spicy paper - like wrapping, pairing nicely with raw fish.The peppers dry well, retaining their fire and flavor for exceptional periods of time, and their seeds can be ground into a powder that causes * severe * eye and skin irritation(DC 16 Cons.Save or blindness for 3d10 minutes).", RarityType.Uncommon, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Calacaza Bush", "A fragrant bush that grows in the dense jungle and sparse desert, the veined leaves and branches are a pale green, and the plant appears to strive to reach upward toward the canopy above. At the end of each branch are clusters of small white flowers or berries, depending on the time of year.The small white berries that the plant produces are actually quite poisonous (Those that ingest the berries must make a DC 17 Constitution saving throw vs poison or suffer 32(8d6) poison damage and be poisoned for 1d6 hours.If the target succeeds the saving throw, they only suffer half damage with no poisoning). Local tribes avoid the berries unless they are using them to coat their arrowheads and blowgun darts (Adds + 2 poison damage to successful attacks made using a blowgun).", RarityType.Uncommon, RegionSubTypes.Jungles, RegionSubTypes.Deserts));
@@ -378,7 +290,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Culumalda", "A short, gnarled tree growing to typically around 10 feet tall, Culumalda has golden-red foliage year-round and a smooth, shiny grey bark.When stripped from the trunk, this bark can be wetted and applied liberally to the skin and clothes, transferring the secnt of freshly turned earth.For 2 hours other creatures have disadvantage on attempts to detect the recipient by scent.", RarityType.Common, RegionSubTypes.Forests));
             #endregion
 
-            #region D
+        #region D
             plantEntries.Add(new Plant("Dagmather", "The spine of this plant must be brewed for one week in fresh water at the end of which time it may be drunk.If the preparation is successful, it will automatically heal any damage to a person’s cartilage that is capable of healing naturally.", RarityType.VeryCommon, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Dahkra(Dognap)", "A reedy hollow grass that smells like sweet hay and corn, found growing near rivers in mild climates.Dahkra must be added to water and boiled over a flame for a few minutes.The resulting somewhat slimy mixture can be fed to beasts and will put them to sleep for 3d4 hours.", RarityType.Common, RegionSubTypes.Rivers));
             plantEntries.Add(new Plant("Dainaberry(Sleepberry)", "The Dainabush is a creeping, thorny vine, much like a bramble.Vines are about 5 mm thick, with 2 mm long thorns and are reddish brown, darkening to black, with leaves dark green in colour.The vines flower in early summer, with light blue, bell shaped flowers.In autumn, it carries dark blue or purple berries, which are fleshy, almost crunchy rather than juicy.The berries are slightly sweet and quite tasty, but have a strong effect on mammals: those who eat them fall asleep.The berries have this effect on mammals only(with half effects on half - mammals like half - elves and the like), but a single berry is enough to bring down any man sized or smaller mammal, and given enough berries, even the greatest mammal will fall asleep.There is no saving throw, although the sleep caused is quite normal, and a sleeping creature can simply be awakened. Although the berries can simply be eaten to cause the effect, it is also possible to dry them carefully and grind them into powder. This powder is weaker (DC 14 cons.save vs poison to avoid) but will keep for a much longer time.The powder can be added to any food or drink, but has a very sweet taste.", RarityType.Common, RegionSubTypes.Forests));
@@ -426,7 +338,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Dwarven Oak", "Stunted, gnarled tree found on the slopes of temperate mountains that looks like a sitting Dwarf from a distance.Its bark can be made into a brown, milky fluid that can be added to poisons up to 1 hour before the poison is used to increase the poison's DC by 2.", RarityType.Rare, RegionSubTypes.Forests, RegionSubTypes.Mountains));
             #endregion
 
-            #region E
+        #region E
             plantEntries.Add(new Plant("Ebur", "The flowers of Ebur must be eaten each day.If the treatment is successful, the rate of healing for a sprain will be doubled for that day. In addition, successful application will increase movement speed by 5 for the day.", RarityType.Common, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Ecru", "Small, red - leaved drooping palm trees that grow no more than 5 - feet tall.The trees produce a small, red, crystalline growths, as a result of build - up of the Ecru’s internal resins, called Ecru Crystal.This crystal can then be dissolved in a strong acid and consumed to induce a state of blissful relaxation for 1d10 minutes.In addition, during this time, there is a 25% chance that a spellcaster who consumes Ecru Crystal will receive a boost of 1d4-1 points to either Wisdom, Charisma, or Intelligence for a period of 24 hours.In addition, during this 24-hour period, the consumer’s Dexterity is halved.", RarityType.Rare, RegionSubTypes.Plains, RegionSubTypes.Coastal));
             plantEntries.Add(new Plant("Edelwood", "A strange looking, dark barked tree that seems to grow face-like patterns in its bark.When bark is peeled off or twigs broken, the Edelwood drips a black oil that is as flammable as typical lamp oil and smells of sulfur.According to legend, the Edelwood is a mystical tree that acts as home to the lost souls of those who succumb to the woods, whether through weakness of mind or weakness of body, and the oil from the Edelwood is used as fuel in the black lantern of The Dark Beast.", RarityType.VeryRare, RegionSubTypes.Forests));
@@ -448,7 +360,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Ephedra", "This small succulent sedum produces small offshoots which hold between 8 and 16 small leaves. These leaves can then be dried and ground into a powder to mix with a poultice or potion to increase the tier of a healing die by 1, turning a d6 into a d8, etc.This effect can be used during short rests or with healing magic as a poultice, or can be used by adding to a health potion", RarityType.Rare, RegionSubTypes.Deserts, RegionSubTypes.Mountains));
             #endregion
 
-            #region F
+        #region F
             plantEntries.Add(new Plant("Fairy Bells", "A leafy green plant that springs up in clusters, the majority of the plant is rather uninteresting, save for the violet flowers that seem to bloom almost year - round.When the wind blows through the flowers, their seeds rattle around inside and create a curious ringing sound, much like tiny bells.Many rural children enjoy picking them and weaving the flowers into their garments, which then jingle as they run and twirl.There is also a legend that the sound of the flowers ward off evil spirits, a legend that is partially true.Any fiend must make a DC 15 Wisdom save vs.fear in order to approach within 10 feet of the fairy bells or anyone wearing them.", RarityType.VeryCommon, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("False Unicorn Root", "A woody - stemmed flower with a large, white, cone - shaped flower that blooms from the top of the stalk.Very rare due to its slow growth and limited growing conditions, False Unicorn Horn has a rich history rooted in folklore.Supposedly, the root used to possess not only extremely beneficial healing properties, but extraordinary magic.This so angered some greater demons, that they sent an army of lesser demons to uproot and eat as many of the roots as they could, and this rage was so powerful that to this day the roots have not been able to fully grow back.The remaining tuberous stub is still imbued with good medicine and every spring it is able to put forth the tall spike of magic - imbued white flowers as a reminder that the power of good can always avert the forces of evil. (Consumption of this root will heal the recipient for 2d6 + 2 hit points, and make the individual invisible to demons and infernals for 1d4 hours.)", RarityType.VeryRare, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Falsifal", "A wide-leafed plant with large pink flowers and thick roots containing a slimy gel. When the root is pulped, mixed with water and used as a poultice, it is effective against fresh burns, aiding rapid healing.The root-gel can also be thinned and drunk as a thick tea to counter the effects of blood loss. (Regains 1d8 hit points of fire damage if administered within 4 rounds of taking fire damage.If used to counter blood - loss, target can add 1d4 to the health regained from a short rest.)", RarityType.Common, RegionSubTypes.Forests, RegionSubTypes.Plains));
@@ -482,7 +394,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Furyax", "Furyax is a large, purple flower that grows from a round-fronded leafy plant in the middle of Jungles that used to house now-dead civilizations, possibly originating from sacrificial uses of this plant within those civilizations. The flowers can be dried and turned into powder which is then mixed with a strong alcohol made only from oranges. Drinking this potion causes massive hallucinations based on the character’s conscience. Good-aligned characters will see beautiful and wondrous things, while evil characters see the most foul and dark abominations.The hallucinations last 2d4 days. Good-aligned characters must make a DC 16 Wisdom save or become addicted after their first consumption while evil-aligned characters must make a DC 18 Wisdom save vs.fear or become slightly insane from these horrific visions (Long-Term Madness Table DMG pg.260).", RarityType.Legendary, RegionSubTypes.Jungles, RegionSubTypes.Mountains));
             #endregion
 
-            #region G
+        #region G
             plantEntries.Add(new Plant("Galda", "A yellowish tree that produces a salty fruit tasting of salt - pork.The fruit can heal for 1d4 - 1 hit points, and up to 10 fruit can be harvested from a tree at one time.", RarityType.VeryCommon, RegionSubTypes.Jungles));
             plantEntries.Add(new Plant("Gallowbrush", "This briar is red in colour with bright crimson thorns.Any mammal pricked with these thorns must make a save vs poison. On a failed save, the target falls asleep for 1d6 x 10 minutes.On a successful save the victim still feels drowsy for the same period of time.The thorns can also be brewed into tea.Anyone drinking this concoction must make a Cons.Save vs.poison with a - 4 penalty or fall asleep for 1d6 hours.", RarityType.Uncommon, RegionSubTypes.Forests, RegionSubTypes.Jungles));
             plantEntries.Add(new Plant("Garadar", "A 5 to 8 - foot shrub with waxy, hard leaves resembling those of a succulent.When this leaf is soaked in water, it will release a very pungent scent that will attract male ogres in a one - mile radius. The scent resembles that of a female ogre.The smell lingers for 1d4 hours.", RarityType.Rare, RegionSubTypes.Plains));
@@ -516,7 +428,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Gyumin Beans", "A small plant that grows close to the ground, the stalks are a mottled green color, and the soft oval leaves grow in small clumps. During harvest time, the plants are laden with several long pods filled with up to a dozen light brown beans.Farmers often grow the beans alongside rows of corn, as the plants seem to complement one another.The beans are often either eaten cooked, or ground into a fine paste and eaten with bread. Several restaurants and taverns across Faerun are known for their particular methods of preparing Gyumin Paste.", RarityType.VeryCommon, RegionSubTypes.Plains));
             #endregion
 
-            #region H
+        #region H
             plantEntries.Add(new Plant("Haella", "Growing in clumps, these tall purple flowers are often planted in tranquil gardens and are commonly seen on gently rolling fields. The stalks bear symmetrical pairs of long tapered leaves with purple veins. Farmers dislike the plants because they tend to choke out food crops, such as corn.The flowers emit a subtle and sweet fragrance which not only smells nice, but also is a repellant to certain predatory insects, such as mosquitoes and dragonflies. Those that can afford to pay for it often rub Haella Fragrance on their unprotected skin during warmer months to repel such vermin (-5 to rolls for initiative for Insectoids).", RarityType.Uncommon, RegionSubTypes.Plains, RegionSubTypes.Cities));
             plantEntries.Add(new Plant("Halcyon Crocus", "In the highland meadows of the Dalelands grows a pale white-silver crocus.By starlight, nectar can be harvested from its simple bloom and dried into snuff that engulfs the user in bittersweet recollections of yore. With each dose of the Halcyon Snuff the user remembers a spell forgotten, effectively allowing him or her to cast it again without expending a spell slot. However, other memories linger uninvited to forever haunt and burden the user of this drug. Each dose inflicts 2d6 o psychic damage after the initial effect.", RarityType.Legendary, RegionSubTypes.Arctic));
             plantEntries.Add(new Plant("Halfling Thistle", "Small hardy thistle with a violet flower that grows in all temperature areas, especially highlands. Soaking Halfling Thistle in water overnight under the full moon will create Shinewater, which removes all rust and corrosion from metal objects left to soak in it overnight. One dose de - rusts a medium-sized metal weapon.", RarityType.Rare, RegionSubTypes.Plains, RegionSubTypes.Forests, RegionSubTypes.Mountains));
@@ -548,7 +460,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Hyperia", "A small, purple, button fungus that when consumed in any form, acts as a strong aphrodisiac.As soon as the fungus is swallowed, the recipient will fall in love with the first person they see(make a DC 18 Wisdom Save or fall in love).", RarityType.VeryRare, RegionSubTypes.Plains, RegionSubTypes.Forests));
             #endregion
 
-            #region I
+        #region I
             plantEntries.Add(new Plant("Iazutl", "Growing in clusters, the flower has a long stalk, which has a single oval leaf at the very top of the plant. The leaf points toward the rising sun, and blows in anything more than a light breeze. During warmer months, the plant blossoms numerous small crimson flowers.Those that venerate Kiltzi speak tales of the Iazutl flower. One tale speaks of the plant growing singularly, and without flowers, and when Kiltzi noticed the plant was all alone, she wept. Her tears caused several similar plants to grow in the area, and as an expression of their love for her, they sprouted an abundance of flowers.Lovers often gift the flowers to one another, as a sign of their affection.The flowers are also typically presented to the bride by the groom on the night before the wedding in Sword Coast wedding ceremonies.", RarityType.VeryCommon, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Ice Lotus", "Solitary, translucent blue - white flower found in cold environments that can be made into Icewalker tincture, which is a blue liquid that grants the Ice Walking ability(slippery and rough terrain like ice or deep snow will be treated as regular terrain) for 1d4 hours.", RarityType.Rare, RegionSubTypes.Arctic));
             plantEntries.Add(new Plant("Iceflower", "A short plant, the stalk bears a number of feathery leaves, and a single flower blooms, bearing shades of blue.The plant is only seen in areas of abundant snow, and oddly seems to thrive where other plants would perish.The plant is only seen during the summer months, when there is considerable sunlight, and in winter months it withers and dies.Beneath the surface of the snow, the iceflower has an extensive root system that grows very quickly.The roots are durable enough that some of the northern tribes will dig them up to serve as a foundation for a roof over small circular huts.In addition, some nomadic tribes of the Dalelands have found that by placing iceflower roots under the armor, soldiers have found that they will be immune to overheating and gain + 1 AC.", RarityType.Uncommon, RegionSubTypes.Arctic));
@@ -559,7 +471,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Ironvine", "A type of Underdark vine that is as hard as iron.Always found interwoven into a thick curtain that blocks passage in underground caves and passageways.", RarityType.Uncommon, RegionSubTypes.UnderdarkCaves));
             #endregion
 
-            #region J
+        #region J
             plantEntries.Add(new Plant("Jabberweed", "Tenacious and ugly root - plant native to jungle environs that looks like a pocked, skeletal hand.These pock - marks are actually small holes that cause a low hissing sound, caused by the plant’s ability to capture wind in these holes, audible to 100 ft(DC 15 listen to notice sound and direction) that imposes a - 4 penalty to other listen checks(for the party and against the party).If kept wrapped in moist cloth it survives for 1 week, but DC 18 Nature check can keep it alive for another week.", RarityType.Uncommon, RegionSubTypes.Jungles));
             plantEntries.Add(new Plant("Jaffray", "A clove - like herb that is normally ground up and sprinkled into other dishes or drinks as flavoring, Jaffray acts as a mild aphrodisiac, increasing sexual interest and general sensitivity to the surroundings.Face flushes, pupils dilate, breathing quickens, and skin becomes preternaturally sensitive.The herb has a mildly cinnamon - like flavor and its potency is not affected by being cooked.The herb is also sometimes used to counteract suspected poisoning, since it increases resistance to poison yet is so common as to be inoffensive if added to a meal. (-2 to Wisdom checks, +2 to Constitution Saves, +1 to Persuasion checks, causes mild, pleasant sense of intoxication.Effects last 1d4 hours.)", RarityType.Common, RegionSubTypes.Plains, RegionSubTypes.Jungles, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Jalap", "A light violet vine that grows around trees, and can often be found amidst ruins. The vine produces large, heart shaped petals, and purple flowers with five petals.Young women often pick the flowers to wear in their hair, and several religious ceremonies require a carpet of jalap flowers.Shaman often use a poultice made of ground jalap to draw the venom out of venomous snake bites. Application of the poultice grants an additional saving throw against the poisoning effects of many types of snake venom.", RarityType.VeryCommon, RegionSubTypes.Jungles));
@@ -571,7 +483,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Juzam", "A hardy desert cactus that can grow to heights of up to 15 feet. Around the base of the cactus, a ring of pink flowers grows year - round, with flowers only growing back after a full year without rain.These flowers turn into a small, hard, pink fruit that can be harvested(only 1 harvested from a single plant) and juiced to yield a potion that heals for 3d6 + 3 hit points.", RarityType.VeryRare, RegionSubTypes.Deserts));
             #endregion
 
-            #region K
+        #region K
             plantEntries.Add(new Plant("Kae’la", "A 2 - foot tall ground plant with a woody stem and large, waxy leaves.The leaves can be ground and turned into a water - soluble powder that allows user to remain awake and alert for 24 hours without sleep.Repeated usage after 2 days will increase the chances of collapse into a coma by 20 % for every day after the first. After collapsing, the character must sleep for at least 2 days per day of sleeplessness.", RarityType.Rare, RegionSubTypes.Plains, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Kaitlin’s Weed", "A short leafy stalk that grows fine red hairs along the prominent bud, it is often mistaken for the taller Dragon’s Breath.Those well versed in herbalism also know that the weed can be used to create a balm which soothes sunburn, and helps alleviate the pain from other burns (if applied within 2 turns of taking fire damage, capable of healing 2d4 fire damage). Many seeking to traverse the desert of Netheril often procure quanities of the balm before setting out on their journeys, and the Bedine tribes often make use of the soothing qualities of the weed.", RarityType.Common, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Kanishta", "A short plant that grows in tendrils across the ground sprouting broad fluffy leaves, the Kanishta thrives in the cold environment. Growing beneath the ground is a thick, dark - colored root. Although it is extremely bitter tasting, chewing on the root provides temporary relief from the cold weather.Those that chew it express a feeling of warmth passing through their body, and a sense of renewed strength(resistance to cold / frost damage, and + 1 to Str. Checks for the next 1d6 hours).", RarityType.Uncommon, RegionSubTypes.Arctic));
@@ -592,7 +504,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Kylathar(Changeberry)", "Anyone who eats the yellow, soft, plum sized fruits instantly has two random stats exchanged; Strength with Constitution, Wisdom with Dexterity; anything is possible (the DM should determine which statistics are exchanged). There is no saving throw, and no cure(DM’s discretion).Eating more of the berries will simply cause more stats to be randomly exchanged.Short of magical storage, the fruits will spoil and rot within 2 days after plucking.The bush itself grows about 2 meters high, with long, dusty green leaves, which are slightly sawed.The flowers grow in groups of 4 to 8, and are yellowish white with orange edges.The flowers grow in late spring, the fruits are ripe in autumn.", RarityType.Legendary, RegionSubTypes.Forests));
             #endregion
 
-            #region L
+        #region L
             plantEntries.Add(new Plant("Laishaberries(Fruit of Silence)", "Laishaberries grow on dark green, knee-high bushes.The leaves of the bushes are hard and waxy, and stay on long into autumn, sometimes even into winter. Concealed under the leaves, the red, cherry sized berries grow in spring and early summer, developing from small, fragrant, wax blue flowers that bloom in early spring. The berries taste quite bland themselves, although they can be used to add a special taste to all kinds of jellies. When ripe, the berries can be eaten raw, and will each heal 2 hp of damage, or speed the recovery from most diseases.However, they will also render the eater mute for 20 minutes for each berry eaten.Also, if more than 5 or 6 berries are eaten at a time, a DC 12 Cons.saving throw vs poison is required to avoid severe and somewhat debilitating stomach cramps that will incur a -2 penalty to Dexterity saves and checks for 1d3 hours.A jelly made from the berries themselves loses both the healing and silencing powers (and the danger of cramps) of the fresh berries, but the curative effects for most diseases is doubled; fresh berries reduce the recovery time by one day for each berry eaten, the jelly halves the total time.", RarityType.Common, RegionSubTypes.Plains, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Lakeleaf", "Parsley - like herb descended from plants growing on the shores of large rivers and oceans.If crushed and rubbed onto meat, that meat never dries out regardless of how overcooked.If used as a component for casting Gentle Repose, it doubles the duration(does not stack with extend spell).Matures in 14 weeks and remains viable for 5 weeks after.", RarityType.Uncommon, RegionSubTypes.Rivers, RegionSubTypes.Coastal));
             plantEntries.Add(new Plant("Land Caltrops", "A spiky groundcover plant avoided by beasts because of the small, thin thorns that sprout from the plants that, with enough force, become embedded in an animal’s paws.The leaves can be carefully harvested and crushed into a poultice.If applied to a venomous bite or injury poison within one turn, it will draw out the poison, healing 1d4 poison damage and removing the poisoned effect if applicable.", RarityType.VeryCommon, RegionSubTypes.Jungles));
@@ -623,7 +535,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Luurden(Bloodfruit)", "A magic - dependent, pale, gnarled tree that looks dead except for a brief period every 3 to 4 years where it produces bitter red fruit. The fruit, called bloodfruit, is a deep scarlet red and bleeds a sweet, citrusy juice when cut into and can be made into the wine. The wine can be used in combination with Bloodkeep to create a tincture that heals for 2d4 + the nature modifier of the character who creates the potion.", RarityType.Uncommon, RegionSubTypes.Jungles));
             #endregion
 
-            #region M
+        #region M
             plantEntries.Add(new Plant("Maiden’s Hair (Earthsilk)", "An odd mushroom cultivated by dwarves for the silken tendrils that hang from it and collect moisture.These tendrils are tough and time - consuming to harvest, but they can be made into a very tough silk that can then be made into tough rope and shirts or woven into existing armor that then grants extra resistance to bludgeoning and slashing, although the fabric can be torn by a piercing damage critical hit, at which point it loses its properties until repaired.Crafting with Maiden’s Hair requires a DC Nature Check of 25 + or consultation with a Dwarven master craftsman.", RarityType.VeryRare, RegionSubTypes.Forests, RegionSubTypes.UnderdarkCaves));
             plantEntries.Add(new Plant("Maitake Mushroom", "A feathery, light brown mushroom, found growing wild in forests and very difficult to cultivate.The maitake is a mild, tasty mushroom, and can be used to increase immune efficacy.The word maitake is literally translated as 'dancing mushroom.' According to herbal folklore, it was so named because in ancient times people who found maitake could exchange it for its weight in silver, leading to their dancing in celebration.", RarityType.Common, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Makebate", "This herb works very rapidly against damage poisons from common pests including snakes, spiders, and scorpions, quickly running through the body and absorbing any left - over poison from the blood if applied within 2 rounds of being poisoned. Removes the poison effect but does not heal for any of the damage the poison has actually done.", RarityType.VeryCommon, RegionSubTypes.Plains));
@@ -664,7 +576,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Myrthis", "Myrthis berries grow on short, roughly 2 - foot bushes resembling blueberry bushes that produce berries that also resemble blueberries.The only visual difference between the two is a slight color variation(the fading from blue to black on the bottom of the berry).Consumption of Myrthis Berries causes disorientation and loss of depth perception, -2 to melee and - 4 to ranged attack rolls.", RarityType.Common, RegionSubTypes.Forests, RegionSubTypes.Plains));
             #endregion
 
-            #region N
+        #region N
             plantEntries.Add(new Plant("Nahre Lotus", "A waterlily native to large bodies of fresh water. Harvesting the plant and putting it in a vial creates a splash weapon against enemies, working as a minor form of the spell Tsunami (wall of water up to 10 feet long, 10 feet high, and 3 feet thick.On a failed save, damage is 2d10 Bludgeoning damage).", RarityType.VeryRare, RegionSubTypes.Rivers));
             plantEntries.Add(new Plant("Napweed", "This plant has a single main stem with small fern like leaves, and small pink flowers growing from it.These flowers must be dried, powdered, and mixed into wine and then drunk to counter the effect of damage poisons.A successful application means that only half normal damage is taken from the poison if consumed before poisoning.In addition to this use, the flower is often counted as a symbol of faith between lovers and is used to decorate and garnish foods at weddings.According to Greek mythology, this plant was used by the centaur who, when wounded by Hercules with an arrow poisoned with the Hydra's blood, treated himself with it.", RarityType.VeryCommon, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Nararoot", "A tuber found throughout Faerun, the green and purple leaves of the plant grow close to the ground, and a single thin stalk sprouts upward to reveal a flower with two wide petals.The root is often cut into shavings and either eaten directly, or brewed into a tea. Although terribly bitter, it primarily serves as a form of birth control, as ingesting it renders a person infertile for several weeks.", RarityType.VeryCommon, RegionSubTypes.Plains));
@@ -678,7 +590,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Novanor", "Commonly found in many desert areas, Novanor is the fruit of a cactus of the same name, growing in small orange pustules along the cactus’s underside.These fruits can be eaten as emergency water reserves in the middle of the desert, but also serve a darker, more dangerous purpose.Harvesting the fruit, drying them in the sun, and then soaking the dried fruit in the blood of a Lamia(those poor, misunderstood creatures) will create a sticky, scarlet paste called Blood Fire.After injury with a weapon coated with Blood Fire, the blood begins to rapidly oxygenate, essentially burning the target from the inside out, and sometimes leaving little more than a charred skeleton behind.The victim must make a DC 12 Cons. Save vs poison.On a failed save, the target will take 1d6 + 1 fire damage per round for the next 10 minutes or until cured.On a successful save, the target only takes 1d6 + 1 additional fire damage on the first hit.", RarityType.Uncommon, RegionSubTypes.Deserts));
             #endregion
 
-            #region O
+        #region O
             plantEntries.Add(new Plant("Obaddis Leaf", "Rare holly variety that can retain some magic if used as Druidic focus.As a component for spells that target plants, it doubles both area and duration.", RarityType.Rare, RegionSubTypes.Arctic));
             plantEntries.Add(new Plant("Oede", "One of the most valuable and prized of all plants, this bush has leaves that are almost golden in color.These leaves can be dried, but if they are not will last only two weeks.This means the drying process must be begun within an hour of the leaves being picked. These leaves can, according to legend, cure any disease.Whether or not the leaves have this power is up to the individual DM.", RarityType.Legendary, RegionSubTypes.Mountains));
             plantEntries.Add(new Plant("Oliosse", "This exceedingly rare herb will restore an Elf to life if given within seven days of death.This effect also works on Half-Elves up to 3 days.", RarityType.Legendary, RegionSubTypes.Mountains));
@@ -694,7 +606,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Osira", "Osira is a tiny, parasitic cactus found growing on surface roots of oak trees. Can be juiced or mashed to yield a slightly sweet syrup. Mixing this syrup with any alcoholic beverage neutralizes the alcohol in the beverage.", RarityType.Common, RegionSubTypes.Forests));
             #endregion
 
-            #region P
+        #region P
             plantEntries.Add(new Plant("Pallast", "Pallast is a willow-tree relative that grows up to about 30 feet tall in many temperate and tropical environments.When ground together with marshmallow root and imbibed, Pallast cures minor aches and pains, especially headaches and pain from abscessed teeth, sore muscles, and so forth. Pallast by itself can be turned into a very bitter pale powder, and is usually served in a heavily sweetened tea. (Relieves minor pains but does not restore lost hit points.)", RarityType.VeryCommon, RegionSubTypes.Forests, RegionSubTypes.Jungles, RegionSubTypes.Swamps));
             plantEntries.Add(new Plant("Palma Eldath", "This herb keeps a person warm for one night or one day, and prevents them suffering from exposure.This can mean the difference between life and death.", RarityType.Common, RegionSubTypes.Plains, RegionSubTypes.Rivers));
             plantEntries.Add(new Plant("Panaeolo", "Magical herb whose leaves tastes like leather and function as an ingested drug with no initial effect.Secondary effect after 1d4 hours is to increase all arcane spell save DCs by 2 for 1d4 hours and 1d8 psychic damage.A second dose within an hour of the first improves the effect to a + 3 to save DCs and deals 2d8 psychic damage.Further doses only cause more and increasing psychic damage.", RarityType.Rare, RegionSubTypes.Rivers));
@@ -717,7 +629,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Pygmy King Flower", "The Pygmy King Flower produces a conical, flower-like structure from a base of 8-10 fat, fluid filled leaves that resemble a broken rib cage.The flower is usually 1' in diameter, 2' tall, and always brightly colored.While the color can vary greatly, solid orange and blue with yellow spots are the most common colors in tropical locales. Nectar fills at least half of each basin shaped flower and when exposed to sunlight this liquid releases a sweet, sugary fragrance. Small creatures and large insects are attracted to this smell but upon entering the flower they are trapped by its slippery walls and slowly digested. When a Pygmy King Flower finishes digesting a meal, or becomes over filled (such as after a heavy rain) the flower will tilt and dump its contents onto the jungle floor before slowly righting itself once more.The succulent, rib shaped leaves at the base of this plant can be mashed into a salve that is an excellent treatment for major burns and minor lacerations (successful application of this salve can cure up to 2d8 fire damage if applied within 3 rounds of taking that damage).", RarityType.Rare, RegionSubTypes.Jungles, RegionSubTypes.Swamps));
             #endregion
 
-            #region Q
+        #region Q
             plantEntries.Add(new Plant("Quare", "A small purple flower found alongside paths and roads that wind through temperate forests. The petals can be ground and combined with water or pure alcohol to yield a simple pesticide.Kills rodents and small animals when consumed by them, has no effect on larger animals and humanoids.", RarityType.VeryCommon, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Queen’s Ambrosia", "A low, waxy - leafed shrub plant with large yellow flowers pointed upward.These flowers collect water and the flowers’ natural nectar and pollen then sweeten the water and add some essence that makes the liquid inside slightly intoxicating.A common tradition in some parts of the realm is to have a picnic the day after a rainstorm next to a Queen’s Ambrosia bush so that the flowers may serve as refreshment for the old and for the young to sneak sips from.", RarityType.VeryCommon, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Quicksilver Lichen", "A slimy, glittering silver lichen that can be ground into a soluble, flavorless powder that can be added to food or drink to grant damage weakness to poison for 2d6 hours.", RarityType.Uncommon, RegionSubTypes.UnderdarkCaves));
@@ -725,7 +637,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Quivar", "A low - lying, ground - cover leafy plant that grows through a layer of snow, never seeing sunlight, but absorbing and using the cold as food.Nomadic tribes of the far north have been known to seek out the plant, dry it, and smoke the leaves to gain an additional +50 % movement speed for 8 hours.", RarityType.Rare, RegionSubTypes.Arctic));
             #endregion
 
-            #region R
+        #region R
             plantEntries.Add(new Plant("Rainbowpetal", "Rainbowpetal grows as a stout, relatively straight stem with triangular green leaves, and reaches a height of 4' to 8'.Many four - petaled flowers appear at the top of this stem forming a terminal spike of 12 inch to 16 inch.The flowers of the Rainbowpetal can appear as any color and individual petals will even grow in distinct colors on the same flower. The petals of these flowers are thick, fleshy, and surprisingly nutritious.They are frequently boiled into a thick and flavorful porridge or dried and used in place of bread crumbs or cornmeal on fried food.If eaten raw, a single spike of Rainbowpetal flowers can sustain a normal sized human for a full day.", RarityType.VeryCommon, RegionSubTypes.Jungles));
             plantEntries.Add(new Plant("Rampalt", "This dark - colored root grows on a plant distinguished by its waxy dark green leaves.When the root is boiled down, it turns into a thick, strong - smelling greyish liquid that cures congestion when boiled in water and inhaled. (Relieves stuffy nose, opens sinuses, for as long as the steam is breathed + 2d6x10 rounds.Grants resistance to diseases in the form of advantage when rolling for Constitution Saves against disease.)", RarityType.Common, RegionSubTypes.Plains, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Rare - Blue", "A rare, pale blue mushroom that grows only in westward facing cave mouths. Can be turned into an inhaled powder drug. Initial effect of + 2 to Int and Cha for 1 hour, Seconary - 1 penalty to Str and - 2 penalty to Wis for 1d4 hours.Overdose 2d6 damage if 2 doses in 12 hours and 4d6 damage plus paralyzed for 2d4 hours if 3 or more doses in 24 hours.", RarityType.VeryRare, RegionSubTypes.UnderdarkCaves));
@@ -752,7 +664,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Rue", "Rue is a small rounded bush which grows to about three feet in height.It has yellow, scoop - like flowers.The leaves are shaped like spades, and are blue - grey in color.It has seedpods which resemble a small lime.The seedpods should be consumed as an antidote to ingested poisons.Provided it is taken within 10 minutes of the poison being ingested, it will neutralize the poison effect in 1d4 minutes, on a successful nature check.", RarityType.VeryCommon, RegionSubTypes.Plains));
             #endregion
 
-            #region S
+        #region S
             plantEntries.Add(new Plant("Sabito", "This shrub plant is found growing in the sands of coastal dunes and has leaves which are bluish in tinge.The root is dark blue in color and small, pill - like growths sprout from these roots. Consuming one of these growths will allow the recipient to breathe underwater for 10 minutes, by allowing them to absorb the oxygen in the water directly into their skin through osmosis.Their skin has a translucent appearance for these ten minutes.This process also works above water, but not as effectively, making it uncomfortable to do much of anything for the time spent above the surface.", RarityType.Uncommon, RegionSubTypes.Coastal));
             plantEntries.Add(new Plant("Sable Fir", "A hardy tree that spreads runners from one original “mother” tree, sometimes creating entire forests from one tree.The Sable Fir allegedly makes for excellent arrow-shafts and turns a deep lustrous black if lumbered mid - winter and rubbed with hot oils, making for beautiful and valuable bows and staves.", RarityType.Common, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Sadaq’s Bedwort", "Long regarded as a plant sacred to Druids and Rangers of Sadaq, Sadaq’s Bedwort is a low - growing ground cover plant found in beds near flooded plain areas and rivers.Preparation of the bedwort in sacramental wine under the light of the new moon will allow for the creation of a concoction called Sadaq’s Empathy.This concoction will allow the recipient to converse with plants and animals in the native tongue for a period of up to 12 hours after consumption.In addition, the recipient will also have lowered spell component costs for spells involving nature and plant growth, or that target plants and animals.Harvesting too much of a bed at the same time will cause the bed to begin to rot as the bed is actually a single organism that spreads deep into the earth.", RarityType.Legendary, RegionSubTypes.Plains, RegionSubTypes.Rivers));
@@ -823,7 +735,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Swordstalks", "A succulent plant with a cluster of three broad and thick leaves that grow from the ground, and sprouting a single small blue flower on the tips of each leaf each spring.The swordstalk often grows in tropical places, and often in the sandy soil near beaches and deserts.The broad and heavy leaves of the plant are often severed and dried, and the result is a fairly resilient weapon with a jagged edge on either side, capable of cutting through flesh almost as easily as a steel sword.The resulting weapon functions as either a short sword or a longsword, perfect for the discerning druid. However, on any critical fail on a roll to hit with the swordstalk, that the weapon is broken and rendered useless.", RarityType.VeryRare, RegionSubTypes.Deserts, RegionSubTypes.Jungles));
             #endregion
 
-            #region T
+        #region T
             plantEntries.Add(new Plant("Taggit", "A family of rare plants, closely guarded where they grow in any number, with oily, deep - green leaves in the shape of stars growing from a central woody - stemmed bush.These oily leaves can be steeped in hot water to extract an oil, that when applied via contact in large quantities, acts as a paralytic that was previously used for surgery until its use as a poison for the torture and assassination of a powerful king several decades ago.A creature subjected to this poison must succeed on a DC 13 Constitution saving throw vs.poison or become poisoned for 24 hours.The poisoned creature is paralyzed and unconscious.The creature wakes up if it takes damage but remains paralyzed except for the movement of their eyes.", RarityType.Rare, RegionSubTypes.Jungles));
             plantEntries.Add(new Plant("Tahtoalethi(Wishfern)", "Mystical plant that produces a singular light blue fruit, capable of granting a wish, every 100 years on the night of the winter solstice. Seed sells for 25000 gp, devilishly hard to cultivate.Once picked, fruits never spoil.", RarityType.Legendary, RegionSubTypes.Mountains, RegionSubTypes.Jungles));
             plantEntries.Add(new Plant("Tai - Gi", "The ground and powdered root of this small, almost - flat plant will, if eaten, increase the efficiency of all a person’s five senses by 5 times for a period of 2d6 hours.They will be able to see five times as far, and things five times as small, track by scent alone, hear the smallest sounds, and even taste many poisons on their tongues, granting double advantage on perception rolls for any sense.A side effect is that they are also five times as susceptible to pain. (For each hit point of damage, the person must roll under their constitution minus damage taken.For example, if someone with a Constitution of 15 was hit for 6 points of damage, they would have to roll under 9 on a d20.If the person ever takes more damage than their Constitution score while under the influence of this herb, they have an 80 % chance of instant death, just from the pain.)", RarityType.VeryRare, RegionSubTypes.Plains));
@@ -862,13 +774,13 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Tyrant’s Sword", "Coarse grass with broad sharp leaves with silver edges that grows to 2 - ft in height.Sporadically found in tundra and temperate plains, it grows slowly and doesn't compete well against other grasses.It can be made into Frost Lotion, Medicine Check of 12 +, to heal 2d4 points of cold damage.", RarityType.Common, RegionSubTypes.Plains));
             #endregion
 
-            #region U
+        #region U
             plantEntries.Add(new Plant("Umanhunan", "A tall tree that grows branches high off of the ground, the bushy leaves are dark green on the underside, and a very pale shade on top.The bark of the tree is rough and mottled between dark red and light brown. Locals often burn boughs of the tree in sacrifice to the goddess Ka’ino, in hopes of bringing rainfall. Breathing in the fumes of burning Umanhunan leaves causes mild hallucinations and euphoria.", RarityType.Common, RegionSubTypes.Jungles));
             plantEntries.Add(new Plant("Umozokai Flower", "This hardy plant grows on the seaward side of many cliffs, looking out over the ocean.The vine clings to the rocks, and the broad fluffy leaves gather moisture from the wind.During the warmer months, the plant -lowers, producing long, sharp yellow petals tinged with crimson on the edges. Tea made from the flower petals is highly sought after, as it includes a wide variety of medicinal uses.Some nobles believe that drinking a single cup of Umozokai Tea a day ensures longevity.", RarityType.VeryCommon, RegionSubTypes.Mountains, RegionSubTypes.Coastal));
             plantEntries.Add(new Plant("Ur", "The leafy, verdant Ur can be used as a substitute for one day’s food.It cannot be used for more than three days or a character will begin to suffer - 2 to all statistics.When any statistic is less than 3 the character become comatose, when any statistic reaches 0 they die.A character will regain 1 statistic point per day with food and medical care, but will remain incapacitated until all statistics reach normal levels.", RarityType.VeryCommon, RegionSubTypes.Plains));
             #endregion
 
-            #region V
+        #region V
             plantEntries.Add(new Plant("Valerian", "Valerian grows to a height of about 3 feet, and has one hollow and furry stem.It has large, pale green, serrated leaves along the length of this stalk which slits into flowers stems with small pink flowers at its top.The root is the useful part of this plant and should be grated into boiling water and the resulting infusion drunk in order to ease the spasms of somebody who is subject to fits or seizures. A successful application will stop all fits for 1d12 hours.The scent of the bruised or cut root also can be used to attract rats.According to some versions of the legend, the Pied Piper of Fendaire - by - the - Sea used this herb to lead the rats from the town.", RarityType.VeryCommon, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Varenia", "A tall, woody - stemmed flower that grows during spring and summer months.The blooms are almost a foot across and a bright crimson red.The inside is filled with a large quantity of nectar, making the flower very popular among a large variety of birds. During the fall, as the plant starts to die in cooler temperatures, the nectar begins to spoil and take in bits and pieces of disintegrating plant matter which turns the nectar into a thicker, foul - smelling salve that can be applied to regenerate a lost limb or body part.The regeneration cycle takes 3 full days.There is a 10 % chance the limb will be mutated in some manner", RarityType.Legendary, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Vaundyr Vine", "A thorny, thin vine that grows in wetter areas such as swamps and jungles.The waxy leaves are ground to create Alarvaun, a component for Spellslayer wine along with Thelmallow Flower. Although the wine is quite refreshing, tasty, and light, it also reduces the magical ability of spellcasters, causing a permanent decrease to the amount of spell slots available at a given level(at the DM’s discretion).", RarityType.VeryRare, RegionSubTypes.Swamps, RegionSubTypes.Jungles));
@@ -882,7 +794,7 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Vortax", "A secret guarded closely by ancient sects of druids around the realm, vortax is a green powder made from a plant of the same name.This powder must be held in the hand of a druid and burned, causing 3d8 fire damage to the druid, making druids that constantly use vortax easy to pick out. After the vortax is burned away, the druid’s hands will start to glow a faint green.The druid can, as an action, conjure up a powerful thunderstorm within a mile radius area, and command any target to be struck by 5d20 lightning damage with no saving throws. This effect lasts for 1d4 minutes.", RarityType.Legendary, RegionSubTypes.Unknown));
             #endregion
 
-            #region W
+        #region W
             plantEntries.Add(new Plant("Waredan", "A surprisingly hardy dwarf tree that grows about 5’ or slightly less. The hard, waxy leaves of this tree can be combined sugar water in a boiling process to yield a concoction that, when injected into the bloodstream of a lycanthrope, will cause the lycanthrope to be unable to change form for 12 hours, even in the presence of magic that would cause this change instantaneously, like the spell Moonbeam.", RarityType.VeryRare, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Watercress", "A very small, leafy green that is commonly eaten in salads or as an added green in many meals.Eating this green in combination with a day’s rations will replenish one hit die if consumed separately from a long rest. Aside from its common uses, Watercress is one of the plants mentioned in the Nine Herbs Charm, which is supposedly capable of curing any poison or disease.", RarityType.VeryCommon, RegionSubTypes.Rivers));
             plantEntries.Add(new Plant("Waterorb", "Bulbous aquatic fungus that grows in boulder - like patches in some seaside areas and tidal pools. Can be used a source of fresh drinking water near the ocean.", RarityType.Common, RegionSubTypes.Coastal));
@@ -911,11 +823,11 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Wormwood", "The effects of this herb last for two hours. During this time the character is granted +10 temporary hit points and can function beyond the point of exhaustion.Wormwood normally grows to about four feet in height.It has a stiff and angular stem, reddish brown in color.It has deeply incised smooth leaves which are silvery white with a slight tinge of green. It has small, yellow-green flowers arranged in long spikes at the top of the stem. The herb is also a rather effective insect repellent and is often left with clothing to keep fleas away. It also makes a very effective antiseptic when mixed with Rue (Intelligence check to remove all infection from a wound within 5d6 hours, healing an additional 2d6 during the next short rest to whoever the antiseptic is applied to). In addition to its above effects wormwood is also a prime ingredient in a very dangerous, very addictive drink called Absinthe which is milky green in color.", RarityType.Rare, RegionSubTypes.Forests, RegionSubTypes.Jungles));
             #endregion
 
-            #region X
+        #region X
             plantEntries.Add(new Plant("Xitluchi", "A twisted bramble of branches, growing small clusters of stiff pale leaves, and covered in sharp thorns, the bush grows deep within jungles and forests.The roots of the bush are often exposed to the air, and are a favored nesting place for snakes and small vermin. Legend has it that the demi - god Finder Wyvernspurn was once walking through the forest, draped in a fine robe made of gold stitched fabric sewn with threads of silver.Passing along, the robe was caught by a particular bush, tearing the robe and causing it to spill some of Finder’s creativity into the wind.Becoming angered by the action, Wyvernspurn cursed the bush, causing it to transform into a twisted mockery of what it once was, and to be covered in thorns.Consumption of the leaves in a pale tea leads to vivid and guiding dreams for 1d4 days afterward.", RarityType.Uncommon, RegionSubTypes.Forests, RegionSubTypes.Jungles));
             #endregion
 
-            #region Y
+        #region Y
             plantEntries.Add(new Plant("Yagdav Bush", "A rather robust bush covered with waxy stiff leaves, the Yagdav is prominent in the north, and sometimes used as topiary decoration. During the warmer months the bush grows small yellow flowers. The flower petals are often dried and ground to make a tea that promotes fertility to couples that are having difficulty conceiving. The female is instructed to drink the tea every morning upon first awakening.", RarityType.VeryCommon, RegionSubTypes.Plains, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Yaran", "The pollen of this flower must be inhaled. A successful roll means that a person’s sense of smell and of taste are doubled for one hour (advantage on perception checks for this period of time).The herb must still be growing or have been cut in the last 10 minutes.", RarityType.Rare, RegionSubTypes.Forests, RegionSubTypes.Plains));
             plantEntries.Add(new Plant("Yarpick(Daggerthorn)", "A type of tree that grows small fruit whose seeds are nourishing both whole and as ground meal.The fruit are protected by long, thin, razor-sharp thorns approximately 3 inches long. These thorns have use as sewing needles, blow-darts, and as miniscule daggers perfect for doll hands.", RarityType.Common, RegionSubTypes.Forests, RegionSubTypes.Jungles));
@@ -928,236 +840,237 @@ namespace DM_Tool
             plantEntries.Add(new Plant("Yuzine", "A rare mushroom that only grows while fully submerged in freshwater, Yuzine is occasionally sought after and harvested by high ranking clergy of Omir and Olim, the Gods of Life and Death respectively.When powdered and combined with holy oil by a trained professional, Yuzine becomes Metabolite, a sort of tranquilizer for the undead. An undead creature subjected to this poison must make a DC 25 Constitution saving throw. Lasting for 30 seconds on a failed save, an affected target's speed is halved, it takes a -2 penalty to AC and Dexterity saving throws, and it can't use reactions. On its turn, it can use either an action or a bonus action, not both. Regardless of the creature's abilities or magic items, it can't make more than one melee or ranged attack during its turn. If the creature attempts to cast a spell with a casting time of 1 action, roll a d20.On an 11 or higher, the spell doesn't take effect until the creature's next turn, and the creature must use its action on that turn to complete the spell. If it can't, the spell is wasted.A creature affected by this poison makes another Constitution saving throw at the end of each of its turns. On a successful save, the effect ends for it.On a failed save, the poison's saving throw DC for the next save attempt decreases by 10.", RarityType.VeryRare, RegionSubTypes.Swamps, RegionSubTypes.Rivers));
             #endregion
 
-            #region Z
+        #region Z
             plantEntries.Add(new Plant("Zalanthar", "Also called blackwood or darkwood in the North, the bark of the tree ranges from the color of pitch to a dark ash. The tree itself is actually comprised of an extensive root system, from which a number of trunks sprout to the heavens.While the trunk and branches are extremely dark, the leaves of the tree are pale grey and white, often giving the branches an appearance of glowing in the moonlight. The trees are often harvested for their precious darkwood, which has the sturdiness of other hard woods, but is favored because it only weighs half as much.Darkwood weapons and shields are often very light and worked only by the most skilled of craftsmen(shields made of darkwood grant + 2 AC and + 1 to stealth checks made while holding the shield), both properties that cause such goods to be quite expensive. Wizards of the South favor darkwood when constructing rods, wands, and staves. Since Zalanthar requires masterwork, it requires training or high knowledge of nature in order to effectively craft with.", RarityType.Rare, RegionSubTypes.Forests));
             plantEntries.Add(new Plant("Zulsendra", "When this pale green and grey mushroom is eaten, it doubles a person’s rate of movement, and rate of attack(2 actions per round) for three rounds, as well as also imposing advantage on rolls to hit. At the end of that time the person must make a DC 18 Cons.Save versus poison or collapse in exhaustion for 1d6 turns.", RarityType.VeryRare, RegionSubTypes.Arctic));
             plantEntries.Add(new Plant("Zur", "This lean and stalky, pale yellow fungus must be brewed for six hours in water harvested from an underground stream.A successful nature roll for the beverage’s preparation means that a person’s senses of smell and of hearing are doubled for one hour. (Advantage on perception rolls based on smell or hearing.)", RarityType.Rare, RegionSubTypes.UnderdarkCaves));
             plantEntries.Add(new Plant("Zurkhwood", "Giant 30 - 40 ft high mushroom.Has large spores that can be eaten as bread if baked properly, and its hardy stalks serve as an Underdark substitute for wood.", RarityType.Common, RegionSubTypes.UnderdarkCaves));
             #endregion
-        }
+    }
 
-        public static List<Plant> PlantNameSearch(string keyword)
-        {
-            return plantEntries.FindAll(plnt => plnt.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-        }
-        public static List<Plant> PlantDescriptionSearch(string keyword)
-        {
-            return plantEntries.FindAll(plnt => plnt.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-        }
-        #endregion
+    public static List<Plant> PlantNameSearch(string keyword)
+    {
+        return plantEntries.FindAll(plnt => plnt.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
+    public static List<Plant> PlantDescriptionSearch(string keyword)
+    {
+        return plantEntries.FindAll(plnt => plnt.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
 
-        #region Weather
+    #endregion
 
-        private static List<LibraryEntry> weatherEntries;
+    #region Weather
 
-        public static List<LibraryEntry> WeatherEntries
-        {
-            get { return weatherEntries; }
-        }
+    private static List<LibraryEntry> weatherEntries;
 
-        private static void InitWeather() // system is from pathfinder but still works well for 3.5
-        {
-            weatherEntries = new List<LibraryEntry>();
+    public static List<LibraryEntry> WeatherEntries
+    {
+        get { return weatherEntries; }
+    }
 
-            weatherEntries.Add(new LibraryEntry("Seasons", "A year has four seasons—spring, summer, fall, and winter— each of which lasts about 3 months. Season plays an important part in dictating a region’s baseline temperature. It also dictates the baseline precipitation frequency in a region before applying adjustments due to climate or elevation. In most regions with cold and temperate climates, precipitation frequency is intermittent during spring and fall, common during the summer, and rare during the winter. In most regions with tropical climates, precipitation frequency is common during spring and fall, intermittent during the summer, and rare during the winter. On worlds with a tilt in their axis, the seasons are typically reversed between northern and southern hemispheres. While it is the height of summer in the north, the areas south of the equator are in the depths of winter."));
-            weatherEntries.Add(new LibraryEntry("Cold Climate", "A cold climate is found in the extreme northern or southern regions of the world at latitudes greater than 60 degrees (approximately 2,000 miles from a pole). In these polar regions, temperatures often remain below freezing throughout the majority of the year. The baseline temperature in this climate is cold, ranging from 20º F in the winter, to 30º F in the spring and fall months, and up to 40º F in the summer. For regions within 500 miles of the pole, the baseline temperature is 10º F colder than the seasonal average. For regions within 250 miles of the pole, the baseline temperature is 20º F colder than the seasonal average. Because cold air tends to be drier than warm air, reduce the frequency and intensity of precipitation by one step in cold climates."));
-            weatherEntries.Add(new LibraryEntry("Temperate Climate", "Temperate climates stretch between the polar regions and tropical regions of the world, generally at latitudes between 60 degrees and 30 degrees. The baseline temperature in this climate ranges from 30º F in winter, to 60º F in spring and fall, and all the way up to 80º F in summer. Precipitation frequency is not altered as a result of a temperate climate, but it can still be altered as a result of other factors such as the elevation or season."));
-            weatherEntries.Add(new LibraryEntry("Tropical Climate", "The tropics exist to either side of the world’s equator, extending north and south for about 30 degrees of latitude in either direction. Tropical regions tend to be warm and humid, with a baseline temperature ranging from 50º F in winter, to 75º F in spring and fall, and up to 95º F in summer. Because warm, humid air produces a great deal of precipitation, increase the frequency and intensity of precipitation by one step in this climate."));
-            weatherEntries.Add(new LibraryEntry("Sea Level Elevation", "Temperatures in sea-level and coastal regions are 10º warmer. Sea-level regions also tend to have more precipitation than areas of higher elevation, so the baseline precipitation intensity in a sea-level region is heavy."));
-            weatherEntries.Add(new LibraryEntry("LowLands Elevation", "Lowlands are areas of low elevation not near the coast, generally at an elevation of 1,000 to 5,000 feet. This elevation range does not alter baseline temperatures. The baseline precipitation intensity in lowlands is medium."));
-            weatherEntries.Add(new LibraryEntry("HighLands Elevation", "Highlands include regions with elevations above 5,000 feet. Decrease baseline temperatures in highlands by 10º (although in particularly arid and flat regions, you should instead increase the baseline temperature by 10º, while in particularly high-altitude regions such as significant mountain ranges, you should instead decrease the baseline temperature by 20º). The frequency of precipitation is decreased by one step, and baseline precipitation intensity is medium."));
-            weatherEntries.Add(new LibraryEntry("Cloud Cover", "Cloud Cover to determine the cloud cover for the day. Light and medium cloud cover mainly serve as thematic elements. Overcast conditions grant concealment for creatures flying at high altitudes. Overcast conditions without precipitation increase the temperature in fall and winter by 10° F and decrease the temperature in spring and summer by the same amount. If precipitation occurs, the cloud cover functions as overcast."));
-            weatherEntries.Add(new LibraryEntry("Wind Strength", "This is the category of the wind strength."));
-            weatherEntries.Add(new LibraryEntry("Wind Speed", "This is the range of wind speeds that occur. Wind speed typically fluctuates between these values through the period of the day, and for moderate or higher wind strength, there are periods in the day when the wind speed dips below the listed range."));
-            weatherEntries.Add(new LibraryEntry("Ranged Weapon Penalty/Siege Weapon Penalty", "These are the penalties that characters take when firing ranged weapons and siege weapons in wind of the listed strength. In windstorm-strength wind, normal ranged weapon attacks (either projectile or thrown) are impossible. This includes ranged attacks made via spells of the conjuration school, but it does not include evocation ranged attacks. Siege weapons include all weapons of that type and boulders thrown by giants and other creatures with the rock throwing special attack." + System.Environment.NewLine + "Ranged Weapon Penalty / Siege Weapon Penalty:" + System.Environment.NewLine + "Strong: –2 / —" + System.Environment.NewLine + "Severe: –4 / —" + System.Environment.NewLine + "Windstorm: Impossible / –4"));
-            weatherEntries.Add(new LibraryEntry("Check Size", "Creatures of the listed size or smaller are unable to move forward against the force of the wind unless they succeed at a DC 10 Strength check (on the ground) or a DC 20 Fly check if airborne."));
-            weatherEntries.Add(new LibraryEntry("Blown Away Size", "Creatures of the listed size on the ground are knocked prone, roll 1d4×10 feet, and take 2d6 points of nonlethal damage, unless they succeed on a DC 15 Strength check. Flying creatures of the listed size are blown back 2d6×10 feet and take 2d6 points of nonlethal damage due to battering and buffeting, unless they succeed at a DC 25 Fly check."));
-            weatherEntries.Add(new LibraryEntry("Skill Penalty", "This is the penalty for skill checks that can be affected by the wind. These penalties always apply on Fly checks and sound-based Perception checks, but GMs may also wish to apply them on Acrobatics checks, Climb checks, and any other ability or skill checks that could be adversely affected by winds."));
-            weatherEntries.Add(new LibraryEntry("Drizzle", "Drizzle reduces visibility to three-quarters of the normal range, imposing a –2 penalty on Perception checks. It automatically extinguishes tiny unprotected flames (candles and the like, but not torches)."));
-            weatherEntries.Add(new LibraryEntry("Fog, Heavy", "Heavy fog obscures all vision beyond 5 feet, including darkvision. Creatures 5 feet away have concealment. Heavy fog typically occurs early in the day, late in the day, or sometimes at night, but the heat of the midday usually burns it away. Heavy fog occurs only when there is no or light wind."));
-            weatherEntries.Add(new LibraryEntry("Fog, Light", "Light fog reduces visibility to three-quarters of the normal ranges, resulting in a –2 penalty on Perception checks and a –2 penalty on ranged attacks. Light fog typically occurs early in the day, late in the day, or sometimes at night, but the heat of the midday usually burns it away. Light fog occurs only when there is no or light wind."));
-            weatherEntries.Add(new LibraryEntry("Fog, Medium", "Medium fog reduces visibility ranges by half, resulting in a –4 penalty on Perception checks and a –4  penalty on ranged attacks. Medium fog typically occurs early in the day, late in the day, or sometimes at night, but the heat of the midday usually burns it away. Medium fog occurs only when there is no or light wind."));
-            weatherEntries.Add(new LibraryEntry("Rain", "Rain reduces visibility ranges by half, resulting in a –4 penalty on Perception checks. Rain automatically extinguishes unprotected flames (candles, torches, and the like) and imposes a –4 penalty on ranged attacks."));
-            weatherEntries.Add(new LibraryEntry("Rain, Heavy", "Heavy rain reduces visibility to one-quarter of the normal range, resulting in a –6 penalty on Perception hecks. Heavy rain automatically extinguishes unprotected flames and imposes a –6 penalty on ranged attacks."));
-            weatherEntries.Add(new LibraryEntry("Sleet", "Essentially frozen rain, sleet has the same effect as light snow, but any accumulation typically doesn’t last longer than 1–2 hours after the storm."));
-            weatherEntries.Add(new LibraryEntry("Snow, Heavy", "Heavy snow reduces visibility ranges to onequarter of the normal range, resulting in a –6 penalty on Perception checks. It extinguishes unprotected flames and imposes a –6 penalty on ranged attacks. Heavy snow impedes movement even before it begins to stick. Moving into a square during a heavy snowstorm requires 1 extra 5-foot square of movement (this stacks with difficult terrain). Every hour of heavy snow leaves 1d4 inches of snow on the ground. As long as at least 2 inches of snow remain on the ground, the requirement of an extra square of movement to enter a square of snow persists. If at least 1 foot of snow remains on the ground, 2 extra squares of movement are required to enter a snow-filled square instead. A heavy snowstorm has a 10% chance of generating thundersnow and has a 40% chance of becoming a blizzard if the wind speed is severe or stronger."));
-            weatherEntries.Add(new LibraryEntry("Snow, Light", "Light snow reduces visibility to threequarters of the normal range, resulting in a –2 penalty on Perception checks. Light snow has a 75% chance each hour of extinguishing unprotected flames and imposes a –2 penalty on ranged attacks. Light snow does not impede movement unless it continues for 2 or more hours, at which point moving into a square of such snow requires 1 extra 5-foot square of movement (this stacks with difficult terrain). Every 2 hours of light snow leaves 1 inch of snow on the ground. As long as at least 2 inches of snow remain on the ground, the requirement of an extra square of movement to enter a square of snow persists. If at least 1 foot of snow remains on the ground, entering a snowfilled square instead requires 2 extra squares of movement."));
-            weatherEntries.Add(new LibraryEntry("Snow, Medium", "Medium snow reduces visibility ranges by half, resulting in a –4 penalty on Perception checks. Medium snow extinguishes unprotected flames and imposes a –4 penalty on ranged attacks. Medium snow does not impede movement unless it continues for 1 hour, at which point moving into a square of such snow requires 1 extra 5-foot square of movement (this stacks with difficult terrain). Every hour of medium snow leaves 1 inch of snow on the ground. As long as at least 2 inches of snow remain on the ground, the requirement of an extra square of movement to enter a square of snow persists. If at least 1 foot of snow remains on the ground, entering a snow-filled square instead requires 2 extra squares of movement."));
-            weatherEntries.Add(new LibraryEntry("Thunderstorm", "Thunderstorms feature powerful winds and heavy rain. In addition, there is a 40% chance that a thunderstorm features hail either up to an hour before or during the storm. An even greater danger presented by a thunderstorm is the lightning that occurs during the storm. These electrical discharges, generated by the roiling clouds, can pose a hazard to creatures that do not have proper shelters, especially creatures clad in metal armor. Every 10 minutes during a thunderstorm, a bolt of lightning strikes an unsheltered creature at random (though this can strike wildlife as easily as PCs). A creature struck by this lightning must succeed a DC 18 Reflex saving throw or take 10d8 points of electricity damage (a successful saving throw halves the damage). Creatures in metal armor take a –4 penalty on the Reflex saving throw. There is a 10% chance that a thunderstorm with winds of windstorm strength also generates a tornado, while thunderstorms with windstorm-strength winds in temperatures higher than 85° F also have a 20% chance of being a precursor to a hurricane. There is a 20% chance that a thunderstorm of any strength in the desert also generates a haboob."));
-            weatherEntries.Add(new LibraryEntry("Rain Frequency", "Precipitation frequency is organized into five levels: drought, rare, intermittent, common, and constant. A region’s baseline precipitation frequency is set by the season, but it can be modified by the climate and other factors. A precipitation frequency can’t be reduced lower than drought or increased higher than constant. Check each day to determine whether precipitation occurs for that day."));
-            weatherEntries.Add(new LibraryEntry("Rain Intensity", "The baseline precipitation intensity is dependent on the elevation and can be modified by the climate. Intensity has four categories. Light precipitation is the lowest level of intensity and generally consists of fog, a faint drizzle of rain or a few isolated flakes of snow. Medium precipitation represents a noticeable but not distracting fall of rain or snow. Heavy precipitation typically consists of a driving rainstorm or significant snowfall. Torrential precipitation is the highest level of intensity and consists of a deluge of rain or snow with conditions that can approach whiteout levels. Precipitation intensity can never be reduced below light or increased above torrential."));
-            weatherEntries.Add(new LibraryEntry("Rain Form", "Precipitation can result in more than just rain. Depending upon the intensity and temperature, precipitation can range from a light fog or a faint drizzle of rain to a blizzard or thunderstorm."));
-            weatherEntries.Add(new LibraryEntry("Blizzard", "A combination of severe or stronger winds with heavy snow can create blizzard conditions. Blizzards reduce range of vision to no more than 20 feet, and even then, creatures takes a –8 penalty on Perception checks within that range. In a blizzard, the snowfall increases to 4 inches of snow each hour, and travel in more than 3 feet of snow is usually impossible without snowshoes or an ability such as waterwalk. Furthermore, the high winds make it feel (and affect living creatures) as if the temperature were 20° F colder. There is a 20% chance that a blizzard lasts for 2d12 hours instead of the normal duration for heavy snow."));
-            weatherEntries.Add(new LibraryEntry("Haboob", "A haboob is a sandstorm created by a thunderstorm. See Sandstorm below for its effects."));
-            weatherEntries.Add(new LibraryEntry("Hail", "Hail typically occurs just before or during a thunderstorm. Hail does not reduce visibility, but the sound of falling hail imposes a –4 penalty on soundbased Perception checks. Rarely (5% chance), hail pellets can become large enough to deal 1d4 points of lethal damage per minute to creatures and objects out in the open."));
-            weatherEntries.Add(new LibraryEntry("Hurricane", "Hurricanes are incredibly massive storms featuring heavy rain and a wind strength greater than that of the most powerful windstorm. With winds of 75–174 miles per hour, a hurricane renders ranged attacks impossible, and siege weapons take a –8 penalty on attack rolls. Large or smaller creatures must succeed at a DC 15 Strength check or they are unable to move forward against the strength of the wind. Medium or smaller creatures on the ground must succeed at a DC 15 Strength check or they are knocked prone and roll 1d6x10 feet, taking 1d6 points of nonlethal damage per 10 feet. Flying creatures must succeed at a DC 25 Fly check or they are blown back 2d8x10 feet and take 4d6 points of nonlethal damage due to battering and buffeting. Hurricanes also usually cause flooding. It’s nearly impossible to journey out into a hurricane unscathed."));
-            weatherEntries.Add(new LibraryEntry("Sandstorm", "Sandstorms occur when severe or greater winds kick up sand and debris in a desert or similarly arid environment. Sandstorms reduce visibility to 1d10×10 feet, and those within them take a –6 penalty on Perception checks. Sandstorms deal 1d3 points of nonlethal damage per hour to creatures caught in the open."));
-            weatherEntries.Add(new LibraryEntry("Thundersnow", "High winds in a snowstorm can create the rare phenomena known as thundersnow. Lighting strikes are less common in thundersnow, but just as deadly. Every hour during the storm, a bolt of lightning strikes an unsheltered creature at random (though this can strike wildlife as easily as PCs). A creature struck by this lightning must succeed a DC 18 Reflex saving throw or take 10d8 points of electricity damage (a successful saving throw halves the damage). Creatures in metal armor take a –4 penalty on the Reflex saving throw."));
-            weatherEntries.Add(new LibraryEntry("Tornado", "With winds with speeds of 174–300 miles per hour, tornados are deadly terrors. The smallest tornados occupy a 20-foot-radius burst, with winds of windstorm strength swirling up to 100 feet beyond that burst. The largest tornados can be 100-foot-radius bursts, with a windstorm whose radius extends 500 feet beyond that burst. Ranged attacks, including normal, siege, and even those produced by evocation spells, are impossible in the core burst of a tornado. Huge or smaller creatures must succeed a DC 20 Strength check or be sucked up by the funnel of the tornado; this deals 8d8 points of bludgeoning, piercing, and slashing lethal damage to the creatures. This damage ignores all but DR/epic, DR/—, and hardness. Once it deals this damage, the tornado flings the creature it has sucked up 1d20×10 feet up and away from the tornado, dealing 1d6 points of falling damage per 10 feet that the creature is flung. Gargantuan and larger creatures take the 8d8 points of damage but are not moved by the tornado. A tornado moves at a speed of 40 feet, though the direction it moves is entirely unpredictable—you can determine the direction randomly each round. Tornados typically last for 3d6 minutes, but some can swirl for up to an hour. While most tornados are created by thunderstorms, some smaller tornados (typically with a 5- to 10-foot-burst radius, with no outer radius) can be created in areas of wildfire (firenados), snow (snownados), or sand (dust devils). They deal a similar amount of damage, but firenados deal fire damage, snownados deal cold damage, and dust devils deal bludgeoning damage only, and these types of tornados do not fling their targets."));
-            weatherEntries.Add(new LibraryEntry("Wildfire", "While wildfires can be sparked a number of ways, for these rules, they are usually created by a lightning strike in a particularly dry area of forest or other vegetation. Use the rules for forest fires, but add a 10% chance of the fire producing 1d6 firenados."));
-        }
+    private static void InitializeWeather() // system is from pathfinder but still works well for 3.5
+    {
+        weatherEntries = new List<LibraryEntry>();
 
-        public static List<LibraryEntry> WeatherNameSearch(string keyword)
-        {
-            return weatherEntries.FindAll(entry => entry.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-        }
-        public static List<LibraryEntry> WeatherDescriptionSearch(string keyword)
-        {
-            return weatherEntries.FindAll(entry => entry.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-        }
+        weatherEntries.Add(new LibraryEntry("Seasons", "A year has four seasons—spring, summer, fall, and winter— each of which lasts about 3 months. Season plays an important part in dictating a region’s baseline temperature. It also dictates the baseline precipitation frequency in a region before applying adjustments due to climate or elevation. In most regions with cold and temperate climates, precipitation frequency is intermittent during spring and fall, common during the summer, and rare during the winter. In most regions with tropical climates, precipitation frequency is common during spring and fall, intermittent during the summer, and rare during the winter. On worlds with a tilt in their axis, the seasons are typically reversed between northern and southern hemispheres. While it is the height of summer in the north, the areas south of the equator are in the depths of winter."));
+        weatherEntries.Add(new LibraryEntry("Cold Climate", "A cold climate is found in the extreme northern or southern regions of the world at latitudes greater than 60 degrees (approximately 2,000 miles from a pole). In these polar regions, temperatures often remain below freezing throughout the majority of the year. The baseline temperature in this climate is cold, ranging from 20º F in the winter, to 30º F in the spring and fall months, and up to 40º F in the summer. For regions within 500 miles of the pole, the baseline temperature is 10º F colder than the seasonal average. For regions within 250 miles of the pole, the baseline temperature is 20º F colder than the seasonal average. Because cold air tends to be drier than warm air, reduce the frequency and intensity of precipitation by one step in cold climates."));
+        weatherEntries.Add(new LibraryEntry("Temperate Climate", "Temperate climates stretch between the polar regions and tropical regions of the world, generally at latitudes between 60 degrees and 30 degrees. The baseline temperature in this climate ranges from 30º F in winter, to 60º F in spring and fall, and all the way up to 80º F in summer. Precipitation frequency is not altered as a result of a temperate climate, but it can still be altered as a result of other factors such as the elevation or season."));
+        weatherEntries.Add(new LibraryEntry("Tropical Climate", "The tropics exist to either side of the world’s equator, extending north and south for about 30 degrees of latitude in either direction. Tropical regions tend to be warm and humid, with a baseline temperature ranging from 50º F in winter, to 75º F in spring and fall, and up to 95º F in summer. Because warm, humid air produces a great deal of precipitation, increase the frequency and intensity of precipitation by one step in this climate."));
+        weatherEntries.Add(new LibraryEntry("Sea Level Elevation", "Temperatures in sea-level and coastal regions are 10º warmer. Sea-level regions also tend to have more precipitation than areas of higher elevation, so the baseline precipitation intensity in a sea-level region is heavy."));
+        weatherEntries.Add(new LibraryEntry("LowLands Elevation", "Lowlands are areas of low elevation not near the coast, generally at an elevation of 1,000 to 5,000 feet. This elevation range does not alter baseline temperatures. The baseline precipitation intensity in lowlands is medium."));
+        weatherEntries.Add(new LibraryEntry("HighLands Elevation", "Highlands include regions with elevations above 5,000 feet. Decrease baseline temperatures in highlands by 10º (although in particularly arid and flat regions, you should instead increase the baseline temperature by 10º, while in particularly high-altitude regions such as significant mountain ranges, you should instead decrease the baseline temperature by 20º). The frequency of precipitation is decreased by one step, and baseline precipitation intensity is medium."));
+        weatherEntries.Add(new LibraryEntry("Cloud Cover", "Cloud Cover to determine the cloud cover for the day. Light and medium cloud cover mainly serve as thematic elements. Overcast conditions grant concealment for creatures flying at high altitudes. Overcast conditions without precipitation increase the temperature in fall and winter by 10° F and decrease the temperature in spring and summer by the same amount. If precipitation occurs, the cloud cover functions as overcast."));
+        weatherEntries.Add(new LibraryEntry("Wind Strength", "This is the category of the wind strength."));
+        weatherEntries.Add(new LibraryEntry("Wind Speed", "This is the range of wind speeds that occur. Wind speed typically fluctuates between these values through the period of the day, and for moderate or higher wind strength, there are periods in the day when the wind speed dips below the listed range."));
+        weatherEntries.Add(new LibraryEntry("Ranged Weapon Penalty/Siege Weapon Penalty", "These are the penalties that characters take when firing ranged weapons and siege weapons in wind of the listed strength. In windstorm-strength wind, normal ranged weapon attacks (either projectile or thrown) are impossible. This includes ranged attacks made via spells of the conjuration school, but it does not include evocation ranged attacks. Siege weapons include all weapons of that type and boulders thrown by giants and other creatures with the rock throwing special attack." + System.Environment.NewLine + "Ranged Weapon Penalty / Siege Weapon Penalty:" + System.Environment.NewLine + "Strong: –2 / —" + System.Environment.NewLine + "Severe: –4 / —" + System.Environment.NewLine + "Windstorm: Impossible / –4"));
+        weatherEntries.Add(new LibraryEntry("Check Size", "Creatures of the listed size or smaller are unable to move forward against the force of the wind unless they succeed at a DC 10 Strength check (on the ground) or a DC 20 Fly check if airborne."));
+        weatherEntries.Add(new LibraryEntry("Blown Away Size", "Creatures of the listed size on the ground are knocked prone, roll 1d4×10 feet, and take 2d6 points of nonlethal damage, unless they succeed on a DC 15 Strength check. Flying creatures of the listed size are blown back 2d6×10 feet and take 2d6 points of nonlethal damage due to battering and buffeting, unless they succeed at a DC 25 Fly check."));
+        weatherEntries.Add(new LibraryEntry("Skill Penalty", "This is the penalty for skill checks that can be affected by the wind. These penalties always apply on Fly checks and sound-based Perception checks, but GMs may also wish to apply them on Acrobatics checks, Climb checks, and any other ability or skill checks that could be adversely affected by winds."));
+        weatherEntries.Add(new LibraryEntry("Drizzle", "Drizzle reduces visibility to three-quarters of the normal range, imposing a –2 penalty on Perception checks. It automatically extinguishes tiny unprotected flames (candles and the like, but not torches)."));
+        weatherEntries.Add(new LibraryEntry("Fog, Heavy", "Heavy fog obscures all vision beyond 5 feet, including darkvision. Creatures 5 feet away have concealment. Heavy fog typically occurs early in the day, late in the day, or sometimes at night, but the heat of the midday usually burns it away. Heavy fog occurs only when there is no or light wind."));
+        weatherEntries.Add(new LibraryEntry("Fog, Light", "Light fog reduces visibility to three-quarters of the normal ranges, resulting in a –2 penalty on Perception checks and a –2 penalty on ranged attacks. Light fog typically occurs early in the day, late in the day, or sometimes at night, but the heat of the midday usually burns it away. Light fog occurs only when there is no or light wind."));
+        weatherEntries.Add(new LibraryEntry("Fog, Medium", "Medium fog reduces visibility ranges by half, resulting in a –4 penalty on Perception checks and a –4  penalty on ranged attacks. Medium fog typically occurs early in the day, late in the day, or sometimes at night, but the heat of the midday usually burns it away. Medium fog occurs only when there is no or light wind."));
+        weatherEntries.Add(new LibraryEntry("Rain", "Rain reduces visibility ranges by half, resulting in a –4 penalty on Perception checks. Rain automatically extinguishes unprotected flames (candles, torches, and the like) and imposes a –4 penalty on ranged attacks."));
+        weatherEntries.Add(new LibraryEntry("Rain, Heavy", "Heavy rain reduces visibility to one-quarter of the normal range, resulting in a –6 penalty on Perception hecks. Heavy rain automatically extinguishes unprotected flames and imposes a –6 penalty on ranged attacks."));
+        weatherEntries.Add(new LibraryEntry("Sleet", "Essentially frozen rain, sleet has the same effect as light snow, but any accumulation typically doesn’t last longer than 1–2 hours after the storm."));
+        weatherEntries.Add(new LibraryEntry("Snow, Heavy", "Heavy snow reduces visibility ranges to onequarter of the normal range, resulting in a –6 penalty on Perception checks. It extinguishes unprotected flames and imposes a –6 penalty on ranged attacks. Heavy snow impedes movement even before it begins to stick. Moving into a square during a heavy snowstorm requires 1 extra 5-foot square of movement (this stacks with difficult terrain). Every hour of heavy snow leaves 1d4 inches of snow on the ground. As long as at least 2 inches of snow remain on the ground, the requirement of an extra square of movement to enter a square of snow persists. If at least 1 foot of snow remains on the ground, 2 extra squares of movement are required to enter a snow-filled square instead. A heavy snowstorm has a 10% chance of generating thundersnow and has a 40% chance of becoming a blizzard if the wind speed is severe or stronger."));
+        weatherEntries.Add(new LibraryEntry("Snow, Light", "Light snow reduces visibility to threequarters of the normal range, resulting in a –2 penalty on Perception checks. Light snow has a 75% chance each hour of extinguishing unprotected flames and imposes a –2 penalty on ranged attacks. Light snow does not impede movement unless it continues for 2 or more hours, at which point moving into a square of such snow requires 1 extra 5-foot square of movement (this stacks with difficult terrain). Every 2 hours of light snow leaves 1 inch of snow on the ground. As long as at least 2 inches of snow remain on the ground, the requirement of an extra square of movement to enter a square of snow persists. If at least 1 foot of snow remains on the ground, entering a snowfilled square instead requires 2 extra squares of movement."));
+        weatherEntries.Add(new LibraryEntry("Snow, Medium", "Medium snow reduces visibility ranges by half, resulting in a –4 penalty on Perception checks. Medium snow extinguishes unprotected flames and imposes a –4 penalty on ranged attacks. Medium snow does not impede movement unless it continues for 1 hour, at which point moving into a square of such snow requires 1 extra 5-foot square of movement (this stacks with difficult terrain). Every hour of medium snow leaves 1 inch of snow on the ground. As long as at least 2 inches of snow remain on the ground, the requirement of an extra square of movement to enter a square of snow persists. If at least 1 foot of snow remains on the ground, entering a snow-filled square instead requires 2 extra squares of movement."));
+        weatherEntries.Add(new LibraryEntry("Thunderstorm", "Thunderstorms feature powerful winds and heavy rain. In addition, there is a 40% chance that a thunderstorm features hail either up to an hour before or during the storm. An even greater danger presented by a thunderstorm is the lightning that occurs during the storm. These electrical discharges, generated by the roiling clouds, can pose a hazard to creatures that do not have proper shelters, especially creatures clad in metal armor. Every 10 minutes during a thunderstorm, a bolt of lightning strikes an unsheltered creature at random (though this can strike wildlife as easily as PCs). A creature struck by this lightning must succeed a DC 18 Reflex saving throw or take 10d8 points of electricity damage (a successful saving throw halves the damage). Creatures in metal armor take a –4 penalty on the Reflex saving throw. There is a 10% chance that a thunderstorm with winds of windstorm strength also generates a tornado, while thunderstorms with windstorm-strength winds in temperatures higher than 85° F also have a 20% chance of being a precursor to a hurricane. There is a 20% chance that a thunderstorm of any strength in the desert also generates a haboob."));
+        weatherEntries.Add(new LibraryEntry("Rain Frequency", "Precipitation frequency is organized into five levels: drought, rare, intermittent, common, and constant. A region’s baseline precipitation frequency is set by the season, but it can be modified by the climate and other factors. A precipitation frequency can’t be reduced lower than drought or increased higher than constant. Check each day to determine whether precipitation occurs for that day."));
+        weatherEntries.Add(new LibraryEntry("Rain Intensity", "The baseline precipitation intensity is dependent on the elevation and can be modified by the climate. Intensity has four categories. Light precipitation is the lowest level of intensity and generally consists of fog, a faint drizzle of rain or a few isolated flakes of snow. Medium precipitation represents a noticeable but not distracting fall of rain or snow. Heavy precipitation typically consists of a driving rainstorm or significant snowfall. Torrential precipitation is the highest level of intensity and consists of a deluge of rain or snow with conditions that can approach whiteout levels. Precipitation intensity can never be reduced below light or increased above torrential."));
+        weatherEntries.Add(new LibraryEntry("Rain Form", "Precipitation can result in more than just rain. Depending upon the intensity and temperature, precipitation can range from a light fog or a faint drizzle of rain to a blizzard or thunderstorm."));
+        weatherEntries.Add(new LibraryEntry("Blizzard", "A combination of severe or stronger winds with heavy snow can create blizzard conditions. Blizzards reduce range of vision to no more than 20 feet, and even then, creatures takes a –8 penalty on Perception checks within that range. In a blizzard, the snowfall increases to 4 inches of snow each hour, and travel in more than 3 feet of snow is usually impossible without snowshoes or an ability such as waterwalk. Furthermore, the high winds make it feel (and affect living creatures) as if the temperature were 20° F colder. There is a 20% chance that a blizzard lasts for 2d12 hours instead of the normal duration for heavy snow."));
+        weatherEntries.Add(new LibraryEntry("Haboob", "A haboob is a sandstorm created by a thunderstorm. See Sandstorm below for its effects."));
+        weatherEntries.Add(new LibraryEntry("Hail", "Hail typically occurs just before or during a thunderstorm. Hail does not reduce visibility, but the sound of falling hail imposes a –4 penalty on soundbased Perception checks. Rarely (5% chance), hail pellets can become large enough to deal 1d4 points of lethal damage per minute to creatures and objects out in the open."));
+        weatherEntries.Add(new LibraryEntry("Hurricane", "Hurricanes are incredibly massive storms featuring heavy rain and a wind strength greater than that of the most powerful windstorm. With winds of 75–174 miles per hour, a hurricane renders ranged attacks impossible, and siege weapons take a –8 penalty on attack rolls. Large or smaller creatures must succeed at a DC 15 Strength check or they are unable to move forward against the strength of the wind. Medium or smaller creatures on the ground must succeed at a DC 15 Strength check or they are knocked prone and roll 1d6x10 feet, taking 1d6 points of nonlethal damage per 10 feet. Flying creatures must succeed at a DC 25 Fly check or they are blown back 2d8x10 feet and take 4d6 points of nonlethal damage due to battering and buffeting. Hurricanes also usually cause flooding. It’s nearly impossible to journey out into a hurricane unscathed."));
+        weatherEntries.Add(new LibraryEntry("Sandstorm", "Sandstorms occur when severe or greater winds kick up sand and debris in a desert or similarly arid environment. Sandstorms reduce visibility to 1d10×10 feet, and those within them take a –6 penalty on Perception checks. Sandstorms deal 1d3 points of nonlethal damage per hour to creatures caught in the open."));
+        weatherEntries.Add(new LibraryEntry("Thundersnow", "High winds in a snowstorm can create the rare phenomena known as thundersnow. Lighting strikes are less common in thundersnow, but just as deadly. Every hour during the storm, a bolt of lightning strikes an unsheltered creature at random (though this can strike wildlife as easily as PCs). A creature struck by this lightning must succeed a DC 18 Reflex saving throw or take 10d8 points of electricity damage (a successful saving throw halves the damage). Creatures in metal armor take a –4 penalty on the Reflex saving throw."));
+        weatherEntries.Add(new LibraryEntry("Tornado", "With winds with speeds of 174–300 miles per hour, tornados are deadly terrors. The smallest tornados occupy a 20-foot-radius burst, with winds of windstorm strength swirling up to 100 feet beyond that burst. The largest tornados can be 100-foot-radius bursts, with a windstorm whose radius extends 500 feet beyond that burst. Ranged attacks, including normal, siege, and even those produced by evocation spells, are impossible in the core burst of a tornado. Huge or smaller creatures must succeed a DC 20 Strength check or be sucked up by the funnel of the tornado; this deals 8d8 points of bludgeoning, piercing, and slashing lethal damage to the creatures. This damage ignores all but DR/epic, DR/—, and hardness. Once it deals this damage, the tornado flings the creature it has sucked up 1d20×10 feet up and away from the tornado, dealing 1d6 points of falling damage per 10 feet that the creature is flung. Gargantuan and larger creatures take the 8d8 points of damage but are not moved by the tornado. A tornado moves at a speed of 40 feet, though the direction it moves is entirely unpredictable—you can determine the direction randomly each round. Tornados typically last for 3d6 minutes, but some can swirl for up to an hour. While most tornados are created by thunderstorms, some smaller tornados (typically with a 5- to 10-foot-burst radius, with no outer radius) can be created in areas of wildfire (firenados), snow (snownados), or sand (dust devils). They deal a similar amount of damage, but firenados deal fire damage, snownados deal cold damage, and dust devils deal bludgeoning damage only, and these types of tornados do not fling their targets."));
+        weatherEntries.Add(new LibraryEntry("Wildfire", "While wildfires can be sparked a number of ways, for these rules, they are usually created by a lightning strike in a particularly dry area of forest or other vegetation. Use the rules for forest fires, but add a 10% chance of the fire producing 1d6 firenados."));
+    }
 
-        #endregion
+    public static List<LibraryEntry> WeatherNameSearch(string keyword)
+    {
+        return weatherEntries.FindAll(entry => entry.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
+    public static List<LibraryEntry> WeatherDescriptionSearch(string keyword)
+    {
+        return weatherEntries.FindAll(entry => entry.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
 
-        #region Sounds
+    #endregion
 
-        // just a bunch of links to youtube
+    #region Sounds
 
-        static public void SoundOcean()
-        {
-            Process.Start("https://youtu.be/MD0tXdSsnBA?t=1s");
-        }
+    // just a bunch of links to youtube
 
-        static public void SoundThunder()
-        {
-            Process.Start("https://youtu.be/6wz5Pyn7Nsc?t=1s");
-        }
+    static public void SoundOcean()
+    {
+        Process.Start("https://youtu.be/MD0tXdSsnBA?t=1s");
+    }
 
-        static public void SoundRainLight()
-        {
-            Process.Start("https://youtu.be/q76bMs-NwRk?t=1s");
-        }
+    static public void SoundThunder()
+    {
+        Process.Start("https://youtu.be/6wz5Pyn7Nsc?t=1s");
+    }
 
-        static public void SoundRainHeavy()
-        {
-            Process.Start("https://youtu.be/jX6kn9_U8qk?t=1s");
-        }
+    static public void SoundRainLight()
+    {
+        Process.Start("https://youtu.be/q76bMs-NwRk?t=1s");
+    }
 
-        static public void SoundRoughOcean()
-        {
-            Process.Start("https://youtu.be/wATW85Biu2c?t=1s");
-        }
+    static public void SoundRainHeavy()
+    {
+        Process.Start("https://youtu.be/jX6kn9_U8qk?t=1s");
+    }
 
-        static public void SoundWindLight()
-        {
-            Process.Start("https://youtu.be/4KzFe50RQkQ?t=1s");
-        }
+    static public void SoundRoughOcean()
+    {
+        Process.Start("https://youtu.be/wATW85Biu2c?t=1s");
+    }
 
-        static public void SoundWindHeavy()
-        {
-            Process.Start("https://youtu.be/SMfB1REALp4?t=1s");
-        }
+    static public void SoundWindLight()
+    {
+        Process.Start("https://youtu.be/4KzFe50RQkQ?t=1s");
+    }
 
-        static public void SoundFireLight()
-        {
-            Process.Start("https://youtu.be/ZW6NmUsok2c?t=1s");
-        }
+    static public void SoundWindHeavy()
+    {
+        Process.Start("https://youtu.be/SMfB1REALp4?t=1s");
+    }
 
-        static public void SoundFireHeavy()
-        {
-            Process.Start("https://youtu.be/LiHjKwkCy3s?t=5");
-        }
+    static public void SoundFireLight()
+    {
+        Process.Start("https://youtu.be/ZW6NmUsok2c?t=1s");
+    }
 
-        static public void SoundNightBugs()
-        {
-            Process.Start("https://youtu.be/eKmRkS1os7k?t=1s");
-        }
+    static public void SoundFireHeavy()
+    {
+        Process.Start("https://youtu.be/LiHjKwkCy3s?t=5");
+    }
 
-        static public void SoundNightSwamp()
-        {
-            Process.Start("https://youtu.be/ih4_1FyVjaY?t=1s");
-        }
+    static public void SoundNightBugs()
+    {
+        Process.Start("https://youtu.be/eKmRkS1os7k?t=1s");
+    }
 
-        static public void SoundLute()
-        {
-            Process.Start("https://youtu.be/bq126uwwOBo?t=1s");
-        }
+    static public void SoundNightSwamp()
+    {
+        Process.Start("https://youtu.be/ih4_1FyVjaY?t=1s");
+    }
 
-        static public void SoundDrum()
-        {
-            Process.Start("https://youtu.be/lASb7_nOaBQ?t=1s");
-        }
+    static public void SoundLute()
+    {
+        Process.Start("https://youtu.be/bq126uwwOBo?t=1s");
+    }
 
-        static public void SoundHarp()
-        {
-            Process.Start("https://youtu.be/7TO_oHxuk6c?t=1s");
-        }
+    static public void SoundDrum()
+    {
+        Process.Start("https://youtu.be/lASb7_nOaBQ?t=1s");
+    }
 
-        static public void SoundHarpLuteDrum()
-        {
-            Process.Start("https://youtu.be/H67dHdR8Bwc?t=1s");
-        }
+    static public void SoundHarp()
+    {
+        Process.Start("https://youtu.be/7TO_oHxuk6c?t=1s");
+    }
 
-        static public void SoundDrumWar()
-        {
-            Process.Start("https://youtu.be/KoTku7qMZOM?t=1s");
-        }
+    static public void SoundHarpLuteDrum()
+    {
+        Process.Start("https://youtu.be/H67dHdR8Bwc?t=1s");
+    }
 
-        static public void SoundRainIndoors()
-        {
-            Process.Start("https://youtu.be/c8AxA99dnCk?t=1s");
-        }
+    static public void SoundDrumWar()
+    {
+        Process.Start("https://youtu.be/KoTku7qMZOM?t=1s");
+    }
 
-        static public void SoundTavern()
-        {
-            Process.Start("https://youtu.be/Ay4c4yAB-so?t=1s");
-        }
+    static public void SoundRainIndoors()
+    {
+        Process.Start("https://youtu.be/c8AxA99dnCk?t=1s");
+    }
 
-        static public void SoundSeaShanties()
-        {
-            Random rand = new Random();
-            string[] timeStamp = { "1s", "1m15s", "2m44s", "4m8s", "5m39s", "7m32s", "8m59s", "10m30s", "12m8s", "13m44s", "14m31s", "16m22s", "18m58s", "20m15s", "22m26s", "25m19s", "27m", "27m57s", "30m17s", "31m51s", "32m51s", "34m45s", "37m19s", "38m48s", "40m16s", "42m2s", "43m33s", "44m40s", "46m4s", "48m5s", "49m32s", "51m23s", "52m42s", "54m1s", "55m26s" };
-            int ndx = rand.Next(0, timeStamp.Length);
-            Process.Start("https://youtu.be/ZMYQ4rhwJto?t=" + timeStamp[ndx]);
-        }
+    static public void SoundTavern()
+    {
+        Process.Start("https://youtu.be/Ay4c4yAB-so?t=1s");
+    }
 
-        static public void SoundThunderCrack()
-        {
-            Process.Start("https://youtu.be/T-BOPr7NXME?t=0s");
-        }
+    static public void SoundSeaShanties()
+    {
+        string[] timeStamp = { "1s", "1m15s", "2m44s", "4m8s", "5m39s", "7m32s", "8m59s", "10m30s", "12m8s", "13m44s", "14m31s", "16m22s", "18m58s", "20m15s", "22m26s", "25m19s", "27m", "27m57s", "30m17s", "31m51s", "32m51s", "34m45s", "37m19s", "38m48s", "40m16s", "42m2s", "43m33s", "44m40s", "46m4s", "48m5s", "49m32s", "51m23s", "52m42s", "54m1s", "55m26s" };
+        Process.Start("https://youtu.be/ZMYQ4rhwJto?t=" + timeStamp[DiceRoller.Rand.Next(0, timeStamp.Length)]);
+    }
 
-        static public void SoundMedievalChantsInRain()
-        {
-            Process.Start("https://youtu.be/h7lyMrpdp1A?t=1s");
-        }
+    static public void SoundThunderCrack()
+    {
+        Process.Start("https://youtu.be/T-BOPr7NXME?t=0s");
+    }
 
-        #endregion
+    static public void SoundMedievalChantsInRain()
+    {
+        Process.Start("https://youtu.be/h7lyMrpdp1A?t=1s");
+    }
 
-        #region Feats
-        private static List<Feat> featEntries;
+    #endregion
 
-        public static List<Feat> FeatEntries
-        {
-            get { return featEntries; }
-        }
-        
-        public static List<Feat> FeatNameSearch(string keyword)
-        {
-            return featEntries.FindAll(feat => feat.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-        }
-        public static List<Feat> FeatDescriptionSearch(string keyword)
-        {
-            return featEntries.FindAll(feat => feat.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-        }
+    #region Feats
 
-        public static List<Feat> FeatSourceSearch(string keyword)
-        {
-            return featEntries.FindAll(feat => feat.Source.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-        }
+    private static List<Feat> featEntries;
 
-        public static List<Feat> FeatPrerequisiteSearch(string keyword)
-        {
-            return featEntries.FindAll(feat => feat.Prerequisite.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
-        }
-        private static void InitFeats() // *WIP* still adding to the list theres a lot of feats...... being pulled from PDF found online
-        {
-            featEntries = new List<Feat>();
+    public static List<Feat> FeatEntries
+    {
+        get { return featEntries; }
+    }
+    
+    public static List<Feat> FeatNameSearch(string keyword)
+    {
+        return featEntries.FindAll(feat => feat.Name.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
+    public static List<Feat> FeatDescriptionSearch(string keyword)
+    {
+        return featEntries.FindAll(feat => feat.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
 
-            featEntries.Add(new Feat("*Key to Sourcebooks", "", "To clarify book references.", "PH – Player’s Handbook v.3.5" + Environment.NewLine + "PH2 – Player’s Handbook 2" + Environment.NewLine + "DMG – Dungeon Master’s Guide v.3.5" + Environment.NewLine + "DMG2 – Dungeon Master’s Guide 2" + Environment.NewLine + "MM – Monster Manual v.3.5" + Environment.NewLine + "MM2 – Monster Manual II" + Environment.NewLine + "MM3 – Monster Manual III" + Environment.NewLine + "MM4 – Monster Manual IV" + Environment.NewLine + "MM5 – Monster Manual V" + Environment.NewLine + "CWar – Complete Warrior" + Environment.NewLine + "CDiv – Complete Divine" + Environment.NewLine + "CArc – Complete Arcane" + Environment.NewLine + "CAdv – Complete Adventurer" + Environment.NewLine + "CSco – Complete Scoundrel" + Environment.NewLine + "RoS – Races of Stone" + Environment.NewLine + "RoD – Races of Destiny" + Environment.NewLine + "RotW – Races of the Wild" + Environment.NewLine + "RoE – Races of Eberron" + Environment.NewLine + "RotD – Races of the Dragon" + Environment.NewLine + "Dcn – Draconomicon" + Environment.NewLine + "LM – Libris Mortis" + Environment.NewLine + "LoM – Lords of Madness" + Environment.NewLine + "HotA – Fiendish Codex 1: Hoards of the Abyss" + Environment.NewLine + "Tot9H – Fiendish Codex 2: Tyrants of the 9 Hells" + Environment.NewLine + "Drow – Drow of the Underdark" + Environment.NewLine + "BoED – Book of Exalted Deeds" + Environment.NewLine + "FF – Fiend Folio" + Environment.NewLine + "UA – Unearthed Arcana" + Environment.NewLine + "Frost – Frostburn" + Environment.NewLine + "Storm – Stormwrack" + Environment.NewLine + "Sand – Sandstorm" + Environment.NewLine + "FR – Forgotten Realms Campaign Setting" + Environment.NewLine + "MoF – Magic of Faerûn" + Environment.NewLine + "LoD – Lords of Darkness" + Environment.NewLine + "RoF – Races of Faerûn" + Environment.NewLine + "SM – Silver Marches" + Environment.NewLine + "Und – Underdark" + Environment.NewLine + "PGF – Player’s Guide to Faerûn" + Environment.NewLine + "Eb – Eberron Campaign Setting" + Environment.NewLine + "PGE – Player’s Guide to Eberron" + Environment.NewLine + "FoE – Faiths of Eberron" + Environment.NewLine + "RoE – Races of Eberron" + Environment.NewLine + "SoX – Secrets of Xen’drik" + Environment.NewLine + "5Nat – Five Nations" + Environment.NewLine + "DR### – Dragon Magazine (with issue number) (e.g., DR343 is Dragon Magazine #343)" + Environment.NewLine + "DU## – Dungeon Magazine (with issue number)" + Environment.NewLine + "3.5up – D & D v.3.5 Accessory Update" + Environment.NewLine + "PH3.5e – Player’s Handbook v.3.5 Errata" + Environment.NewLine + "MM3Errata – Monster Manual III Errata" + Environment.NewLine + "PGFe – Player’s Guide to Faerûn Errata" + Environment.NewLine + "CDivErrata – Complete Divine Errata" + Environment.NewLine + "CArcErrata – Complete Arcane Errata" + Environment.NewLine + "CAdvErrata – Complete Adventurer Errata" + Environment.NewLine + "DR334Errata – Dragon 344 Errata" + Environment.NewLine + "EbErrata – Eberron Errata" + Environment.NewLine + "wCity1 – Cityscape Web Enhancement #1" + Environment.NewLine + "wCity3 – Cityscape Web Enhancement #3" + Environment.NewLine + "wRotD1 – Races of the Dragon Web Enhancement #1" + Environment.NewLine + "wRotD2 – Races of the Dragon Web Enhancement #2" + Environment.NewLine + "wLivingSpell1 – WotC Living Spells, part 1 of 4" + Environment.NewLine + "wLivingSpell2 – WotC Living Spells, part 2 of 4" + Environment.NewLine + "wLivingSpell3 – WotC Living Spells, part 3 of 4" + Environment.NewLine + "wLivingSpell4 – WotC Living Spells, part 4 of 4" + Environment.NewLine + "wWarforged – Dragonshards – The Warforged" + Environment.NewLine + "wWaterdeep – Waterdeep Web Enhancement" + Environment.NewLine + "wTot9H – Tyrants of the 9 Hell’s Web Enhancement" + Environment.NewLine + "Note: If a Key reference is followed by a “+”, then it is partially superseded the entry above it."));
+    public static List<Feat> FeatSourceSearch(string keyword)
+    {
+        return featEntries.FindAll(feat => feat.Source.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
 
-            // wrote a script to do most of the work but so i could copy paste and only have to correct minor mistakes\
-            // but its still super time consuming
+    public static List<Feat> FeatPrerequisiteSearch(string keyword)
+    {
+        return featEntries.FindAll(feat => feat.Prerequisite.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
 
-            #region PG 10
+    private static void InitializeFeats() // *WIP* still adding to the list theres a lot of feats...... being pulled from PDF found online
+    {
+        featEntries = new List<Feat>();
+
+        featEntries.Add(new Feat("*Key to Sourcebooks", "", "To clarify book references.", "PH – Player’s Handbook v.3.5" + Environment.NewLine + "PH2 – Player’s Handbook 2" + Environment.NewLine + "DMG – Dungeon Master’s Guide v.3.5" + Environment.NewLine + "DMG2 – Dungeon Master’s Guide 2" + Environment.NewLine + "MM – Monster Manual v.3.5" + Environment.NewLine + "MM2 – Monster Manual II" + Environment.NewLine + "MM3 – Monster Manual III" + Environment.NewLine + "MM4 – Monster Manual IV" + Environment.NewLine + "MM5 – Monster Manual V" + Environment.NewLine + "CWar – Complete Warrior" + Environment.NewLine + "CDiv – Complete Divine" + Environment.NewLine + "CArc – Complete Arcane" + Environment.NewLine + "CAdv – Complete Adventurer" + Environment.NewLine + "CSco – Complete Scoundrel" + Environment.NewLine + "RoS – Races of Stone" + Environment.NewLine + "RoD – Races of Destiny" + Environment.NewLine + "RotW – Races of the Wild" + Environment.NewLine + "RoE – Races of Eberron" + Environment.NewLine + "RotD – Races of the Dragon" + Environment.NewLine + "Dcn – Draconomicon" + Environment.NewLine + "LM – Libris Mortis" + Environment.NewLine + "LoM – Lords of Madness" + Environment.NewLine + "HotA – Fiendish Codex 1: Hoards of the Abyss" + Environment.NewLine + "Tot9H – Fiendish Codex 2: Tyrants of the 9 Hells" + Environment.NewLine + "Drow – Drow of the Underdark" + Environment.NewLine + "BoED – Book of Exalted Deeds" + Environment.NewLine + "FF – Fiend Folio" + Environment.NewLine + "UA – Unearthed Arcana" + Environment.NewLine + "Frost – Frostburn" + Environment.NewLine + "Storm – Stormwrack" + Environment.NewLine + "Sand – Sandstorm" + Environment.NewLine + "FR – Forgotten Realms Campaign Setting" + Environment.NewLine + "MoF – Magic of Faerûn" + Environment.NewLine + "LoD – Lords of Darkness" + Environment.NewLine + "RoF – Races of Faerûn" + Environment.NewLine + "SM – Silver Marches" + Environment.NewLine + "Und – Underdark" + Environment.NewLine + "PGF – Player’s Guide to Faerûn" + Environment.NewLine + "Eb – Eberron Campaign Setting" + Environment.NewLine + "PGE – Player’s Guide to Eberron" + Environment.NewLine + "FoE – Faiths of Eberron" + Environment.NewLine + "RoE – Races of Eberron" + Environment.NewLine + "SoX – Secrets of Xen’drik" + Environment.NewLine + "5Nat – Five Nations" + Environment.NewLine + "DR### – Dragon Magazine (with issue number) (e.g., DR343 is Dragon Magazine #343)" + Environment.NewLine + "DU## – Dungeon Magazine (with issue number)" + Environment.NewLine + "3.5up – D & D v.3.5 Accessory Update" + Environment.NewLine + "PH3.5e – Player’s Handbook v.3.5 Errata" + Environment.NewLine + "MM3Errata – Monster Manual III Errata" + Environment.NewLine + "PGFe – Player’s Guide to Faerûn Errata" + Environment.NewLine + "CDivErrata – Complete Divine Errata" + Environment.NewLine + "CArcErrata – Complete Arcane Errata" + Environment.NewLine + "CAdvErrata – Complete Adventurer Errata" + Environment.NewLine + "DR334Errata – Dragon 344 Errata" + Environment.NewLine + "EbErrata – Eberron Errata" + Environment.NewLine + "wCity1 – Cityscape Web Enhancement #1" + Environment.NewLine + "wCity3 – Cityscape Web Enhancement #3" + Environment.NewLine + "wRotD1 – Races of the Dragon Web Enhancement #1" + Environment.NewLine + "wRotD2 – Races of the Dragon Web Enhancement #2" + Environment.NewLine + "wLivingSpell1 – WotC Living Spells, part 1 of 4" + Environment.NewLine + "wLivingSpell2 – WotC Living Spells, part 2 of 4" + Environment.NewLine + "wLivingSpell3 – WotC Living Spells, part 3 of 4" + Environment.NewLine + "wLivingSpell4 – WotC Living Spells, part 4 of 4" + Environment.NewLine + "wWarforged – Dragonshards – The Warforged" + Environment.NewLine + "wWaterdeep – Waterdeep Web Enhancement" + Environment.NewLine + "wTot9H – Tyrants of the 9 Hell’s Web Enhancement" + Environment.NewLine + "Note: If a Key reference is followed by a “+”, then it is partially superseded the entry above it."));
+
+        // wrote a script to do most of the work so I could copy paste and only have to correct minor mistakes\
+        // but its still super time consuming
+
+        #region PG 10
             FeatEntries.Add(new Feat("Able Learner [General]", "(RoD p150)", "Human or Doppelganger only 1st Level only", "All skills are “in-class” and only cost 1 skill point." + Environment.NewLine + "Does not effect the cost of learning a language or gaining literacy."));
             FeatEntries.Add(new Feat("Acrobatic [General, Scout]", "(PH p89) (CAdv p10)+", "—", "+2 bonus to Jump & Tumble checks."));
             FeatEntries.Add(new Feat("Agile [General, Scout]", "(PH p89) (CAdv p10)+", "—", "+2 bonus to Balance & Escape Artist checks."));
@@ -1185,7 +1098,7 @@ namespace DM_Tool
             FeatEntries.Add(new Feat("Education [General]", "(Eb p52)", "1st level only", "All Knowledge skills are added to your In-Class Skill List." + Environment.NewLine + "+1 bonus on two specific Knowledge skills of your choice."));
             #endregion
 
-            #region PG 11
+        #region PG 11
             FeatEntries.Add(new Feat("Efficient Hunter [General]", "(DR333 p84)", "Survival: 1 rank Raised in a plains environment", "+2 bonus on Survival checks." + Environment.NewLine + "When you are “living off the land”, you may provide food for a number of people equal to your Wisdom modifier (minimum 1) without a change in the DC of your Survival check."));
             FeatEntries.Add(new Feat("Extraordinary Concentration [General]", "(CAdv p109)", "Concentration: 10 ranks", "You may maintain Concentration on a spell as a Move Action (DC 25 + spell level)." + Environment.NewLine + "If you beat the DC by 10 or more, you can maintain concentration as a Swift Action." + Environment.NewLine + "If you fail your check, you lose concentration."));
             FeatEntries.Add(new Feat("Flexible Mind [Anarchic]", "(DR326 p80)", "Chaotic alignment", "Choose two skills that you have ranks in." + Environment.NewLine + "These skills are always in-class for you from now on." + Environment.NewLine + "Both skills receive a +1 bonus." + Environment.NewLine + "You gain a Chaotic Aura equal to your Character level." + Environment.NewLine + "It can discerned by Detect Chaos spell or ability."));
@@ -1216,7 +1129,7 @@ namespace DM_Tool
             FeatEntries.Add(new Feat("Sailor’s Balance [General]", "(Storm p93)", "Profession(sailor): 4 ranks", "Gain a +5 Competence bonus on Balance checks made while on a deck or in the ship’s riggings." + Environment.NewLine + "You may move across a slipper deck at your normal speed."));
             #endregion
 
-            #region PG 12
+        #region PG 12
             FeatEntries.Add(new Feat("Savvy Swimmer [General]", "(DR323 p90)", "Swim: 4 ranks", "When swimming in armor that you have proficiency with, you only receive ½ the Armor Check Penalty (instead of 2x) on your Swim check."));
             FeatEntries.Add(new Feat("Scout the Path [General, Scout]", "(DR346 p87)", "Survival: 4 ranks", "+3 bonus when making a Survival check to Trailblaze (see the Skill Index for details)." + Environment.NewLine + "In addition, all allies within 20’ receive a +1 bonus on their Hide and Move Silently checks."));
             FeatEntries.Add(new Feat("Sea Legs [General]", "(Storm p93) (DR314 p45)", "—", "+2 bonus to Balance & Tumble checks –and– +1 bonus on Initiative checks, as long as you are on a floating ship."));
@@ -1246,7 +1159,7 @@ Target Attitude   Target DC
             FeatEntries.Add(new Feat("Versatile Performer [General]", "(CAdv p112)", "Perform: 5 ranks", "Pick a number of Perform categories equal to your Intelligence modifier (minimum 1) When making checks, treat all categories as if they had as many ranks as your highest-ranked category." + Environment.NewLine + "You gain a +2 bonus to check when using more than one of these Performance categories together."));
             #endregion
 
-            #region PG 13
+        #region PG 13
             FeatEntries.Add(new Feat("Able Learner [General]", "(RoD p150)", "Human or Doppelganger 1st level only", "All skills are “in-class” and only cost 1 skill point." + Environment.NewLine + "Does not effect the cost of learning a language or gaining literacy."));
             FeatEntries.Add(new Feat("Born under a Setting Sun [Birth]", "(DR340 p48)", "1st level only May not have another [Birth] feat", "Concentration is always an in-class skill for you." + Environment.NewLine + "+1 bonus on any two Knowledge skills."));
             FeatEntries.Add(new Feat("Bronze Solaris Member [General]", "(DR334 p93)", "Sorcerer level 1st + 1st Level only", "You descended from an Ancient Deity and are a member of The Order of the Bronze Solaris." + Environment.NewLine + "1. Knowledge (religion) is a Sorcerer class skill for you." + Environment.NewLine + "Receive a +3 bonus on Knowledge (religion) checks related to your Ancestor Deity." + Environment.NewLine + "2. You are proficient with the Favored Weapon of your Ancestor Deity."));
@@ -1274,7 +1187,7 @@ Dragon   Energy Type   Skill
             FeatEntries.Add(new Feat("Seafarer [General]", "(DR337 p96)", "—", "Profession (sailor) and Survival are always class skills for you." + Environment.NewLine + "+2 bonus to Profession (sailor) checks." + Environment.NewLine + "+2 bonus to Survival checks while on a ship or boat."));
             #endregion
 
-            #region PG 14
+        #region PG 14
             FeatEntries.Add(new Feat("Appraise Magic Value [General]", "(CAdv p103)", "Appraise: 5 ranks Know (arcana): 5 ranks Spellcraft: 5 ranks", "If you know an item is magical, you may spend 8 hours and 25 gp in special materials to make an Appraise check (DC 10 + item’s caster level) to determine its exact properties."));
             FeatEntries.Add(new Feat("Astral Tracking [General]", "(DR313 p110)", "Track Know (planes): 11 ranks Spellcraft: 8 ranks Survival: 10 ranks", "You may make Survival checks to track creatures through the planes." + Environment.NewLine + "1.Track through the featureless Astral Plane – DC 25." + Environment.NewLine + "2.Determine the destination of a Teleport spell or effect when standing at the point of departure – DC 30." + Environment.NewLine + "If you succeed and can teleport, then you may attempt to follow as if you had viewed the destination once."));
             FeatEntries.Add(new Feat("Breath Control [General, Fighter]", "(DR333 p88)", "Perform (wind instrument): 5 ranks", "+2 bonus on Perform (wind instrument) checks." + Environment.NewLine + "+2 bonus on saves vs. inhaled poisons and nauseating vapors." + Environment.NewLine + "Able to hold your breath for either 2 times Constitution score –or– Perform (wind instrument) check rounds, whichever is higher."));
@@ -1302,7 +1215,7 @@ Also, you gain a +5 bonus to pinpoint the location of Invisible creatures"));
             FeatEntries.Add(new Feat("Vatic Gaze [General]", "(PH2 p85)", "Arcane spellcaster 9th lvl", "1. Detect Magic, at will." + Environment.NewLine + "2. By making a Sense Motive check vs. DC (5 + target’s caster level), you may determine the highest level spell the target is still capable of casting."));
             #endregion
 
-            #region PG 15
+        #region PG 15
             FeatEntries.Add(new Feat("Wanderer’s Diplomacy [General]", "(PH2 p85)", "Halfling –or– Bluff: 4 ranks Diplomacy: 4 ranks Sense Motive: 4 ranks", "Gain the following abilities: Canny Merchant – you can make a Diplomacy check to locate a desired object that is normally too expensive for the current settlement to sell." + Environment.NewLine + "You must still purchase the object after locating it." + Environment.NewLine + "The DC of the check is 10 + ((item’s gp cost – settlement’s gp limit) / 1000)" + Environment.NewLine + "Intuitive Communication – you may communicate in a simple way with a creature whose language you do not share by spending 1 minute interacting with it and then making a Sense Motive check vs." + Environment.NewLine + "DC 20 if you and the creature are of the same type, otherwise DC 30." + Environment.NewLine + "Social Agility – you may temporarily change a creature’s Attitude towards you by using Bluff (instead of Diplomacy as usual)." + Environment.NewLine + "The attempt takes a Standard Action and its DC is the same as changing an Attitude with Diplomacy." + Environment.NewLine + "You may not use this ability on a creature with the Attitude of ‘Hostile’." + Environment.NewLine + "If successful, the effect lasts for 1 minute, after which the creature’s Attitude becomes one category worse than it started for 10 minutes."));
             FeatEntries.Add(new Feat("War Chant [General, Fighter]", "(DR335 p88)", "Perform (sing): 7 ranks", "By chanting for at least 3 rounds before combat begins (a Free Action each round), the following occur: 1." + Environment.NewLine + "You gain a +2 bonus on your Initiative check." + Environment.NewLine + "2." + Environment.NewLine + "Allies within 30’ who were listening to the chant receive a +1 Morale bonus on their Initiative check. The effects of multiple chanters on their allies stack (up to a max of +4)."));
             FeatEntries.Add(new Feat("Cool Head [General]", "(CSco p075)", "any 2 Mental Skill Tricks", "Gain 2 extra Mental Skill Tricks that do not count against your maximum."));
@@ -1311,7 +1224,7 @@ Also, you gain a +5 bonus to pinpoint the location of Invisible creatures"));
             FeatEntries.Add(new Feat("Sweet Talker [General]", "(CSco p081)", "any 2 Interaction Skill Tricks", "Gain 2 extra Interaction Skill Tricks that do not count against your maximum."));
             #endregion
 
-            #region PG 16
+        #region PG 16
             FeatEntries.Add(new Feat("Arcane Defense [General]", "(CArc p73)", "Spell Focus in the chosen School of Magic", "+3 bonus on saves vs." + Environment.NewLine + "spells from the chosen School of Magic." + Environment.NewLine + "You may take this feat multiple times, each time choosing a different School of Magic."));
             FeatEntries.Add(new Feat("Aura of Bravery [General]", "(DR323 p96)", "—", "All allies within 10’ of you gain a +2 Morale bonus on saves vs." + Environment.NewLine + "Fear as long as you are not affected by the Fear effect." + Environment.NewLine + "You do not receive the bonus."));
             FeatEntries.Add(new Feat("Battlefield Inspiration [General]", "(Mini p25)", "Charisma 13", "As a Free Action, you may grant a +2 XXX bonus to saves vs." + Environment.NewLine + "Fear to allies 30’ with an Intelligence of 3+ who can hear you for XXX rounds." + Environment.NewLine + "This feat may be taken multiple times, each time increasing the bon us by an additional +2."));
@@ -1339,7 +1252,7 @@ Also, you gain a +5 bonus to pinpoint the location of Invisible creatures"));
             FeatEntries.Add(new Feat("Strong Mind [General]", "(Eb p61) (Und p27)", "Wisdom 11", "Receive a +3 bonus on saving throws vs. Psionic abilities and mind attacks."));
             #endregion
 
-            #region PG 17
+        #region PG 17
             FeatEntries.Add(new Feat("Strong Stomach [General]", "(DR326 p55)", "—", "Receive a +4 bonus on saving throws vs." + Environment.NewLine + "extraordinary, supernatural, or spell-like effects that cause Nausea or any other scent-based effect."));
             FeatEntries.Add(new Feat("Tomb-Born Resilience [General]", "(LM p30)", "Non-Good Alignment Tomb-Tainted Soul", "+2 bonus on saving throws vs." + Environment.NewLine + "mind-affecting spells and abilities, poison, and disease."));
             FeatEntries.Add(new Feat("Unquenchable Flame of Life [General]", "(FoE p148)", "—", "Receive a +2 bonus on saving throws vs." + Environment.NewLine + "the Extraordinary & Supernatural abilities of Undead." + Environment.NewLine + "If Undead are your Favored Enemy, you receive your Favored Enemy bonus vs." + Environment.NewLine + "Undead instead of the +2."));
@@ -1363,7 +1276,7 @@ Also, you gain a +5 bonus to pinpoint the location of Invisible creatures"));
             FeatEntries.Add(new Feat("Tunnel Rat [General]", "(DR326 p55)", "Escape Artist: 4 ranks", "When squeezing, each space counts as 1 square of movement and you only suffer a –2 penalty on attack rolls." + Environment.NewLine + "Normally, each space squeezed through costs 2 squares of movement and the penalty is –4."));
             #endregion
 
-            #region PG 18
+        #region PG 18
             FeatEntries.Add(new Feat("Armor Proficiency (heavy) [General]", "(PH p89)", "Armor Proficiency (medium)", "You are proficient with all normal Heavy Armors."));
             FeatEntries.Add(new Feat("Armor Proficiency (light) [General]", "(PH p89)", "—", "You are proficient with all normal Light Armors."));
             FeatEntries.Add(new Feat("Armor Proficiency (medium) [General]", "(PH p89)", "Armor Proficiency (light)", "You are proficient with all normal Medium Armors."));
@@ -1394,7 +1307,7 @@ with Faster Healing
             FeatEntries.Add(new Feat("Toughness [General]", "(PH p101)", "—", "Gain +3 hit points." + Environment.NewLine + "This feat may be taken multiple times."));
             #endregion
 
-            #region PG 19
+        #region PG 19
             FeatEntries.Add(new Feat("Favored of the Companions [Exalted]", "(BoED p43)", "Pledged fealty to one of the Paragon of the Guardinals (NG)", "Once per day, you receive a +1 Luck bonus on any one roll or check." + Environment.NewLine + "You must be performing a good act." + Environment.NewLine + "You may not take ‘Knight of Stars’ or ‘Servant of the Heavens’ after taking this feat."));
             FeatEntries.Add(new Feat("Friend of Earth [General]", "(DR314 p29)", "Member of an earthfocused sect or a follower of an earthbased deity", "You receives a +4 bonus on any Charisma-based check to influence earth creatures, including creatures with the [earth] subtype, intelligence Constructs made from stone, etc." + Environment.NewLine + "You receives a +2 bonus on any Charisma-based check to influence any created associated with earth or stone that does not have an [earth] subtype, such as Dwarves."));
             FeatEntries.Add(new Feat("Knight of Stars [Exalted]", "(BoED p44)", "Pledged fealty to a member of the Court of Stars (CG)", "Once per day, you receive a +1 Luck bonus on any one roll or check." + Environment.NewLine + "You must be performing a good act." + Environment.NewLine + "You may not take ‘Favored of the Companions’ or ‘Servant of the Heavens’ after taking this feat."));
@@ -1406,7 +1319,7 @@ with Faster Healing
             FeatEntries.Add(new Feat("Wise Elder [General]", "(DR334 p84)", "Leadership Recognized Leader Old age Membership in a tribe", "When using Diplomacy or Intimidate to influence your own trip, you may reroll a check, though you must take the second roll (even if worse)." + Environment.NewLine + "Usable 1/day." + Environment.NewLine + "You may gain a Cohort with levels in Barbarian as if your Leadership score was +2 (supersedes bonus from Recognized Leader)."));
             #endregion
 
-            #region PG 20
+        #region PG 20
             FeatEntries.Add(new Feat("Assemble the Horde [General]", "(DR346 p52)", "Leadership Character level 6th Leadership score 4 higher than your level", "+1 bonus on your Leadership score." + Environment.NewLine + "For each Follower who is above 1st level, gain an extra 1st level follower."));
             FeatEntries.Add(new Feat("Class Champion [General]", "(DR346 p53)", "Leadership Character level 6th Leadership score 4 higher than your level", "+1 bonus on your Leadership score." + Environment.NewLine + "Gain two additional Followers of the highest level available for your Leadership score, but they must be the same class (i." + Environment.NewLine + "." + Environment.NewLine + " Fighter, Cleric, Rogue, etc." + Environment.NewLine + " as you."));
             FeatEntries.Add(new Feat("Close Cohort [General]", "(DR346 p53)", "Leadership Character level 6th Leadership score 2 higher than your level", "Your Cohort may be one level below your level (instead of two below, as usual)."));
@@ -1426,7 +1339,7 @@ with Faster Healing
             FeatEntries.Add(new Feat("Wise Elder [General]", "(DR334 p84)", "Leadership Recognized Leader Old age Membership in a tribe", "When using Diplomacy or Intimidate to influence your own trip, you may reroll a check, though you must take the second roll (even if worse)." + Environment.NewLine + "Usable 1/day." + Environment.NewLine + "You may gain a Cohort with levels in Barbarian as if your Leadership score was +2 (supersedes bonus from Recognized Leader)."));
             #endregion
 
-            #region PG 21
+        #region PG 21
             FeatEntries.Add(new Feat("Binding Brand [General]", "(PGE p36)", "—", "You have the mark of the Binding Brand, a stylized flame." + Environment.NewLine + "Cast the following 1/day as a Spell-Like Ability as a 1st level Sorcerer: Guidance, Protection from Evil, Resistance." + Environment.NewLine + "DC is Charisma-based."));
             FeatEntries.Add(new Feat("Born under the Crescent Moon [Birth]", "(DR340 p56)", "1st level only May not have another [Birth] feat", "+1 bonus on Sense Motive & Spot checks." + Environment.NewLine + "Detect Thoughts, 1/day as a Spell-like Ability." + Environment.NewLine + "DC is Charisma-based." + Environment.NewLine + "Caster level is your Character level."));
             FeatEntries.Add(new Feat("Born under the Full Moon [Birth]", "(DR340 p57)", "1st level only May not have another [Birth] feat", "+1 bonus on Intimidate & Use Magical Device checks." + Environment.NewLine + "Command, 1/day as a Spell-like Ability." + Environment.NewLine + "DC is Charisma-based." + Environment.NewLine + "Caster level is your Character level."));
@@ -1445,7 +1358,7 @@ with Faster Healing
             FeatEntries.Add(new Feat("Touch of Summoning [General]", "(PGE p35)", "From the Demon Wastes region of Eberron", "Your facial features look unusual, such as a heavy brow ridge, deeply sunken eyes, etc." + Environment.NewLine + "Cast the following 1/day as a Spell-Like Ability as a 1st level Sorcerer: Acid Splash, Mage Hand, Summon Monster I (fiendish creatures only)." + Environment.NewLine + "DC is Charisma-based."));
             #endregion
 
-            #region PG 22
+        #region PG 22
             FeatEntries.Add(new Feat("Aerial Reflexes [General]", "(RotW p148)", "—", @"When flying, gain a bonus on Reflex saves based on your Maneuverability: 
 
 Maneuverability  Bonus
@@ -1486,7 +1399,7 @@ Totem   Energy
  White   Cold"));
             #endregion
 
-            #region PG 23
+        #region PG 23
             FeatEntries.Add(new Feat("Dragonthrall [General]", "(Dcn p105)", "Speak Language (Draconic)", "You have pledged your life to the service of evil dragonkind." + Environment.NewLine + "+4 bonus on Bluff checks against a Dragon." + Environment.NewLine + "+2 bonus to Ride checks made when you are mounted on a Dragon." + Environment.NewLine + "+4 bonus on saves against the Frightful Presence of Evil Dragons." + Environment.NewLine + "–2 to your saves vs." + Environment.NewLine + "Enchantment spells & effects cast by Dragons." + Environment.NewLine + "You cannot take this feat if you have already taken the Dragonfriend feat."));
             FeatEntries.Add(new Feat("Earth Sense [General]", "(RoS p138)", "Constitution 13 Wisdom 13", "While touching the ground, you can take a Move Action to sense the number of creatures within 20’ who are also touching the ground." + Environment.NewLine + "You cannot pinpoint the location of any creature with this feat." + Environment.NewLine + "Note: Creatures with the Air or Aquatic subtypes may not select this feat."));
             FeatEntries.Add(new Feat("Flesh of the Ice Tomb [General]", "(DU109 p50)", "Non-Good Alignment Tomb-Tainted Soul Endurance", "Cold damage you take becomes non-lethal damage."));
@@ -1507,7 +1420,7 @@ Totem   Energy
             FeatEntries.Add(new Feat("Wild Touch [Anarchic]", "(DR326 p80)", "Chaotic alignment Use Magic Device: 8 ranks", "When determining the random effect of a magic item (i." + Environment.NewLine + "." + Environment.NewLine + " drawing a card from a Deck of Many Things, activating a Rod of Wonder, etc." + Environment.NewLine + ", you may roll twice and choose the more appropriate of the two." + Environment.NewLine + "This ability may be used once per day." + Environment.NewLine + "You gain a Chaotic Aura equal to your Character level." + Environment.NewLine + "It can discerned by Detect Chaos spell or ability."));
             #endregion
 
-            #region PG 24
+        #region PG 24
             FeatEntries.Add(new Feat("Combat Intuition [General, Fighter]", "(CAdv p106)", "Base Attack Bonus +5 Sense Motive: 4 ranks As a Free Action, you can make a Sense Motive check to assess the challenge presented by an opponent (CAdv p102)", " You gain a +4 bonus to the check, and narrow the result to a single category." + Environment.NewLine + "Whenever you make a melee attack against a creature you also attacked in melee last round, gain a +1 Insight bonus to your attack roll."));
             FeatEntries.Add(new Feat("Daunting Presence [General, Fighter]", "(LM p25) (Mini p25)", "Charisma 13 Base Attack Bonus +1", "You may take a Standard Action to ‘Awe’ an opponent with 30’, who can see you, and who has an Intelligence score." + Environment.NewLine + "If the opponent fails a Will saving throw (DC 10 + ½ your character level + your Charisma modifier) it is Shaken for 10 minutes."));
             FeatEntries.Add(new Feat("This fear has no effect on a creature that is already Shaken Deadly Defense [General, Fighter]", "(CSco p076)", "—", "When ‘Fighting Defensively’ or using Combat Expertise with at least a –2 penalty, you do +1d6 damage with a Light or Finesse melee weapon." + Environment.NewLine + "You may only use this feat if you are wearing Light Armor or less."));
@@ -1528,7 +1441,7 @@ Totem   Energy
             FeatEntries.Add(new Feat("Spectral Skirmisher [General, Fighter]", "(PH2 p83)", "Base Attack Bonus +6", "When you are Invisible, you gain the following benefits: a) creatures who cannot see you receive a –5 penalty on Listen checks to hear you." + Environment.NewLine + "b) a creature attempting a melee attack against the square you are in generates an Attack of Opportunity." + Environment.NewLine + "If you attack the creature, then he/she automatically knows where you are (assuming you are still Invisible)."));
             #endregion
 
-            #region PG 25
+        #region PG 25
             FeatEntries.Add(new Feat("Blind-Fight [General, Fighter, Scout]", "(PH p89) (CAdv p10)+", "—", "If you miss a melee attack due to Concealment, you may reroll the miss chance to see if you can attempt to hit." + Environment.NewLine + "You keep your Dexterity bonus to AC when attacked in melee by an invisible attacker." + Environment.NewLine + "Also, your attacker does not get a +2 bonus due to being invisible." + Environment.NewLine + "Darkness & poor lighting only reduce your movement to 75%, instead of 50%."));
             FeatEntries.Add(new Feat("Death Blow [General]", "(CAdv p106)", "Base Attack Bonus +2 Improved Initiative", "You may perform a Coup de Grace as a Standard Action that provokes an Attack of Opportunity."));
             FeatEntries.Add(new Feat("Elusive Dance [General, Fighter]", "(DR333 p88)", "Perform (dance): 5 ranks", "During your action, you may designate an opponent who may not make Attacks of Opportunity against you." + Environment.NewLine + "If you have the feat Dodge, your designated Dodge and Elusive Dance opponent must be the same creature."));
@@ -1547,7 +1460,7 @@ Totem   Energy
             FeatEntries.Add(new Feat("Weapon Finesse [General, Fighter]", "(PH p102)", "Base Attack Bonus +1", "Use your Dexterity modifier instead of your Strength modifier as the bonus to your melee attacks when using any Light Weapon, a Rapier, a Spiked Chain, or a Whip." + Environment.NewLine + "(note: this feat now applies to all appropriate weapons)."));
             #endregion
 
-            #region PG 26
+        #region PG 26
             FeatEntries.Add(new Feat("Double Hit [General, Fighter]", "(Mini p25)", "Dexterity 17 Base Attack Bonus +6 Combat Reflexes Two-Weapon Fighting", "Before you make an Attack of Opportunity, you may choose to attack with both weapons, taking the standard penalties for fighting with two weapons."));
             FeatEntries.Add(new Feat("Dual Strike [General, Fighter]", "(CAdv p108)", "Two-Weapon Fighting Improved Two-Weapon Fighting", "As a Standard Action, you can make a melee attack with your primary and off-hand weapon." + Environment.NewLine + "Both attacks use the same attack roll and the worse of the two weapon’s attack modifier." + Environment.NewLine + "If you are using a one-handed or light weapon in your off-hand, you take a –4 penalty; otherwise the penalty is –10. Each weapon deals its damage normally and reduction/resistance is applied separately." + Environment.NewLine + "Precision damage (such as sneak attack) is only applied once." + Environment.NewLine + "A critical hit only deals critical damage from the primary."));
             FeatEntries.Add(new Feat("Greater Two-Weapon Defense [General, Fighter]", "(CWar p100)", "Dexterity 19 Base Attack Bonus +11 Improved Two-Weapon Defense Two-Weapon Defense Two-Weapon Fighting", "When wielding two weapons (but not when using Unarmed Strikes or Natural Weapons), you gain a +3 Shield bonus to AC." + Environment.NewLine + "If Fighting Defensively or using Total Defense, you gain a +6 Shield bonus to AC."));
@@ -1565,7 +1478,7 @@ Totem   Energy
             FeatEntries.Add(new Feat("Two-Weapon Rend [General, Fighter]", "(PH2 p84)", "Dexterity 15 Base Attack Bonus +11 Two-Weapon Fighting", "Ranger 11th If you damage an opponent with each of your weapons in a given round, you do extra damage equal to 1d6 + 1 ½ Strength modifier." + Environment.NewLine + "With regards to Damage Reduction, use the off-hand weapon’s characteristics." + Environment.NewLine + "A given creature may only take this rending damage once per round."));
             #endregion
 
-            #region PG 27
+        #region PG 27
             FeatEntries.Add(new Feat("Exotic Weapon Proficiency [General, Fighter]", "(PH p94)", "Base Attack Bonus +1 For Dwarven Waraxe or Bastard Sword, Str 13", "Become proficient in chosen exotic weapon (i.e., Exotic Weapon Proficiency (spiked chain)) grants proficiency with a Spiked Chain."));
             FeatEntries.Add(new Feat("Graceful Edge [General, Fighter]", "(DU128 p44)", "Base Attack Bonus +1 Weapon Finesse Weapon Focus with the chosen One-Handed Slashing weapon", "When fighting with the chosen weapon in your primary hand and no weapon or shield in your off-hand, receive the following benefits: a) treat the chosen weapon as ‘Light’ (i." + Environment.NewLine + "." + Environment.NewLine + " Weapon Finesse applies to it); b) receive a +1 Shield bonus to AC; and c) if Fighting Defensively or using Total Defense, receive a +2 Shield bonus to AC."));
             FeatEntries.Add(new Feat("Greater Weapon Focus [General, Fighter]", "(PH p95)", "Fighter 8th Weapon Focus with the chosen weapon", "Gain an additional +1 bonus to attack rolls with the chosen weapon."));
@@ -1580,7 +1493,7 @@ Totem   Energy
             FeatEntries.Add(new Feat("Weapon Supremacy [General]", "(PH2 p85)", "Fighter 18th Weapon Focus with the chosen weapon Greater Weapon Focus with the chosen weapon Weapon Specialization with the chosen weapon Greater Weapon Specialization with the chosen weapon Weapon Mastery with the chosen weapon’s type", "When fighting with the chosen weapon, receive the following benefits: a) +4 bonus to avoid being Disarmed; b) if Grappled, you may still attack with the chosen weapon as a Standard Attack or a Full Round Attack without penalty; c) when you make a Full Round Attack, you may assign a +5 bonus on any attack roll after the 1st; d) you may “Take 10” on your attack roll, once per round; and e) +1 bonus to AC." + Environment.NewLine + "Note: unlike Weapon Focus & other weapon specific feats, this feat may only be taken once (you may only have supremacy with one type of weapon)."));
             #endregion
 
-            #region PG 28
+        #region PG 28
             FeatEntries.Add(new Feat("Crushing Strike [General]", "(PH2 p78)", "Base Attack Bonus +14 Weapon Focus (any bludgeoning) Weapon Specialization (any bludgeoning) Melee Weapon Master – Bludgeoning", "When making a Full Round Attack with any Bludgeoning melee weapon, you receive a +1 cumulative bonus on attack rolls for each roll that has hit this round (i." + Environment.NewLine + "." + Environment.NewLine + " it restarts at +0 at the start of each round)."));
             FeatEntries.Add(new Feat("Driving Attack [General]", "(PH2 p78)", "Base Attack Bonus +14 Weapon Focus (any piercing) Weapon Specialization (any piercing) Melee Weapon Master – Piercing", "Spend a Full Round Attack action to make a single melee attack with any Piercing weapon." + Environment.NewLine + "If the attack hits, you do damage and make a modified Bull Rush that uses your damage in place of your Strength modifier, does not provoke an Attack of Opportunity, and does not cause you to move." + Environment.NewLine + "If you move your opponent 10’ or more, you may reduce the distance moved by your opponent to have him/her fall Prone at the end of the movement."));
             FeatEntries.Add(new Feat("Melee Weapon Mastery – Bludgeoning [General, Fighter]", "(PH2 p81)", "Base Attack Bonus +8 Weapon Focus (any bludgeoning melee) Weapon Specialization (any bludgeoning melee)", "Any Melee Bludgeoning weapon you wield has a +2 bonus on attack & damage rolls."));
@@ -1593,7 +1506,7 @@ Totem   Energy
             FeatEntries.Add(new Feat("Stoneback [General, Fighter]", "(RoS p144)", "Shield Proficiency Tunnel Fighting", "If you have a ready Shield (with which you are proficient) and one side of your space is entirely in contact with a solid wall, you cannot be Flanked."));
             #endregion
 
-            #region PG 29
+        #region PG 29
             FeatEntries.Add(new Feat("Active Shield Defense [General, Fighter]", "(PH2 p 71)", "Shield Proficiency Shield Specialization", "When Fighting Defensively while using a Shield, you do not take the normal –4 penalty on attack when you make an Attack of Opportunity." + Environment.NewLine + "When using an All Out Defense action using a Shield, you still threaten the area around you as normal and can make Attacks of Opportunity at a –4 penalty on the attack roll."));
             FeatEntries.Add(new Feat("Agile Shield Fighter [General, Fighter]", "(PH2 p74)", "Shield Proficiency Improved Shield Bash Shield Specialization", "When making a Full Round Attack with a weapon and a Shield Bash, the penalty is –2 on each, instead of whatever the penalty would have been (i." + Environment.NewLine + "." + Environment.NewLine + " due to not having Two-Weapon Fighting, etc." + Environment.NewLine + "."));
             FeatEntries.Add(new Feat("Blood-Spiked Charger [Tactical, Fighter]", "(PH2 p92)", "Base Attack Bonus +6 Strength 13 Power Attack Weapon Focus (spiked armor) Weapon Focus (spiked shield)", "You may use the following 3 tactical maneuvers: Spiked Avalanche – If you make a Charge while wearing Spiked Armor and using a Spiked Shield (or with your hands empty), you may make a single attack with the Spiked Armor or the Spiked Shield that receives a 2x Strength modifier bonus to damage –or– attacks with both your Spiked Armor and your Spiked Shield that each receive a 1x Strength modifier bonus to damage (two weapon penalties apply)." + Environment.NewLine + "Spiked Rebuke – When you Fight Defensively with a Spiked Shield and an opponent missed your AC but would have hit if not for your Shield, your next attack against that opponent with your Spiked Shield (if in the next round) receives a +2 bonus on its attack roll." + Environment.NewLine + "Spiked Slam – As a Full Round Action, you may make a single attack with your Spiked Shield that generates an Attack of Opportunity, has a 2x Strength modifier bonus to damage in addition to the damage below." + Environment.NewLine + @"You do not threaten adjacent squares until the start of your next round.
@@ -1620,7 +1533,7 @@ Size        Bonus Dmg
             FeatEntries.Add(new Feat("Shieldmate [General, Fighter]", "(Mini p28)", "Base Attack Bonus +1", "Adjacent allies receive a +1 Shield bonus to AC when you are using a Shield with which you are proficient and can take actions." + Environment.NewLine + "The bonus increases to +2 if you are using a Tower Shield."));
             #endregion
 
-            #region PG 30
+        #region PG 30
             FeatEntries.Add(new Feat("Cavalry Charger [Tactical, Fighter]", "(CWar p108)", "Base Attack Bonus +7 Mounted Combat Spirited Charge Trample", "You may use the following 3 tactical maneuvers: Unhorse – While mounted, if you Charge and successfully hit a mounted opponent, you may make an immediate Bull Rush attempt." + Environment.NewLine + "If successful, your opponent moves back but his/her mount does not." + Environment.NewLine + "Leaping Charge – While mounted, if you Charge a foe at least one size category smaller than you, you may choose to make a Ride check at the end of movement to do extra damage (either DC 10 for +2 damage or DC 20 for +4 damage)." + Environment.NewLine + "If you fail, you do not get an attack." + Environment.NewLine + "If you fail by 5+, you also fall off your mount." + Environment.NewLine + "Fell Trample – While mounted, you may Overrun more than one foe." + Environment.NewLine + "Each successfully Overrun foe receives an attack (typically a hoof)."));
             FeatEntries.Add(new Feat("Improved Mounted Archery [General, Fighter]", "(CWar p101)", "Mounted Combat Mounted Archery Ride: 1 rank", "If you make a ranged attack from the back of a mount making a double-move, you receive no penalty on the attack roll." + Environment.NewLine + "If your mount is running, you receive a –2 penalty." + Environment.NewLine + "You may attack at any point in your mount’s movement."));
             FeatEntries.Add(new Feat("Mounted Archery [General, Fighter]", "(PH p98)", "Mounted Combat Ride: 1 rank", "If you make a ranged attack from the back of a mount making a double-move, you receive a –2 penalty on the attack roll (instead of the standard –4 penalty)" + Environment.NewLine + "If your mount is running, you receive a –4 penalty (instead of –8)"));
@@ -1633,7 +1546,7 @@ Size        Bonus Dmg
             FeatEntries.Add(new Feat("Tunnel Riding [General]", "(RoS p145)", "Mounted Combat Tunnel Fighting", "You and your mount do not take penalties on attack rolls or to AC when squeezing into or through tight spaces." + Environment.NewLine + "You can fight in any space large enough for the mount to squeeze through."));
             #endregion
 
-            #region PG 31
+        #region PG 31
             FeatEntries.Add(new Feat("Able Sniper [General]", "(RotW p148)", "Dexterity 13 Hide: 5 ranks", "When using at ranged attack on a flat-footed opponent who is at least 30’ away, you gain a +2 bonus on the attack roll." + Environment.NewLine + "Gain a +4 bonus on Hide checks to hide again after making an attack roll from hiding (PH p76)."));
             FeatEntries.Add(new Feat("Bow Feint [General, Fighter]", "(DR350 p90)", "Intelligence 13 Point Blank Shot", "You may make a ‘Feint in Combat’ action with a ranged weapon (this feat is not bow-specific)." + Environment.NewLine + "Your target must be within 30’ and be able to see you." + Environment.NewLine + "This action requires a Standard Action with a loaded weapon." + Environment.NewLine + "Normally, you may only ‘Feint in Combat’ with a melee weapon."));
             FeatEntries.Add(new Feat("Bowslinger [General, Fighter]", "(Und p24)", "Base Attack Bonus +1", "+2 bonus on your attack roll when you fire or throw a ranged weapon at a Flat Footed opponent."));
@@ -1657,7 +1570,7 @@ Size        Bonus Dmg
             FeatEntries.Add(new Feat("Ranged Disarm [General, Fighter]", "(CWar p103)", "Dexterity 15 Base Attack Bonus +5 Point Blank Shot Precise Shot", "This feat applies to one ranged weapon with which you are proficient." + Environment.NewLine + "You may make a Disarm Attempt with the chosen weapon as long as you are within 30’ of your opponent." + Environment.NewLine + "This feat does not stack with Improved Disarm." + Environment.NewLine + "This feat may be taken multiple times, each with a different weapon."));
             #endregion
 
-            #region PG 32
+        #region PG 32
             FeatEntries.Add(new Feat("Ranged Pin [General, Fighter]", "(CWar p104)", "Dexterity 15 Base Attack Bonus +5 Point Blank Shot Precise Shot", "You may pin your opponent’s clothes / armor to a wall, tree, etc." + Environment.NewLine + " that is within 5’." + Environment.NewLine + "You must succeed on a Ranged Attack and then win an Opposed Grapple Check (size modifier still apply)." + Environment.NewLine + "If successful, you opponent must make an Escape Artist check vs. DC 15 as a Standard Action to become free. This feat does not stack with Improved Grapple."));
             FeatEntries.Add(new Feat("Ranged Sunder [General, Fighter]", "(CWar p104)", "Strength 13 Base Attack Bonus +5 Point Blank Shot Precise Shot", "When attacking an object, you deal full damage (instead of ½ damage) with Slashing or Bludgeoning Ranged Weapons –or– ½ damage (instead of no damage) with Piercing Ranged Weapons. You must be within 30’ of your target to use this feat." + Environment.NewLine + "This feat does not stack with Improved Sunder."));
             FeatEntries.Add(new Feat("Ranged Threat [General, Fighter]", "(DR350 p90)", "Base Attack Bonus +6 Combat Reflexes Point Blank Shot Precise Shot", "If a creature within 15’ of you takes an action that provokes an Attack of Opportunity, you may make a single ranged attack against him/her/it at your highest attack bonus. This consumes all of your remaining Attacks of Opportunity for the round."));
@@ -1674,7 +1587,7 @@ Size        Bonus Dmg
             FeatEntries.Add(new Feat("Zen Archery [General]", "(CWar p106)", "Wisdom 13 Base Attack Bonus +1", "You may use your Wisdom modifier instead of your Dexterity modifier when making ranged attacks."));
             #endregion
 
-            #region PG 33
+        #region PG 33
             FeatEntries.Add(new Feat("Anvil of Thunder [Style]", "(CWar p112)", "Strength 13 Improved Sunder Power Attack Two-Weapon Fighting Weapon Focus (light hammer –or– warhammer) Weapon Focus (battleaxe –or– dwarven waraxe –or– handaxe)", "If you hit the same creature with both your Axe & your Hammer on the same round, your opponent is Dazed for 1 round (FortNeg, DC is Strength-based)."));
             FeatEntries.Add(new Feat("Axespike [Style]", "(RoS p137)", "Weapon Proficiency (armor spikes) Weapon Proficiency (greataxe) Armor Proficiency (heavy) Weapon Focus (armor spikes)", "When you make a Full Attack with your Greataxe, you can make an additional attack with your Armor Spikes at a –5 penalty." + Environment.NewLine + "You can only add ½ your Strength modifier to this attack."));
             FeatEntries.Add(new Feat("Bear Fang [Style]", "(CWar p112)", "Strength 15 Power Attack Two-Weapon Fighting Weapon Focus (dagger) Weapon Focus (battleaxe –or– dwarven waraxe –or– handaxe)", "If you hit the same creature with both your Axe & your Dagger on the same round, you have the option of starting a Grapple as a Free Action without provoking an Attack of Opportunity." + Environment.NewLine + "If successful, you drop your Axe, but gain an additional attack with your Dagger against your foe at your highest attack bonus (with the standard –4 penalty)."));
@@ -1690,7 +1603,7 @@ Size        Bonus Dmg
             FeatEntries.Add(new Feat("Shielded Axe [Style]", "(RoS p144)", "Proficiency with Dwarven Waraxe Proficiency with Handaxe Shield Proficiency Two-Weapon Fighting", "When you make a Full Attack with your Dwarven Waraxe (primary hand) and Handaxe (offhand), you still gain the shield bonus for a Buckler." + Environment.NewLine + "Additionally, you do not take the usual –1 penalty to attack rolls while using a Buckler."));
             #endregion
 
-            #region PG 34
+        #region PG 34
             FeatEntries.Add(new Feat("Spellrazor [Style]", "(RoS p144)", "Combat Casting Exotic Weapon Proficiency (Gnome Quickrazor) Two-Weapon Fighting Concentration: 5 ranks", "As a Full-Round action, you can cast a melee touch attack spell, attack with the spell, and make an off-hand attack with your Gnome Quickrazor."));
             FeatEntries.Add(new Feat("Spinning Halberd [Style]", "(CWar p114)", "Combat Reflexes Two-Weapon Fighting Weapon Focus (halberd)", "When you make a Full Round Attack with a Halberd, you receive a +1 Dodge bonus to AC & an additional attack with the staff end at a –5 penalty which is a 1d6 + ½ Strength modifier Bludgeoning damage."));
             FeatEntries.Add(new Feat("Storm of Flying Strikes [Style]", "(DR332 p88)", "Strength 15 Base Attack Bonus +6 Power Attack Improved Bull Rush Two-Weapon Fighting", "When using Power Attack with at least a –5 penalty, if you hit your opponent more than once in a single round, your opponent is knocked Prone at the end of your round (FortNeg, DC = 10 + your Strength modifier + number of times you hit this round)." + Environment.NewLine + "Your opponent may add any Stability bonuses to this saving throw." + Environment.NewLine + "This ability has no effect on an opponent who is already Prone."));
@@ -1698,7 +1611,7 @@ Size        Bonus Dmg
             FeatEntries.Add(new Feat("Turtle Dart [Style]", "(RoS p145)", "Exotic Armor Proficiency (Battle Plate –or– Mountain Plate) Tower Shield Proficiency –or–Exotic Shield Proficiency (Extreme Shield) Weapon Focus (shortsword)", "When wearing Exotic Heavy Armor and using an Extreme or Tower Shield, you do not provoke Attacks of Opportunity for moving away from a creature which you attacked with Shortsword in the same round."));
             #endregion
 
-            #region PG 35
+        #region PG 35
             FeatEntries.Add(new Feat("Blood-Spiked Charger [Tactical, Fighter]", "(PH2 p92)", "Base Attack Bonus +6 Strength 13 Power Attack Weapon Focus (spiked armor) Weapon Focus (spiked shield)", "You may use the following 3 tactical maneuvers: Spiked Avalanche – If you make a Charge while wearing Spiked Armor and using a Spiked Shield (or with your hands empty), you may make a single attack with the Spiked Armor or the Spiked Shield that receives a 2x Strength modifier bonus to damage –or– attacks with both your Spiked Armor and your Spiked Shield that each receive a 1x Strength modifier bonus to damage (two weapon penalties apply)." + Environment.NewLine + "Spiked Rebuke – When you Fight Defensively with a Spiked Shield and an opponent missed your AC but would have hit if not for your Shield, your next attack against that opponent with your Spiked Shield (if in the next round) receives a +2 bonus on its attack roll." + Environment.NewLine + "Spiked Slam – As a Full Round Action, you may make a single attack with your Spiked Shield that generates an Attack of Opportunity, has a 2x Strength modifier bonus to damage in addition to the damage below." + Environment.NewLine + @"You do not threaten adjacent squares until the start of your next round.
 
 Size       Bonus Dmg 
@@ -1727,7 +1640,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Shock Trooper [Tactical, Fighter]", "(CWar p112)", "Base Attack Bonus +6 Improved Bull Rush Power Attack", "You may use the following 3 tactical maneuvers: Directed Bull Rush – On a successful Bull Rush at the end of a Charge, you may move your opponent one hex to the left or right for each hex you move him/her backwards. Domino Rush – On a successful Bull Rush that pushes your opponent into the same hex as another opponent, you may attempt to Trip both opponents & they cannot attempt to trip you if you fail." + Environment.NewLine + "Heedless Charge – If you make a Charge that ends in an attack that uses Power Attack (at least a –5 to your attack roll), you may transfer part or all of the attack roll penalty to your AC as a penalty." + Environment.NewLine + @"This is in additional to the –2 AC due to the Charge."));
             #endregion
 
-            #region PG 36
+        #region PG 36
             FeatEntries.Add(new Feat("Braced for Charge [General]", "(DR331 p28)", "Base Attack Bonus +1", "If you ready a Polearm to receive a Charge, it does double damage. This does not effect Polearms that already do double damage against a charge."));
             FeatEntries.Add(new Feat("Formation Expert [Tactical, Fighter]", "(CWar p110)", "Base Attack Bonus +5", "You may use the following 3 tactical maneuvers, even if your allies do not have the feat too: Lock Shield – If you and the two allies on either side of you are wielding shield, you gain a +1 bonus to AC." + Environment.NewLine + "Step into the Breach – If there is a line of adjacent allies and one ally within a single move falls, you may make a single move to that ally’s location as if you had a Readied Action." + Environment.NewLine + "Wall of Polearms – Gain a +2 attack bonus if you and your adjacent allies are each wielding the same weapon, which must be off the following list: Shortspear, Longspear, Trident, Glaive, Gisarme, Halberd, or Ranseur."));
             FeatEntries.Add(new Feat("Haft Strike [General]", "(DR331 p28)", "Two-Weapon Fighting", "When making a Full Attack Action with a Polearm that is not a Double weapon, you may make an off-hand attack with the haft of the Polearm that does damage as if it were a Club." + Environment.NewLine + "All normal Two-Weapon Fighting rules apply." + Environment.NewLine + "If the Polearm is magical, its haft counts as magic for purposes of overcoming Damage Reduction." + Environment.NewLine + "Normally, the haft of a non-double weapon counts as an Improvised weapon and cannot be used as part of a Full Attack Action."));
@@ -1743,7 +1656,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Vault [General]", "(DR331 p28)", "Strength 13 Jump: 4 ranks", "While wielding a Polearm during a Total Defense Action, you gain the following: a) the DC for a Long Jump is reduced by 5; and b) the DC for a High Jump is equal to 3x the distance to be cleared (instead of 4x)."));
             #endregion
 
-            #region PG 37
+        #region PG 37
             FeatEntries.Add(new Feat("Backstab [General, Fighter]", "(DR340 p86)", "Combat Reflexes", "You may make an Attack of Opportunity against an opponent that you flank who attacks a target other than you."));
             FeatEntries.Add(new Feat("Canny Opportunist [General, Fighter]", "(DR340 p86)", "Dexterity 13 Intelligence 13 Combat Expertise", "If an opponent you threaten does any of the following, you may make an Attack of Opportunity on him/her, even if you are Flat-Footed: Draw a Weapon, Ready / Loosen a Shield, or Attempts a Feint in Combat."));
             FeatEntries.Add(new Feat("Close-Quarter Defense [General, Fighter]", "(DR309 p110)", "Combat Reflexes", "You gain a +2 bonus on attack rolls for an Attack of Opportunity generated by any of the following actions: an opponent entering your hex, making an unarmed attack, starting a grapple, bull rushing you, sundering your weapon or armor, etc." + Environment.NewLine + "If your opponent has a Feat that allows them to do one of the above actions without generating an Attack of Opportunity, you may still take an Attack of Opportunity with a –10 penalty to your attack roll (instead of a +2)."));
@@ -1765,7 +1678,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Mercurial Strike [General]", "(DR310 p69)", "Quick Draw Base Attack Bonus +5", "If an opponent generates an Attack of Opportunity and you are unarmed, you may draw a melee weapon and make your Attack of Opportunity, with your opponent being Flat-Footed."));
             #endregion
 
-            #region PG 38
+        #region PG 38
             FeatEntries.Add(new Feat("Occult Opportunist [General]", "(DR340 p87)", "Know(arcana): 5 ranks Spellcraft: 5 ranks", "If an opponent you threaten does any of the following, you may make an Attack of Opportunity on him/her: Dismiss a Spell, Direct / Redirect an Active Spell, cast a Quickened or Swift Spell, makes a Turn / Rebuke attempt." + Environment.NewLine + "If damage, your opponent looses the spell / action attempted unless he/she makes a Concentration check vs. DC (10 + damage)."));
             FeatEntries.Add(new Feat("Opportunistic Tactician [General, Fighter]", "(DR340 p87)", "Combat Reflexes Dodge Mobility", "After making an Attack of Opportunity, you may take a bonus 5’ step."));
             FeatEntries.Add(new Feat("Overhead Thrust [General]", "(Dcn p106)", "Base Attack Bonus +6 Close-Quarters Fighting Power Attack", "You can use a Slashing or Piercing weapon to make an Attack of Opportunity against a foe using an attack designed to batter you from above (Overrun, Trample, Power Dive, Dragon Crush)." + Environment.NewLine + "You cannot use this feat if you are flat-footed or already grappled." + Environment.NewLine + "You gain a special attack modifier based on your opponent’s size: Medium or smaller (+0), Large (+4), Huge (+8), Gargantuan (+12), Colossal (+16), If your attack succeeds, you do triple damage."));
@@ -1777,7 +1690,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Wolfpack [Tactical]", "(RotW p153)", "Dexterity 15 Dodge Mobility Spring Attack Base Attack Bonus +6", "You may use the following 3 tactical maneuvers: Distract Foe – You and an ally must have Flanked your foe for at least one round to use this ability." + Environment.NewLine + "As a Full Round Action, make a single melee attack." + Environment.NewLine + "If it hits, make a Bluff check with the damage as a bonus vs. your foes Sense Motive check with his/her BAB as a bonus. If you are successful, all of your allies that give you a Flanking bonus receives an Attack of Opportunity on the foe. Drive Back – You and at least one ally must Threaten the same foe and an ally must perform an Aid Other action to help your attack on t hat foe. As a Full Round Action, make a melee attack." + Environment.NewLine + "If you hit, you do damage and initiate a Bull Rush that does not provoke an Attack of Opportunity or move you into your foe’s square. Resolve the Bull Rush normally, except the damage you did is a bonus on your Strength check and your foe cannot be moved back more than 5’." + Environment.NewLine + "Gang Dodge – You and at least one ally must Threaten the same foe. Perform an Aid Other action to give every one of your allies that threaten the same foe a +2 bonus to AC." + Environment.NewLine + @"This bonus lasts until your next turn, provided you still threaten the same foe."));
             #endregion
 
-            #region PG 39
+        #region PG 39
             FeatEntries.Add(new Feat("Beast Strike [General, Fighter]", "(DR355 p76)", "Improved Unarmed Strike Base Attack Bonus +5 Claw or Slam attack", "When making an Unarmed Strike or Grapple check to deal damage, add your Claw or Slam damage."));
             FeatEntries.Add(new Feat("Clever Wrestling [General]", "(CWar p97) (Dcn p103) (Storm p92)", "Small or Medium size Improved Unarmed Strike", "When grappling with an opponent greater than Medium size, you gain a bonus when attempting to escape a Grapple or Pin."));
             FeatEntries.Add(new Feat("The size of the bonus depends on the opponent’s size: Large – +2 Huge – +4 Gargantuan – +6 Colossal – +8 Cunning Sidestep [General]", "(Dcn p103)", "Small or Medium size Improved Unarmed Strike Clever Wrestling", "When your opponent is larger than Medium size, you gain a bonus on any opposed check you make to avoid being Bull Rushed, Tripped, Knocked Down, or Pushed." + Environment.NewLine + "The bonus depends on the opponent’s size: Large – +2 Huge – +4 Gargantuan – +6 Colossal – +8 This feat is effective against the Large and in Charge feat." + Environment.NewLine + "The bonus from this feat does not stack with Clever Wrestling."));
@@ -1796,7 +1709,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Offensive Metered Foot [General]", "(DR337 p97)", "Concentration: 6 ranks Improved Unarmed Strike", "Choose an opponent as a Free Action." + Environment.NewLine + "Each time you hit this opponent consecutively, you gain a cumulative +1 Insight bonus on attacks against that opponent (max +5)." + Environment.NewLine + "If you miss this opponent, the bonus is lost." + Environment.NewLine + "If you hit this opponent again, the count restarts at +1. This feat only applies on one opponent at a time."));
             #endregion
 
-            #region PG 40
+        #region PG 40
             FeatEntries.Add(new Feat("Ring the Ear [Ambush]", "(DR344 p103)", "Improved Unarmed Strike Sneak Attack / Sudden Strike class ability with at least +2d6", "On a successful Sneak Attack using an Unarmed Strike, you may reduce the Sneak Attack dice by 1d6 to Deafen your foe for 1 minute (FortNeg, DC = 10 + ½ Character level + Strength modifier)."));
             FeatEntries.Add(new Feat("Roundabout Kick [General]", "(CWar p105)", "Strength 15 Improved Unarmed Strike Power Attack", "If you confirm a Critical Hit with an Unarmed Strike, you can immediately make another unarmed attack at the same bonus on the opponent that received your Critical Hit."));
             FeatEntries.Add(new Feat("Scorpion’s Grasp [General]", "(DU120 p35)", "Strength 13 Dexterity 13 Improved Grapple Improved Unarmed Strike", "If you hit a creature with a One-Handed or Light weapon, deal damage normally and then you have the option of starting a Grapple as a Free Action without provoking an Attack of Opportunity (no touch needed)." + Environment.NewLine + "If a grapple is started and you were wielding a One-Handed weapon, you drop it." + Environment.NewLine + "If a grapple is started and you were wielding a Light weapon, you may continue holding it." + Environment.NewLine + "Each round, you may attack your grappled foe as normal with it, except you do not have the standard –4 penalty."));
@@ -1813,7 +1726,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Ki Blast [General, Fighter]", "(PH2 p80)", "Dexterity 13 Wisdom 13 Base Attack Bonus +8 Improved Unarmed Strike Stunning Fist Fiery Fist", "Monk 6th 1. By using up two of your daily Stunning Fist attacks as a Move Action, you may form an orb of force energy in your hand." + Environment.NewLine + "As a Standard Action, you may throw the orb up to 60’." + Environment.NewLine + "If you hit on a Ranged Touch attack, you do (3d6 + Wisdom modifier) Force damage. If not thrown by the end of your round, the orb dissipates. 2. You receive +1 Stunning Fist use per day."));
             #endregion
 
-            #region PG 41
+        #region PG 41
             FeatEntries.Add(new Feat("Pain Touch [General]", "(CWar p103)", "Wisdom 15 Base Attack Bonus +2 Stunning Fist", "The target of a successful Stunning Fist attack is Nauseated for 1 round after the round which he/she was Stunned." + Environment.NewLine + "This ability may not be used on creatures two size categories or more larger than the user."));
             FeatEntries.Add(new Feat("Pressure Point Strike [General]", "(DR336 p103)", "Dexterity 13 Wisdom 13 Base Attack Bonus +8 Improved Unarmed Strike Stunning Fist Know (arcana): 5 ranks Ki Strike (magic) class ability", "The following abilities must be declared before the strike is attempted and the indicated number of Stunning Fist uses are consumed even if it misses. May only be used on Humanoids, Monstrous Humanoids, and Giants. Harmful effects allow a Fortitude save vs. DC = 10 + ½ Character level + Wisdom modifier." + Environment.NewLine + @"Beneficial effects may require a Level check against the level of the detriment being overcome (if magical).
 
@@ -1839,7 +1752,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Weakening Touch [General, Fighter]", "(CWar p106)", "Wisdom 17 Base Attack Bonus +2 Improved Unarmed Strike Stunning Fist", "On a successful Unarmed Strike, you cause no damage, but your opponent receives a –6 penalty to his/her Strength for 1 minute. Multiple uses do not stack, but reset the duration." + Environment.NewLine + "Depletes one use of Stunning Fist even if the attack misses."));
             #endregion
 
-            #region PG 42
+        #region PG 42
             FeatEntries.Add(new Feat("Body Guard [General]", "(DR339 p34)", "—", "To use this feat, you must be adjacent to another character with this feat." + Environment.NewLine + "If both characters need to make a saving throw against the same effect, the two of you may swap your saving throw bonus for this single save (though you may do it again later)." + Environment.NewLine + "Both characters must be willing."));
             FeatEntries.Add(new Feat("Formation Expert [Tactical, Fighter]", "(CWar p110)", "Base Attack Bonus +5", "You may use the following 3 tactical maneuvers, even if your allies do not have the feat too: Lock Shield – If you and the two allies on either side of you are wielding shield, you gain a +1 bonus to AC." + Environment.NewLine + "Step into the Breach – If there is a line of adjacent allies and one ally within a single move falls, you may make a single move to that ally’s location as if you had a Readied Action." + Environment.NewLine + "Wall of Polearms – Gain a +2 attack bonus if you and your adjacent allies are each wielding the same weapon, which must be off the following list: Shortspear, Longspear, Trident, Glaive, Gisarme, Halberd, or Ranseur."));
             FeatEntries.Add(new Feat("Improved Aid Other [General]", "(DR339 p34)", "—", "When you use the Aid Other action to improve an allies AC, Attack bonus, or Skill check, you grant an additional +1 bonus (usually +3)."));
@@ -1857,7 +1770,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Rouse Courage [General]", "(DR323 p29)", "Charisma 13 Commander", "All allies within 30’ may reroll a failed save vs. a Fear effect." + Environment.NewLine + "An ally affected by a Fear effect that moves within 30’ of you can make one additional save to resist the Fear effect."));
             #endregion
 
-            #region PG 43
+        #region PG 43
             FeatEntries.Add(new Feat("Aid Giver [General, Fighter]", "(DR343 p92)", "Strength 13 Intelligence 13 Combat Expertise Dodge Power Attack", "As a Full Round Action, you may use an Aid Other action to benefit every adjacent ally, granting either a +2 bonus on Attack rolls or a +2 bonus to AC."));
             FeatEntries.Add(new Feat("Canny Opportunist [General, Fighter]", "(DR340 p86)", "Dexterity 13 Intelligence 13 Combat Expertise", "If an opponent you threaten does any of the following, you may make an Attack of Opportunity on him/her, even if you are Flat-Footed: Draw a Weapon, Ready / Loosen a Shield, or Attempts a Feint in Combat."));
             FeatEntries.Add(new Feat("Combat Cloak Expert [Tactical, Fighter]", "(PH2 p93)", "Base Attack Bonus +6 Dexterity 15 Intelligence 13 Combat Expertise Dodge", "You may use the following 3 tactical maneuvers: Cloak Defense – When Fighting Defensively while wearing a cloak, receive a +1 Shield bonus to AC." + Environment.NewLine + "If you take a Total Defense Action, you receive a +2 Shield bonus to AC." + Environment.NewLine + "Cloaked Strike – In the first round, advance without wielding a weapon until you are adjacent to your opponent." + Environment.NewLine + "On the next round, make an opposed Bluff vs. Sense Motive check as a Move Action while you draw your Light weapon." + Environment.NewLine + "If successful, your opponent looses his/her Dexterity bonus to AC –or– his/her Shield bonus to AC (your choice) until the end of your round." + Environment.NewLine + "Whirling Cloak – After striking an opponent in melee, you may spend a Move Action to make a melee touch attack against the same opponent." + Environment.NewLine + "If successful, the opponent may not make Attacks of Opportunity against an ally of your choice until the start of your opponent’s next round."));
@@ -1875,7 +1788,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Improved Disarm [General, Fighter]", "(PH p95)", "Intelligence 13 Combat Expertise", "Monk 6th When you do a Disarm Action, the following apply: Your opponent does not get an Attack of Opportunity against you." + Environment.NewLine + "You receive a +4 bonus on the Disarm check." + Environment.NewLine + "If your Disarm attempt fails, your opponent does not get a chance to try to disarm you."));
             #endregion
 
-            #region PG 44
+        #region PG 44
             FeatEntries.Add(new Feat("Improved Feint [General, Fighter]", "(PH p95)", "Intelligence 13 Combat Expertise", "You may make a Feint in Combat as a Move Action (instead of a Full Round Action)."));
             FeatEntries.Add(new Feat("Improved Trip [General, Fighter]", "(PH p96)", "Intelligence 13 Combat Expertise Monk 6th", "When you do a Trip Action, the following apply: 1. Your opponent does not get an Attack of Opportunity against you." + Environment.NewLine + "2. You gain a +4 bonus on the Strength roll to knock your opponent prone. 3. If you succeed in tripping your opponent in melee combat, you may immediately make a follow-up attack on him/her at the same attack bonus of the action you used to make the trip."));
             FeatEntries.Add(new Feat("Improved Whirlwind Attack [General, Fighter]", "(DR343 p93)", "Intelligence 13 Dexterity 13 Base Attack Bonus +4 Combat Expertise Dodge Mobility Spring Attack Whirlwind Attack", "When making a Full Round Attack, you get one attack on each opponent within your reach at your best attack bonus, plus a single attack at each of your other attack bonuses vs. a legal target of your choice. For example, an 11th level Fighter has a Base Attack Bonus of +11 / +6 / +1. He/she would take an attack at +11 (plus modifiers) against all opponents within reach, plus one attack at +6 and one attack at +1. Using this feat means you forfeit all bonus attacks, such as those from Cleave, Haste, etc."));
@@ -1889,7 +1802,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Whirlwind Attack [General, Fighter]", "(PH p102)", "Intelligence 13 Dexterity 13 Base Attack Bonus +4 Combat Expertise Dodge Mobility Spring Attack", "When making a Full Round Attack, you get one attack on each opponent within your reach at your best attack bonus. Using this feat means you forfeit all bonus attacks, such as those from Cleave, Haste, etc."));
             #endregion
 
-            #region PG 45
+        #region PG 45
             FeatEntries.Add(new Feat("Adaptable Flanker [General, Fighter]", "(PH2 p71)", "Base Attack Bonus +4 Combat Reflexes Vexing Flanker", "Designate an opponent as a Swift Action." + Environment.NewLine + "When adjacent to that opponent, your current hex and one other you threaten count as being occupied by you for purposes of determining whether you and your allies gain Flanking bonuses."));
             FeatEntries.Add(new Feat("Backstab [General, Fighter]", "(DR340 p86)", "Combat Reflexes", "You may make an Attack of Opportunity against an opponent that you flank who attacks a target other than you."));
             FeatEntries.Add(new Feat("Close-Quarter Defense [General, Fighter]", "(DR309 p110)", "Combat Reflexes", "You gain a +2 bonus on attack rolls for an Attack of Opportunity generated by any of the following actions: an opponent entering your hex, making an unarmed attack, starting a grapple, bull rushing you, sundering your weapon or armor, etc." + Environment.NewLine + "If your opponent has a Feat that allows them to do one of the above actions without generating an Attack of Opportunity, you may still take an Attack of Opportunity with a –10 penalty to your attack roll (instead of a +2)."));
@@ -1911,7 +1824,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Stalwart Defense [General]", "(PH2 p83)", "Base Attack Bonus +9 Combat Reflexes Hindering Opportunist", "If an opponent you threaten makes a melee attack against one of your allies, you may expend one of ‘Attacks of Opportunity’ to do an ‘Aid Other’ action for your ally in order to grant him/her a +2 bonus to AC vs. this attack." + Environment.NewLine + "You may only use this ability against a given opponent once per round."));
             #endregion
 
-            #region PG 46
+        #region PG 46
             FeatEntries.Add(new Feat("Two-Weapon Attack of Opportunity [General, Fighter]", "(DR340 p87)", "Dexterity 17 Combat Reflexes Two-Weapon Fighting", "When you make an Attack of Opportunity, you are allowed an attack with each of your weapons, with the normal penalties for doing so." + Environment.NewLine + "This counts as two of your Attacks of Opportunity per round and your maximum is not increased."));
             FeatEntries.Add(new Feat("Vexing Flanker [General, Fighter]", "(PH2 p85)", "Combat Reflexes", "You receive a +4 bonus on attack rolls to hit a Flanked opponent (instead of the normal +2)."));
             FeatEntries.Add(new Feat("Bounding Assault [General]", "(PH2 p75)", "Dexterity 13 Base Attack Bonus +12 Dodge Mobility Spring Attack", "When doing an Attack Action with a melee weapon, you may move, attack twice (with the second attack at –5) and then continue the movement (up to your speed)." + Environment.NewLine + "This does not provoke an Attack of Opportunity from two creatures (at least one of which you must attack)." + Environment.NewLine + "You must move at least 5’ before and after the attack to make use of this feat." + Environment.NewLine + "You may attack both creatures you have designated –or– attack one with both attacks."));
@@ -1927,7 +1840,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Mobility [General, Fighter, Scout]", "(PH p98) (CAdv p10)+", "Dexterity 13 Dodge", "+4 Dodge bonus to AC vs. Attacks of Opportunity due to moving out of or within a threatened area." + Environment.NewLine + "Any condition that could cause you to lose your Dexterity bonus to AC against an attack causes you to lose this bonus too."));
             #endregion
 
-            #region PG 47
+        #region PG 47
             FeatEntries.Add(new Feat("Nimble Deflections [General, Fighter]", "(DR335 p88)", "Dexterity 13 Dodge Perform (keyboard): 7 ranks", "When wielding a two-handed weapon, you receive a +2 Shield bonus to AC against your Dodge opponent."));
             FeatEntries.Add(new Feat("Opportunistic Tactician [General, Fighter]", "(DR340 p87)", "Dexterity 13 Combat Reflexes Dodge Mobility", "After making an Attack of Opportunity, you may take a bonus 5’ step."));
             FeatEntries.Add(new Feat("Rapid Blitz [General]", "(PH2 p82)", "Dexterity 13 Base Attack Bonus +18 Dodge Mobility Spring Attack Bounding Assault", "When doing an Attack Action with a melee weapon, you may move, attack three times (with the second attack at –5 & the 3rd at –10), and then continue the movement (up to your speed)." + Environment.NewLine + "This does not provoke an Attack of Opportunity from three creatures (at least one of which you must attack)." + Environment.NewLine + "You must move at least 5’ before and after the attack to make use of this feat." + Environment.NewLine + "You may distribute your attacks between the three designated creatures as you wish."));
@@ -1939,7 +1852,7 @@ Size       Bonus Damage
             FeatEntries.Add(new Feat("Wolfpack [Tactical]", "(RotW p153)", "Dexterity 15 Dodge Mobility Spring Attack Base Attack Bonus +6", "You may use the following 3 tactical maneuvers: Distract Foe – You and an ally must have Flanked your foe for at least one round to use this ability." + Environment.NewLine + "As a Full Round Action, make a single melee attack." + Environment.NewLine + "If it hits, make a Bluff check with the damage as a bonus vs. your foes Sense Motive check with his/her BAB as a bonus. If you are successful, all of your allies that give you a Flanking bonus receives an Attack of Opportunity on the foe. Drive Back – You and at least one ally must Threaten the same foe and an ally must perform an Aid Other action to help your attack on t hat foe. As a Full Round Action, make a melee attack." + Environment.NewLine + "If you hit, you do damage and initiate a Bull Rush that does not provoke an Attack of Opportunity or move you into your foe’s square. Resolve the Bull Rush normally, except the damage you did is a bonus on your Strength check and your foe cannot be moved back more than 5’." + Environment.NewLine + "Gang Dodge – You and at least one ally must Threaten the same foe. Perform an Aid Other action to give every one of your allies that threaten the same foe a +2 bonus to AC." + Environment.NewLine + "This bonus lasts until your next turn, provided you still threaten the same foe."));
             #endregion
 
-            #region PG 48
+        #region PG 48
             FeatEntries.Add(new Feat("Blinding Strike [Tactical, Fighter]", "(DR345 p90)", "Base Attack Bonus +5 Strength 13 Dexterity 13 Power Attack", "You may use the following 3 tactical maneuvers: Blind the Foe – If you use a Full Round Action to make one melee attack with a Power Attack of at least –5, your foe takes no damage, but becomes Blind for 1d4 rounds (FortNeg, DC = 10 + Power Attack value)." + Environment.NewLine + "Weaken Gaze – If you use a Full Round Action to make one melee attack with a Power Attack of at least –5, your foe takes normal damage and the DC of one of the creature’s Gaze Attacks has its DC reduced by 2 for 10 rounds. Multiple uses of this maneuver stack." + Environment.NewLine + "Eye Gouge – If you use a Full Round Action to make one melee attack with a Power Attack of at least –5, your foe takes normal damage and looses the use of one of its Gaze Attacks for 1d4 rounds (FortNeg, DC = 10 + Power Attack value)." + Environment.NewLine + "Unlike the other two maneuvers, ‘Eye Gouge’ generates and Attack of Opportunity." + Environment.NewLine + "If you take damage from the attack, the maneuver is negated."));
             FeatEntries.Add(new Feat("Blood-Spiked Charger [Tactical, Fighter]", "(PH2 p92)", "Base Attack Bonus +6 Strength 13 Power Attack Weapon Focus (spiked armor) Weapon Focus (spiked shield)", "You may use the following 3 tactical maneuvers: Spiked Avalanche – If you make a Charge while wearing Spiked Armor and using a Spiked Shield (or with your hands empty), you may make a single attack with the Spiked Armor or the Spiked Shield that receives a 2x Strength modifier bonus to damage –or– attacks with both your Spiked Armor and your Spiked Shield that each receive a 1x Strength modifier bonus to damage (two weapon penalties apply)." + Environment.NewLine + "Spiked Rebuke – When you Fight Defensively with a Spiked Shield and an opponent missed your AC but would have hit if not for your Shield, your next attack against that opponent with your Spiked Shield (if in the next round) receives a +2 bonus on its attack roll." + Environment.NewLine + "Spiked Slam – As a Full Round Action, you may make a single attack with your Spiked Shield that generates an Attack of Opportunity, has a 2x Strength modifier bonus to damage in addition to the damage below." + Environment.NewLine + @"You do not threaten adjacent squares until the start of your next round.
 Size       Bonus Dmg
@@ -1959,7 +1872,7 @@ Size       Bonus Dmg
             FeatEntries.Add(new Feat("Eagle Claw Attack [General]", "(CWar p97)", "Wisdom 13 Power Attack Improved Sunder Improved Unarmed Strike", "When you make an Unarmed Strike against an object, add your Wisdom modifier to your damage."));
             #endregion
 
-            #region PG 49
+        #region PG 49
             FeatEntries.Add(new Feat("Find Flaw [General, Fighter]", "(DR359 p123)", "Base Attack Bonus +6 Strength 13 Power Attack", "When you use Power Attack while attacking an object, reduce the Hardness of the target by 1 for each point of Power Attack you do."));
             FeatEntries.Add(new Feat("Flay [General, Fighter]", "(PH2 p79)", "Strength 13 Power Attack", "When you hit a creature without a Natural Armor bonus to AC with a Slashing or Piercing weapon while doing a Power Attack, the creature receives a –2 penalty on attacks for 1 round (FortNeg, DC = 10 + the Power Attack amount)." + Environment.NewLine + "This ability may only be used on a given creature once per round."));
             FeatEntries.Add(new Feat("Flying Kick [General]", "(CWar p99)", "Strength 13 Power Attack Improved Unarmed Strike Jump: 4 ranks", "You do +1d12 damage when you Charge & end with an Unarmed Strike."));
@@ -1978,7 +1891,7 @@ Size       Bonus Dmg
             FeatEntries.Add(new Feat("Retribution [General]", "(DR326 p33)", "Power Attack", "For each 5 hp of damage (round down) inflicted on you by a specific foe in a single round, you gain a +1 on your next attack roll if it is against that foe that takes place in the following round." + Environment.NewLine + "For example, if a Wizard does 13 hp of damage to you with Magic Missile, you receive a +2 to attack that Wizard if it is the next attack roll you make and it occurs before the end of your turn."));
             #endregion
 
-            #region PG 50
+        #region PG 50
             FeatEntries.Add(new Feat("Roundabout Kick [General]", "(CWar p105)", "Strength 15 Power Attack Improved Unarmed Strike", "If you confirm a Critical Hit with an Unarmed Strike, you can immediately make another unarmed attack at the same bonus on the opponent that received your Critical Hit."));
             FeatEntries.Add(new Feat("Shock Trooper [Tactical, Fighter]", "(CWar p112)", "Strength 13 Power Attack Improved Bull Rush Base Attack Bonus +6", "You may use the following 3 tactical maneuvers: Directed Bull Rush – On a successful Bull Rush at the end of a Charge, you may move your opponent one hex to the left or right for each hex you move him/her backwards. Domino Rush – On a successful Bull Rush that pushes your opponent into the same hex as another opponent, you may attempt to Trip both opponents & they cannot attempt to trip you if you fail." + Environment.NewLine + "Heedless Charge – If you make a Charge that ends in an attack that uses Power Attack (at least a –5 to your attack roll), you may transfer part or all of the attack roll penalty to your AC as a penalty." + Environment.NewLine + "This is in additional to the –2 AC due to the Charge."));
             FeatEntries.Add(new Feat("Terrifying Warrior [General, Fighter]", "(DR343 p93)", "Base Attack Bonus +3 Strength 13 Power Attack Cleave", "If you drop a creature with a Cleave attack (i.e., you dropped two creatures in a row), all opponents within your reach are Panicked for 1d4 rounds (WillNeg, DC is Charisma-based)." + Environment.NewLine + "Creatures with HD equal or greater than you are not effected." + Environment.NewLine + "This is an Extraordinary Mind-Affecting Fear Effect."));
@@ -1990,7 +1903,7 @@ Size       Bonus Dmg
             FeatEntries.Add(new Feat("Combat Vigor [Combat Focus, Fighter]", "(PH2 p88)", "Base Attack Bonus +9 Wisdom 13 Combat Focus", "While in ‘Combat Focus’, you gain Fast Healing 2. If you have 3+ Combat Focus feats, you gain Fast Healing 4."));
             #endregion
 
-            #region PG 51
+        #region PG 51
             FeatEntries.Add(new Feat("Mage Slayer [General, Fighter]", "(CArc p81) (Mini p27)", "Base Attack Bonus +3 Spellcraft: 2 ranks", "1. You receive a +1 bonus on Will saves. 2. If you threaten a spellcaster, he/her cannot take the ‘cast defensively’ action." + Environment.NewLine + "3. Your Caster level (if any) of all spell and spell-like abilities is reduced by 4."));
             FeatEntries.Add(new Feat("Pierce Magical Concealment [General, Fighter]", "(CArc p81)", "Constitution 13 Mage Slayer Blind-Fight", "1. You may disregard a Miss Chance that results from a spell or spell-like abilities, such as from Blur, Darkness, Invisibility, Obscuring Mist, etc." + Environment.NewLine + "You can not ignore non-magical Concealment (such as fog)." + Environment.NewLine + "2. When fighting a creature under the effect of Mirror Image, you automatically know which image is real." + Environment.NewLine + "3. Your Caster level (if any) of all spell and spell-like abilities is reduced by 4."));
             FeatEntries.Add(new Feat("Pierce Magical Protection [General, Fighter]", "(CArc p82)", "Constitution 13 Mage Slayer", "1. As a Standard Action, you may make a melee attack that ignores bonuses to AC granted by spells. If this attack deals damage, all spells and spell effects that grant a bonus to AC are immediately dispelled." + Environment.NewLine + "2. Your Caster level (if any) of all spell and spell-like abilities is reduced by 4."));
@@ -2007,7 +1920,7 @@ Size       Bonus Dmg
             FeatEntries.Add(new Feat("Vampire Hunter [General]", "(LM p31)", "Know (religion): 6 ranks", "As a Move Action, you can unfailingly determine if a Vampire or Vampire Spawn is within 30’." + Environment.NewLine + "You are immune to the Dominating Gaze ability of Vampires and Vampire Spawn."));
             #endregion
 
-            #region PG 52
+        #region PG 52
             FeatEntries.Add(new Feat("Clever Wrestling [General]", "(CWar p97) (Dcn p103) (Storm p92)", "Small or Medium size Improved Unarmed Strike", "When grappling with an opponent greater than Medium size, you gain a bonus when attempting to escape a Grapple or Pin."));
             FeatEntries.Add(new Feat("The size of the bonus depends on the opponent’s size: Large – +2 Huge – +4 Gargantuan – +6 Colossal – +8 Confound the Big Folk [Tactical]", "(RotW p153)", "Small size (or smaller) Underfoot Combat Tumble: 10 ranks", "You may use the following 3 tactical maneuvers: Knee Striker – When you occupy a square with a creature at least two size categories larger than you, the creature is considered Flat-Footed against you and you receive a +4 bonus on rolls to confirm critical hits. Underfoot Defense – When you occupy a square with a creature at least two size categories larger than you, and you Fight Defensively, use Total Defense, or use Combat Expertise, any melee or ranged attack on you has a 50% chance of striking the creature who shares the square with you (that creature does not have a 50% chance of striking itself)." + Environment.NewLine + "Unsteady Footing – When you occupy a square with a creature at least two size categories larger than you, you may initiate a Trip attack on the creature you share the square with and not provoke an Attack of Opportunity." + Environment.NewLine + "You can add your choice of Strength or Dexterity modifier to you check (your opponent gets the better of its Strength or Dexterity as usual)." + Environment.NewLine + "Your opponent does not get to add his/her size bonus to its roll." + Environment.NewLine + "If the Trip attempt fails, your opponent does not get to try to trip you."));
             FeatEntries.Add(new Feat("Cunning Sidestep [General]", "(Dcn p103)", "Small or Medium size Improved Unarmed Strike Clever Wrestling", "When your opponent is larger than Medium size, you gain a bonus on any opposed check you make to avoid being Bull Rushed, Tripped, Knocked Down, or Pushed." + Environment.NewLine + "The bonus depends on the opponent’s size: Large – +2 Huge – +4 Gargantuan – +6 Colossal – +8 This feat is effective against the Large and in Charge feat." + Environment.NewLine + "The bonus from this feat does not stack with Clever Wrestling."));
@@ -2016,7 +1929,7 @@ Size       Bonus Dmg
             FeatEntries.Add(new Feat("Underfoot Combat [General]", "(RotW p152)", "Small size (or smaller) Tumble: 10 ranks", "You can move into or through a square occupied by a creature at least two size categories larger than you." + Environment.NewLine + "You do not provoke Attacks of Opportunity for doing so." + Environment.NewLine + "When you are in a square occupied by a creature at least two size categories larger than you, you gain the benefit of Soft Cover (+4 bonus to AC) again all attacks (including those of the creature whose space you occupy)."));
             #endregion
 
-            #region PG 53
+        #region PG 53
             FeatEntries.Add(new Feat("Attune Magic Weapon [Item Creation]", "(Eb p50)", "Craft Magic Arms and Armor Caster level 5th", "After spending 24 hours with a new magic weapon, you gain a +1 Insight bonus on attack roll & damage with it."));
             FeatEntries.Add(new Feat("Bind Elemental [Item Creation]", "(Eb p51)", "Craft Wondrous Item Caser level 9th", "Able to create items with bound elements, including vehicles such as flying boats."));
             FeatEntries.Add(new Feat("Brew Potion [Item Creation]", "(PH p89)", "Caster level 3rd", "Create a potion of a spell up to 3rd level that you know."));
@@ -2041,7 +1954,7 @@ Size       Bonus Dmg
             FeatEntries.Add(new Feat("Wand Mastery [Item Creation]", "(Eb p62)", "Caster level 9th Craft Wand", "Any spell you cast from a wand has its DC increased by 2 and its effective caster level increased by 2."));
             #endregion
 
-            #region PG 54
+        #region PG 54
             FeatEntries.Add(new Feat("Double Wand Wielder [General]", "(CArc p77)", "Craft Wand Two-Weapon Fighting", "As a Full Round Action, you can fire a Wand in each hand." + Environment.NewLine + "The Wand in your secondary hand (your choice) uses up 2 charges, while one in your primary hand uses up 1 charge."));
             FeatEntries.Add(new Feat("Dragoncrafter [General]", "(Dcn p105)", "Know (arcana): 2 ranks", "You can create Dragoncraft Items whose prerequisites you meet." + Environment.NewLine + "See Dcn p116 for details on Dragoncrafted Items."));
             FeatEntries.Add(new Feat("Magical Artisan [General]", "(PGF p41)", "any Item Creation Feat", "Choose one Item Creation feat that you posses. When you make an item with that feat, you pay only 75% of the normal cost to creation the item." + Environment.NewLine + "You may take this feat multiple times, each time with a new Item Creation feat."));
@@ -2053,447 +1966,447 @@ Size       Bonus Dmg
             FeatEntries.Add(new Feat("Imbued Strength [Item Creation]", "(DR338 p60)", "Caster level 3rd ability to Imbue a Staff", "When attacking with your Imbued Staff, add your Wisdom modifier to the damage instead of your Strength modifier." + Environment.NewLine + "Requires a 12 hour ritual that consumes 500 gp."));
             FeatEntries.Add(new Feat("Invest Spell [Item Creation]", "(DR338 p60)", "Caster level 9th ability to Imbue a Staff", "Choose a spell you can cast that is no higher than two levels below the highest you can cast." + Environment.NewLine + "Your Imbued Staff grants you (and only you) ability to cast this spell as a Spell-like ability three times per day when held." + Environment.NewLine + "You permanently loose a spell slot of the same level as the invested spell." + Environment.NewLine + "Requires a 24 hour ritual that consumes 250 gp per spell level." + Environment.NewLine + "This feat may be taken multiple times. Each time a new spell is added."));
             FeatEntries.Add(new Feat("Recharge Staff [Item Creation]", "(DR338 p60)", "Caster level 12th Craft Staff ability to Imbue a Staff", "If you have used Craft Staff to add spell charges to your Imbued Staff, you may expend prepared spell / unused spell slots to add charges back into your Imbued Staff." + Environment.NewLine + "For each 5 Spell levels expended, the Staff regains one charge (max 50 charges)."));
-            #endregion
+        #endregion
 
-            //-----------------------------------------------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------------------------  current spot  -----------------------------------------------------------------------------------------------------------
 
-            #region PG 55
-            #endregion
+        #region PG 55
+        #endregion
 
-            #region PG 56
-            #endregion
+        #region PG 56
+        #endregion
 
-            #region PG 57
-            #endregion
+        #region PG 57
+        #endregion
 
-            #region PG 58
-            #endregion
+        #region PG 58
+        #endregion
 
-            #region PG 59
-            #endregion
+        #region PG 59
+        #endregion
 
-            #region PG 60
-            #endregion
+        #region PG 60
+        #endregion
 
-            #region PG 61
-            #endregion
+        #region PG 61
+        #endregion
 
-            #region PG 62
-            #endregion
+        #region PG 62
+        #endregion
 
-            #region PG 63
-            #endregion
+        #region PG 63
+        #endregion
 
-            #region PG 64
-            #endregion
+        #region PG 64
+        #endregion
 
-            #region PG 65
-            #endregion
+        #region PG 65
+        #endregion
 
-            #region PG 66
-            #endregion
+        #region PG 66
+        #endregion
 
-            #region PG 67
-            #endregion
+        #region PG 67
+        #endregion
 
-            #region PG 68
-            #endregion
+        #region PG 68
+        #endregion
 
-            #region PG 69
-            #endregion
+        #region PG 69
+        #endregion
 
-            #region PG 70
-            #endregion
+        #region PG 70
+        #endregion
 
-            #region PG 71
-            #endregion
+        #region PG 71
+        #endregion
 
-            #region PG 72
-            #endregion
+        #region PG 72
+        #endregion
 
-            #region PG 73
-            #endregion
+        #region PG 73
+        #endregion
 
-            #region PG 74
-            #endregion
+        #region PG 74
+        #endregion
 
-            #region PG 75
-            #endregion
+        #region PG 75
+        #endregion
 
-            #region PG 76
-            #endregion
+        #region PG 76
+        #endregion
 
-            #region PG 77
-            #endregion
+        #region PG 77
+        #endregion
 
-            #region PG 78
-            #endregion
+        #region PG 78
+        #endregion
 
-            #region PG 79
-            #endregion
+        #region PG 79
+        #endregion
 
-            #region PG 80
-            #endregion
+        #region PG 80
+        #endregion
 
-            #region PG 81
-            #endregion
+        #region PG 81
+        #endregion
 
-            #region PG 82
-            #endregion
+        #region PG 82
+        #endregion
 
-            #region PG 83
-            #endregion
+        #region PG 83
+        #endregion
 
-            #region PG 84
-            #endregion
+        #region PG 84
+        #endregion
 
-            #region PG 85
-            #endregion
+        #region PG 85
+        #endregion
 
-            #region PG 86
-            #endregion
+        #region PG 86
+        #endregion
 
-            #region PG 87
-            #endregion
+        #region PG 87
+        #endregion
 
-            #region PG 88
-            #endregion
+        #region PG 88
+        #endregion
 
-            #region PG 89
-            #endregion
+        #region PG 89
+        #endregion
 
-            #region PG 90
-            #endregion
+        #region PG 90
+        #endregion
 
-            #region PG 91
-            #endregion
+        #region PG 91
+        #endregion
 
-            #region PG 92
-            #endregion
+        #region PG 92
+        #endregion
 
-            #region PG 93
-            #endregion
+        #region PG 93
+        #endregion
 
-            #region PG 94
-            #endregion
+        #region PG 94
+        #endregion
 
-            #region PG 95
-            #endregion
+        #region PG 95
+        #endregion
 
-            #region PG 96
-            #endregion
+        #region PG 96
+        #endregion
 
-            #region PG 97
-            #endregion
+        #region PG 97
+        #endregion
 
-            #region PG 98
-            #endregion
+        #region PG 98
+        #endregion
 
-            #region PG 99
-            #endregion
+        #region PG 99
+        #endregion
 
-            #region PG 100
-            #endregion
+        #region PG 100
+        #endregion
 
-            #region PG 101
-            #endregion
+        #region PG 101
+        #endregion
 
-            #region PG 102
-            #endregion
+        #region PG 102
+        #endregion
 
-            #region PG 103
-            #endregion
+        #region PG 103
+        #endregion
 
-            #region PG 104
-            #endregion
+        #region PG 104
+        #endregion
 
-            #region PG 105
-            #endregion
+        #region PG 105
+        #endregion
 
-            #region PG 106
-            #endregion
+        #region PG 106
+        #endregion
 
-            #region PG 107
-            #endregion
+        #region PG 107
+        #endregion
 
-            #region PG 108
-            #endregion
+        #region PG 108
+        #endregion
 
-            #region PG 109
-            #endregion
+        #region PG 109
+        #endregion
 
-            #region PG 110
-            #endregion
+        #region PG 110
+        #endregion
 
-            #region PG 111
-            #endregion
+        #region PG 111
+        #endregion
 
-            #region PG 112
-            #endregion
+        #region PG 112
+        #endregion
 
-            #region PG 113
-            #endregion
+        #region PG 113
+        #endregion
 
-            #region PG 114
-            #endregion
+        #region PG 114
+        #endregion
 
-            #region PG 115
-            #endregion
+        #region PG 115
+        #endregion
 
-            #region PG 116
-            #endregion
+        #region PG 116
+        #endregion
 
-            #region PG 117
-            #endregion
+        #region PG 117
+        #endregion
 
-            #region PG 118
-            #endregion
+        #region PG 118
+        #endregion
 
-            #region PG 119
-            #endregion
+        #region PG 119
+        #endregion
 
-            #region PG 120
-            #endregion
+        #region PG 120
+        #endregion
 
-            #region PG 121
-            #endregion
+        #region PG 121
+        #endregion
 
-            #region PG 122
-            #endregion
+        #region PG 122
+        #endregion
 
-            #region PG 123
-            #endregion
+        #region PG 123
+        #endregion
 
-            #region PG 124
-            #endregion
+        #region PG 124
+        #endregion
 
-            #region PG 125
-            #endregion
+        #region PG 125
+        #endregion
 
-            #region PG 126
-            #endregion
+        #region PG 126
+        #endregion
 
-            #region PG 127
-            #endregion
+        #region PG 127
+        #endregion
 
-            #region PG 128
-            #endregion
+        #region PG 128
+        #endregion
 
-            #region PG 129
-            #endregion
+        #region PG 129
+        #endregion
 
-            #region PG 130
-            #endregion
+        #region PG 130
+        #endregion
 
-            #region PG 131
-            #endregion
+        #region PG 131
+        #endregion
 
-            #region PG 132
-            #endregion
+        #region PG 132
+        #endregion
 
-            #region PG 133
-            #endregion
+        #region PG 133
+        #endregion
 
-            #region PG 134
-            #endregion
+        #region PG 134
+        #endregion
 
-            #region PG 135
-            #endregion
+        #region PG 135
+        #endregion
 
-            #region PG 136
-            #endregion
+        #region PG 136
+        #endregion
 
-            #region PG 137
-            #endregion
+        #region PG 137
+        #endregion
 
-            #region PG 138
-            #endregion
+        #region PG 138
+        #endregion
 
-            #region PG 139
-            #endregion
+        #region PG 139
+        #endregion
 
-            #region PG 140
-            #endregion
+        #region PG 140
+        #endregion
 
-            #region PG 141
-            #endregion
+        #region PG 141
+        #endregion
 
-            #region PG 142
-            #endregion
+        #region PG 142
+        #endregion
 
-            #region PG 143
-            #endregion
+        #region PG 143
+        #endregion
 
-            #region PG 144
-            #endregion
+        #region PG 144
+        #endregion
 
-            #region PG 145
-            #endregion
+        #region PG 145
+        #endregion
 
-            #region PG 146
-            #endregion
+        #region PG 146
+        #endregion
 
-            #region PG 147
-            #endregion
+        #region PG 147
+        #endregion
 
-            #region PG 148
-            #endregion
+        #region PG 148
+        #endregion
 
-            #region PG 149
-            #endregion
+        #region PG 149
+        #endregion
 
-            #region PG 150
-            #endregion
+        #region PG 150
+        #endregion
 
-            #region PG 151
-            #endregion
+        #region PG 151
+        #endregion
 
-            #region PG 152
-            #endregion
+        #region PG 152
+        #endregion
 
-            #region PG 153
-            #endregion
+        #region PG 153
+        #endregion
 
-            #region PG 154
-            #endregion
+        #region PG 154
+        #endregion
 
-            #region PG 155
-            #endregion
+        #region PG 155
+        #endregion
 
-            #region PG 156
-            #endregion
+        #region PG 156
+        #endregion
 
-            #region PG 157
-            #endregion
+        #region PG 157
+        #endregion
 
-            #region PG 158
-            #endregion
+        #region PG 158
+        #endregion
 
-            #region PG 159
-            #endregion
+        #region PG 159
+        #endregion
 
-            #region PG 160
-            #endregion
+        #region PG 160
+        #endregion
 
-            #region PG 161
-            #endregion
+        #region PG 161
+        #endregion
 
-            #region PG 162
-            #endregion
+        #region PG 162
+        #endregion
 
-            #region PG 163
-            #endregion
+        #region PG 163
+        #endregion
 
-            #region PG 164
-            #endregion
+        #region PG 164
+        #endregion
 
-            #region PG 165
-            #endregion
+        #region PG 165
+        #endregion
 
-            #region PG 166
-            #endregion
+        #region PG 166
+        #endregion
 
-            #region PG 167
-            #endregion
+        #region PG 167
+        #endregion
 
-            #region PG 168
-            #endregion
+        #region PG 168
+        #endregion
 
-            #region PG 169
-            #endregion
+        #region PG 169
+        #endregion
 
-            #region PG 170
-            #endregion
+        #region PG 170
+        #endregion
 
-            #region PG 171
-            #endregion
+        #region PG 171
+        #endregion
 
-            #region PG 172
-            #endregion
+        #region PG 172
+        #endregion
 
-            #region PG 173
-            #endregion
+        #region PG 173
+        #endregion
 
-            #region PG 174
-            #endregion
+        #region PG 174
+        #endregion
 
-            #region PG 175
-            #endregion
+        #region PG 175
+        #endregion
 
-            #region PG 176
-            #endregion
+        #region PG 176
+        #endregion
 
-            #region PG 177
-            #endregion
+        #region PG 177
+        #endregion
 
-            #region PG 178
-            #endregion
+        #region PG 178
+        #endregion
 
-            #region PG 179
-            #endregion
+        #region PG 179
+        #endregion
 
-            #region PG 180
-            #endregion
+        #region PG 180
+        #endregion
 
-            #region PG 181
-            #endregion
+        #region PG 181
+        #endregion
 
-            #region PG 182
-            #endregion
+        #region PG 182
+        #endregion
 
-            #region PG 183
-            #endregion
+        #region PG 183
+        #endregion
 
-            #region PG 184
-            #endregion
+        #region PG 184
+        #endregion
 
-            #region PG 185
-            #endregion
+        #region PG 185
+        #endregion
 
-            #region PG 186
-            #endregion
+        #region PG 186
+        #endregion
 
-            #region PG 187
-            #endregion
+        #region PG 187
+        #endregion
 
-            #region PG 188
-            #endregion
+        #region PG 188
+        #endregion
 
-            #region PG 189
-            #endregion
+        #region PG 189
+        #endregion
 
-            #region PG 190
-            #endregion
+        #region PG 190
+        #endregion
 
-            #region PG 191
-            #endregion
+        #region PG 191
+        #endregion
 
-            #region PG 192
-            #endregion
+        #region PG 192
+        #endregion
 
-            #region PG 193
-            #endregion
+        #region PG 193
+        #endregion
 
-            #region PG 194
-            #endregion
+        #region PG 194
+        #endregion
 
-            #region PG 195
-            #endregion
+        #region PG 195
+        #endregion
 
-            featEntries = featEntries.OrderBy(f => f.Name).ToList();
+        featEntries = featEntries.OrderBy(f => f.Name).ToList();
 
-            // removes duplicates cause i dont feel like looking for them
+        // removes duplicates cause I dont feel like looking for them
 
-            for (int i = 0; i < featEntries.Count - 1; i++)
+        for (int i = 0; i < featEntries.Count - 1; i++)
+        {
+            if (featEntries[i].Name == featEntries[i + 1].Name)
             {
-                if (featEntries[i].Name == featEntries[i + 1].Name)
-                {
-                    featEntries.Remove(featEntries[i + 1]); 
-                    i--;
-                }
+                featEntries.Remove(featEntries[i + 1]); 
+                i--;
             }
         }
-
-        #endregion
     }
+
+    #endregion
 }
+

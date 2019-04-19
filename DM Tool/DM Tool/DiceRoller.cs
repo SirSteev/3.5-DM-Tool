@@ -1,23 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-namespace DM_Tool
+/// <summary>Contains:
+/// Built in Random Class,
+/// Inclusive random number generator,
+/// and multiple ways to roll the following dice:
+/// D2, D3, D4, D6, D8, D10, D12, D20, D100.</summary>
+public static class DiceRoller
 {
-    public static class DiceRoller // ALL THE RANDOM NUMBER simple class that makes rolling fake dice easier
-    {
-        public static string diceRolls;
+    /// <summary>Can be used to store dice rolls for export.</summary>
+    public static string DiceRolls;
 
-        private static Random rand = new Random();
+    private static Random rand = new Random();
 
-        public static int RandomNum(int min, int max)
+    /// <summary>Built in Random class access.</summary>
+    public static Random Rand
         {
-            if (max + 1 <= min) return 0;
-
-            return rand.Next(min, max + 1);
+            get
+            {
+                return rand;
+            }
         }
 
+    /// <summary>Inclusive ranged number generator.</summary>
+    public static int RandomRangeNumber(int min, int max)
+    {
+        if (max + 1 <= min) return 0;
+
+        return rand.Next(min, max + 1);
+    }
+
+    #region D2
+
+        /// <summary>Rolls 1 D2 and returns the number.</summary>
         public static int RollD2()
         {
             int D6 = RollD6();
@@ -32,6 +47,7 @@ namespace DM_Tool
             }
         }
 
+        /// <summary>Rolls "howMany" D2 and returns the sum of all rolls.</summary>
         public static int RollD2(uint howMany)
         {
             int sum = 0;
@@ -44,6 +60,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D2 and returns the List of all rolled numbers.</summary>
         public static List<int> RollD2(uint howMany, out int sum)
         {
             sum = 0;
@@ -59,6 +76,11 @@ namespace DM_Tool
             return rolls;
         }
 
+        #endregion
+
+    #region D3
+
+        /// <summary>Rolls 1 D3 and returns the number./summary>
         public static int RollD3()
         {
             int D6 = RollD6();
@@ -77,6 +99,7 @@ namespace DM_Tool
             }
         }
 
+        /// <summary>Rolls "howMany" D3 and returns the sum of all rolls.</summary>
         public static int RollD3(uint howMany)
         {
             int sum = 0;
@@ -89,6 +112,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D3 and returns the List of all rolled numbers.</summary>
         public static List<int> RollD3(uint howMany, out int sum)
         {
             sum = 0;
@@ -104,6 +128,11 @@ namespace DM_Tool
             return rolls;
         }
 
+        #endregion
+
+    #region D4
+
+        /// <summary>Rolls 1 D4 and returns the number.</summary>
         public static int RollD4()
         {
             int sum = rand.Next(1, 5);
@@ -111,6 +140,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D4 and returns the sum of all rolls.</summary>
         public static int RollD4(uint howMany)
         {
             int sum = 0;
@@ -123,6 +153,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D4 and returns the List of all rolled numbers.</summary>
         public static List<int> RollD4(uint howMany, out int sum)
         {
             sum = 0;
@@ -138,6 +169,11 @@ namespace DM_Tool
             return rolls;
         }
 
+        #endregion
+
+    #region D6
+
+        /// <summary>Rolls 1 D6 and returns the number.</summary>
         public static int RollD6()
         {
             int sum = rand.Next(1, 7);
@@ -145,6 +181,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D6 and returns the sum of all rolls.</summary>
         public static int RollD6(uint howMany)
         {
             int sum = 0;
@@ -157,6 +194,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D6 and returns the List of all rolled numbers.</summary>
         public static List<int> RollD6(uint howMany, out int sum)
         {
             sum = 0;
@@ -172,6 +210,11 @@ namespace DM_Tool
             return rolls;
         }
 
+        #endregion
+
+    #region D8
+
+        /// <summary>Rolls 1 D8 and returns the number.</summary>
         public static int RollD8()
         {
             int sum = rand.Next(1, 9);
@@ -179,6 +222,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D8 and returns the sum of all rolls.</summary>
         public static int RollD8(uint howMany)
         {
             int sum = 0;
@@ -191,6 +235,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D8 and returns the List of all rolled numbers.</summary>
         public static List<int> RollD8(uint howMany, out int sum)
         {
             sum = 0;
@@ -206,6 +251,11 @@ namespace DM_Tool
             return rolls;
         }
 
+        #endregion
+
+    #region D10
+
+        /// <summary>Rolls 1 D10 and returns the number.</summary>
         public static int RollD10()
         {
             int sum = rand.Next(1, 11);
@@ -213,6 +263,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D10 and returns the sum of all rolls.</summary>
         public static int RollD10(uint howMany)
         {
             int sum = 0;
@@ -225,6 +276,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D10 and returns the List of all rolled numbers.</summary>
         public static List<int> RollD10(uint howMany, out int sum)
         {
             sum = 0;
@@ -240,6 +292,11 @@ namespace DM_Tool
             return rolls;
         }
 
+        #endregion
+
+    #region D12
+
+        /// <summary>Rolls 1 D12 and returns the number.</summary>
         public static int RollD12()
         {
             int sum = rand.Next(1, 13);
@@ -247,6 +304,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D12 and returns the sum of all rolls.</summary>
         public static int RollD12(uint howMany)
         {
             int sum = 0;
@@ -259,6 +317,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D12 and returns the List of all rolled numbers.</summary>
         public static List<int> RollD12(uint howMany, out int sum)
         {
             sum = 0;
@@ -274,6 +333,11 @@ namespace DM_Tool
             return rolls;
         }
 
+        #endregion
+
+    #region D20
+
+        /// <summary>Rolls 1 D20 and returns the number.</summary>
         public static int RollD20()
         {
             int sum = rand.Next(1, 21);
@@ -281,6 +345,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D20 and returns the sum of all rolls.</summary>
         public static int RollD20(uint howMany)
         {
             int sum = 0;
@@ -293,6 +358,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D20 and returns the List of all rolled numbers.</summary>
         public static List<int> RollD20(uint howMany, out int sum)
         {
             sum = 0;
@@ -308,6 +374,11 @@ namespace DM_Tool
             return rolls;
         }
 
+        #endregion
+
+    #region D100
+
+        /// <summary>Rolls 2 D10 and returns the side by side value.</summary>
         public static int RollD100()
         {
             int tens = RollD10();
@@ -323,6 +394,7 @@ namespace DM_Tool
             }
         }
 
+        /// <summary>Rolls "howMany" D100 (2 D10) and returns the sum of all rolls.</summary>
         public static int RollD100(uint howMany)
         {
             int sum = 0;
@@ -335,6 +407,7 @@ namespace DM_Tool
             return sum;
         }
 
+        /// <summary>Rolls "howMany" D100 (2 D10) and returns the List of all rolled numbers.</summary>
         public static List<int> RollD100(uint howMany, out int sum)
         {
             sum = 0;
@@ -349,5 +422,6 @@ namespace DM_Tool
 
             return rolls;
         }
-    }
+
+        #endregion
 }

@@ -11,99 +11,94 @@ namespace DM_Tool
 {
     public partial class DMToolForm : Form
     {
-        Random rand;
         StartNewCampaignForm newCampaignForm;
         DiceRolls diceRollsForm;
-        float informationTBFontSize;
-        int InitiativeTracker;
 
+        float informationTBFontSize;
+        
         public DMToolForm()
         {
             InitializeComponent();
-            InitiativeTracker = 0;
-
-            rand = new Random();
-
+            
             pbMap.MouseHover += new EventHandler(pbMap_MouseHover);
 
             #region EXP Calculator
-            ComboBox[] comboBoxArray;
-            NumericUpDown[] numericUpDownArray;
 
-            comboBoxArray = new ComboBox[8];
-            comboBoxArray[0] = CRNum1;
-            comboBoxArray[1] = CRNum2;
-            comboBoxArray[2] = CRNum3;
-            comboBoxArray[3] = CRNum4;
-            comboBoxArray[4] = CRNum5;
-            comboBoxArray[5] = CRNum6;
-            comboBoxArray[6] = CRNum7;
-            comboBoxArray[7] = CRNum8;
+            InitializeEXPCalculator();
 
-            numericUpDownArray = new NumericUpDown[8];
-            numericUpDownArray[0] = numOfMonsters1;
-            numericUpDownArray[1] = numOfMonsters2;
-            numericUpDownArray[2] = numOfMonsters3;
-            numericUpDownArray[3] = numOfMonsters4;
-            numericUpDownArray[4] = numOfMonsters5;
-            numericUpDownArray[5] = numOfMonsters6;
-            numericUpDownArray[6] = numOfMonsters7;
-            numericUpDownArray[7] = numOfMonsters8;
-            
-            foreach (ComboBox box in comboBoxArray) // adds challange ratings to drop down
-            {
-                box.Items.Add("1/10");
-                box.Items.Add("1/8");
-                box.Items.Add("1/6");
-                box.Items.Add("1/4");
-                box.Items.Add("1/3");
-                box.Items.Add("1/2");
-                for (int i = 1; i <= 30; i++)
-                {
-                    box.Items.Add(i.ToString());
-                }
-
-                box.SelectedIndex = 0;
-            }
-            EXPCalculator.InitCalculator(numericUpDownArray, comboBoxArray);
             #endregion
 
             #region Information Library
-            InformationLibrary.InitLibrary();
 
-            foreach (var plant in InformationLibrary.PlantEntries)
-            {
-                lbPlants.Items.Add(plant.Name);
-            }
-            foreach (var weather in InformationLibrary.WeatherEntries)
-            {
-                lbWeather.Items.Add(weather.Name);
-            }
-            foreach (var feat in InformationLibrary.FeatEntries)
-            {
-                lbFeats.Items.Add(feat.Name);
-            }
+            InitializeInformationLibrary();
 
-            informationTBFontSize = 8.5f;
-            TbInformation.Font = new Font(FontFamily.GenericMonospace, informationTBFontSize);
+            #endregion
+
+            #region Initiative Tracker
+
+            InitializeInitiativeTracker();
 
             #endregion
 
             #region Calendar
+
             newCampaignForm = new StartNewCampaignForm();
-
-
+            
             #endregion
         }
 
+        private void startNewCampaignToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (newCampaignForm.ShowDialog() == DialogResult.OK)
+            {
+                RefreshCalendar();
+
+                foreach (var player in InitiativeTracker.InitiativeList)
+                {
+                    lbInitTrackName.Items.Add(player.Name);
+                    lbInitTrackInit.Items.Add(player.Initiative);
+                    lbInitTrackHP.Items.Add(player.HPMax);
+                }
+            }
+        }
+
         #region EXP Calculator
+
+        private void InitializeEXPCalculator()
+        {
+            ComboBox[] challangeRatingComboBoxArray;
+            NumericUpDown[] numberOfMonstersNumericUpDownArray;
+
+            challangeRatingComboBoxArray = new ComboBox[8];
+            challangeRatingComboBoxArray[0] = CRNum1;
+            challangeRatingComboBoxArray[1] = CRNum2;
+            challangeRatingComboBoxArray[2] = CRNum3;
+            challangeRatingComboBoxArray[3] = CRNum4;
+            challangeRatingComboBoxArray[4] = CRNum5;
+            challangeRatingComboBoxArray[5] = CRNum6;
+            challangeRatingComboBoxArray[6] = CRNum7;
+            challangeRatingComboBoxArray[7] = CRNum8;
+
+            numberOfMonstersNumericUpDownArray = new NumericUpDown[8];
+            numberOfMonstersNumericUpDownArray[0] = numOfMonsters1;
+            numberOfMonstersNumericUpDownArray[1] = numOfMonsters2;
+            numberOfMonstersNumericUpDownArray[2] = numOfMonsters3;
+            numberOfMonstersNumericUpDownArray[3] = numOfMonsters4;
+            numberOfMonstersNumericUpDownArray[4] = numOfMonsters5;
+            numberOfMonstersNumericUpDownArray[5] = numOfMonsters6;
+            numberOfMonstersNumericUpDownArray[6] = numOfMonsters7;
+            numberOfMonstersNumericUpDownArray[7] = numOfMonsters8;
+            
+            EXPCalculator.InitializeCalculator(numberOfMonstersNumericUpDownArray, challangeRatingComboBoxArray);
+        }
+
         private void btnEXPCalc_Click(object sender, EventArgs e)
         {
             EXPCalculator.CalculateEXP((int)numOfPartyMembers.Value);
             UpdateXP(EXPCalculator.getLevel);
         }
 
-        private void UpdateXP(Level level) // pulls all into from class and fills the boxes
+        private void UpdateXP(Level level) // pulls all info from class and fills the boxes
         {
             addedXP1to3Bx.Text = level._1to3.addedXP;
             totalXP1to3Bx.Text = level._1to3.totalXP;
@@ -198,6 +193,28 @@ namespace DM_Tool
         #endregion
 
         #region Information Library
+
+        private void InitializeInformationLibrary()
+        {
+            InformationLibrary.InitializeLibrary();
+
+            foreach (var plant in InformationLibrary.PlantEntries)
+            {
+                lbPlants.Items.Add(plant.Name);
+            }
+            foreach (var weather in InformationLibrary.WeatherEntries)
+            {
+                lbWeather.Items.Add(weather.Name);
+            }
+            foreach (var feat in InformationLibrary.FeatEntries)
+            {
+                lbFeats.Items.Add(feat.Name);
+            }
+
+            informationTBFontSize = 8.5f;
+            TbInformation.Font = new Font(FontFamily.GenericMonospace, informationTBFontSize);
+        }
+
         private void btnInfoTBFontSizeUp_Click(object sender, EventArgs e)
         {
             informationTBFontSize += 1;
@@ -550,14 +567,14 @@ namespace DM_Tool
         #region Dice Box
         private void btnExportDiceRolls_Click(object sender, EventArgs e)
         {
-            DiceRoller.diceRolls = tbDiceBox.Text;
+            DiceRoller.DiceRolls = tbDiceBox.Text;
             diceRollsForm = new DiceRolls();
             diceRollsForm.Show();
         }
 
         private void btnRandomNumGen_Click(object sender, EventArgs e)
         {
-            tbRandomNum.Text = DiceRoller.RandomNum((int)nudRandMin.Value, (int)nudRandMax.Value).ToString();
+            tbRandomNum.Text = DiceRoller.RandomRangeNumber((int)nudRandMin.Value, (int)nudRandMax.Value).ToString();
         }
 
         private void btnRollDice_Click(object sender, EventArgs e)
@@ -687,29 +704,13 @@ namespace DM_Tool
 
         #region Calendar
 
-        #endregion
-        
-
         public void RefreshCalendar()
         {
             this.Text = "3.5 DM Tool - " + Calendar.campaignName;
         }
 
-        private void startNewCampaignToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (newCampaignForm.ShowDialog() == DialogResult.OK)
-            {
-                RefreshCalendar();
-
-                foreach (var player in InformationLibrary.InitiativeList)
-                {
-                    lbInitTrackName.Items.Add(player.Name);
-                    lbInitTrackInit.Items.Add(player.Initiative);
-                    lbInitTrackHP.Items.Add(player.HPMax);
-                }
-            }
-        }
-
+        #endregion
+        
         #region Sound Board
 
         private void btnSoundOcean_Click(object sender, EventArgs e)
@@ -821,231 +822,80 @@ namespace DM_Tool
 
         #region Initiative Tracker
 
-        // needs play test, found bugs in last session and i beleive them to be fixed
+        private void InitializeInitiativeTracker()
+        {
+            InitiativeTracker.InitializeInitiativeTracker(this);
+            
+            btnInitTrackEndInitiative.Enabled = false;
+        }
 
         private void btnInitTrackEndTurn_Click(object sender, EventArgs e)
         {
-            if (lbInitTrackName.Items.Count > 0)
-            {
-                InitiativeTracker++;
-
-                if (InitiativeTracker > InformationLibrary.InitiativeList.Count - 1) InitiativeTracker = 0;
-
-                if (lbInitTrackName.Items[InitiativeTracker].ToString().Contains("*"))
-                {
-                    lbInitTrackName.Items[InitiativeTracker] = lbInitTrackName.Items[InitiativeTracker].ToString().Replace("*", "");
-                }
-
-                lblInitTrackTurnName.Text = InformationLibrary.InitiativeList[InitiativeTracker].Name;
-                InitTrackCenterLable(lblInitTrackTurnName);
-                lblInitTrackTurnHP.Text = "HP: " + InformationLibrary.InitiativeList[InitiativeTracker].HPCurrent;
-                InitTrackCenterLable(lblInitTrackTurnHP);
-            }
-            else
-            {
-                lblInitTrackTurnName.Text = "*_____*";
-                InitTrackCenterLable(lblInitTrackTurnName);
-                lblInitTrackTurnHP.Text = "HP: --";
-                InitTrackCenterLable(lblInitTrackTurnHP);
-                MessageBox.Show("No Combatants");
-            }
-        }
-
-        private void InitTrackCenterLable(Label lbl)
-        { 
-            lbl.Location = new Point((int)(227 + ((627 - 227 - lbl.Width) / 2)), lbl.Location.Y);
+            InitiativeTracker.EndTurn();
         }
 
         private void lbInitTrackName_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lbInitTrackInit.SelectedIndex != lbInitTrackName.SelectedIndex && lbInitTrackName.SelectedItem != null)
-            {
-                lbInitTrackInit.SelectedIndex = lbInitTrackName.SelectedIndex;
-                lbInitTrackHP.SelectedIndex = lbInitTrackName.SelectedIndex;
-
-                tbInitTrackSelectedCombatant.Text = lbInitTrackName.SelectedItem.ToString();
-                nudInitTrackHPUpdate.Value = Int32.Parse(lbInitTrackHP.Text);
-                nudInitTrackInitUpdate.Value = Int32.Parse(lbInitTrackInit.Text);
-            }
+            InitiativeTracker.NameSelectedIndexChanged();
         }
 
         private void lbInitTrackInit_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lbInitTrackName.SelectedIndex != lbInitTrackInit.SelectedIndex && lbInitTrackInit.SelectedItem != null)
-            {
-                lbInitTrackName.SelectedIndex = lbInitTrackInit.SelectedIndex;
-                lbInitTrackHP.SelectedIndex = lbInitTrackInit.SelectedIndex;
-
-                tbInitTrackSelectedCombatant.Text = lbInitTrackName.SelectedItem.ToString();
-                nudInitTrackHPUpdate.Value = Int32.Parse(lbInitTrackHP.Text);
-                nudInitTrackInitUpdate.Value = Int32.Parse(lbInitTrackInit.Text);
-            }
+            InitiativeTracker.InitiativeSelectedIndexChanged();
         }
 
         private void lbInitTrackHP_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lbInitTrackName.SelectedIndex != lbInitTrackHP.SelectedIndex && lbInitTrackHP.SelectedItem != null)
-            {
-                lbInitTrackName.SelectedIndex = lbInitTrackHP.SelectedIndex;
-                lbInitTrackInit.SelectedIndex = lbInitTrackHP.SelectedIndex;
-
-                tbInitTrackSelectedCombatant.Text = lbInitTrackName.SelectedItem.ToString();
-                nudInitTrackHPUpdate.Value = Int32.Parse(lbInitTrackHP.Text);
-                nudInitTrackInitUpdate.Value = Int32.Parse(lbInitTrackInit.Text);
-            }
+            InitiativeTracker.HPSelectedIndexChanged();
         }
 
         private void btnInitTrackAddCombatant_Click(object sender, EventArgs e)
         {
-            if (tbInitTrackAddCombatant.Text.Contains("*"))
-            {
-                tbInitTrackAddCombatant.Text = tbInitTrackAddCombatant.Text.Replace("*", "");
-            }
-
-            if (nudInitTrackAddHP.Value <= 0)
-            {
-                MessageBox.Show("Combatant HP must be higher than 0");
-            }
-            else if (nudInitTrackAddIndex.Value != 0)
-            {
-                Player newCombatant = new Player(tbInitTrackAddCombatant.Text + " - " + nudInitTrackAddIndex.Value, (int)nudInitTrackAddHP.Value, (int)nudInitTrackAddInit.Value);
-                InformationLibrary.InitiativeList.Add(newCombatant);
-
-                lbInitTrackName.Items.Add(newCombatant.Name);
-                lbInitTrackInit.Items.Add(newCombatant.Initiative);
-                lbInitTrackHP.Items.Add(newCombatant.HPMax);
-
-                SortInitiativeList();
-            }
-            else
-            {
-                Player newCombatant = new Player(tbInitTrackAddCombatant.Text, (int)nudInitTrackAddHP.Value, (int)nudInitTrackAddInit.Value);
-                InformationLibrary.InitiativeList.Add(newCombatant);
-
-                lbInitTrackName.Items.Add(newCombatant.Name);
-                lbInitTrackInit.Items.Add(newCombatant.Initiative);
-                lbInitTrackHP.Items.Add(newCombatant.HPMax);
-
-                SortInitiativeList();
-            }
+            InitiativeTracker.AddCombatant();
         }
 
         private void btnInitTrackApplyDamage_Click(object sender, EventArgs e)
         {
-            int ndx = lbInitTrackName.SelectedIndex;
-            int damage = Int32.Parse(nudInitTrackDamageApplyer.Text);
-
-            InformationLibrary.InitiativeList.Find(p => p.Name == lbInitTrackName.SelectedItem.ToString()).HPCurrent -= damage;
-            
-            
-            lbInitTrackHP.Items[ndx] = InformationLibrary.InitiativeList.Find(p => p.Name == lbInitTrackName.SelectedItem.ToString()).HPCurrent;
-
-            nudInitTrackDamageApplyer.Value = 0;
+            if (lbInitTrackName.SelectedItem != null)
+            {
+                InitiativeTracker.ApplyDamageToIndex(Int32.Parse(nudInitTrackDamageApplyer.Text), lbInitTrackName.SelectedIndex);
+            }
         }
 
         private void btnInitTrackRemoveFromInit_Click(object sender, EventArgs e)
         {
             if (lbInitTrackName.SelectedItem != null)
             {
-                int ndx = lbInitTrackName.SelectedIndex;
-
-                InformationLibrary.InitiativeList.Remove(InformationLibrary.InitiativeList.Find(p => p.Name == lbInitTrackName.SelectedItem.ToString()));
-
-                lbInitTrackName.Items.RemoveAt(ndx);
-                lbInitTrackInit.Items.RemoveAt(ndx);
-                lbInitTrackHP.Items.RemoveAt(ndx);
-            }
-        }
-
-        private void SortInitiativeList()
-        {
-            lbInitTrackName.Items.Clear();
-            lbInitTrackInit.Items.Clear();
-            lbInitTrackHP.Items.Clear();
-
-            InformationLibrary.InitiativeList = InformationLibrary.InitiativeList.OrderBy(p => -p.Initiative).ToList();
-
-            foreach (var player in InformationLibrary.InitiativeList)
-            {
-                lbInitTrackName.Items.Add(player.Name);
-                lbInitTrackInit.Items.Add(player.Initiative);
-                lbInitTrackHP.Items.Add(player.HPCurrent);
-            }
-        }
-
-        private void RefreshInitiativeList()
-        {
-            List<int> heldActions = new List<int>();
-            foreach (var thing in lbInitTrackName.Items)
-            {
-                if (thing.ToString().Contains("*"))
-                {
-                    heldActions.Add(lbInitTrackName.Items.IndexOf(thing));
-                }
-            }
-
-            lbInitTrackName.Items.Clear();
-            lbInitTrackInit.Items.Clear();
-            lbInitTrackHP.Items.Clear();
-            
-            foreach (var player in InformationLibrary.InitiativeList)
-            {
-                lbInitTrackName.Items.Add(player.Name);
-                lbInitTrackInit.Items.Add(player.Initiative);
-                lbInitTrackHP.Items.Add(player.HPCurrent);
-            }
-
-            foreach (var thing in heldActions)
-            {
-                lbInitTrackName.Items[thing] += "*";
+                InitiativeTracker.RemoveIndexFromInitiative(lbInitTrackName.SelectedIndex);
             }
         }
 
         private void btnInitTrackStartInitiative_Click(object sender, EventArgs e)
         {
-            btnInitTrackSortInitiative.Enabled = false;
-
-            InitiativeTracker = 0;
-
-            if (lbInitTrackName.Items.Count > 0)
+            if (InitiativeTracker.StartInitiative())
             {
-                lblInitTrackTurnName.Text = InformationLibrary.InitiativeList[InitiativeTracker].Name;
-                InitTrackCenterLable(lblInitTrackTurnName);
-                lblInitTrackTurnHP.Text = "HP: " + InformationLibrary.InitiativeList[InitiativeTracker].HPCurrent;
-                InitTrackCenterLable(lblInitTrackTurnHP);
-            }
-            else
-            {
-                lblInitTrackTurnName.Text = "*_____*";
-                InitTrackCenterLable(lblInitTrackTurnName);
-                lblInitTrackTurnHP.Text = "HP: --";
-                InitTrackCenterLable(lblInitTrackTurnHP);
-                MessageBox.Show("No Combatants");
+                btnInitTrackSortInitiative.Enabled = false;
+
+                btnInitTrackStartInitiative.Enabled = false;
+                btnInitTrackEndInitiative.Enabled = true;
             }
         }
 
         private void btnInitTrackEndInitiative_Click(object sender, EventArgs e)
         {
+            InitiativeTracker.EndInitiative();
+
             btnInitTrackSortInitiative.Enabled = true;
 
-            lblInitTrackTurnName.Text = "*_____*";
-            InitTrackCenterLable(lblInitTrackTurnName);
-            lblInitTrackTurnHP.Text = "HP: --";
-            InitTrackCenterLable(lblInitTrackTurnHP);
-            InitiativeTracker = 0;
+            btnInitTrackStartInitiative.Enabled = true;
+            btnInitTrackEndInitiative.Enabled = false;
         }
 
         private void btnInitTrackUpdate_Click(object sender, EventArgs e)
         {
             if (lbInitTrackName.SelectedItem != null)
             {
-                int ndx = lbInitTrackName.SelectedIndex;
-                InformationLibrary.InitiativeList[ndx].HPCurrent = (int)nudInitTrackHPUpdate.Value;
-                InformationLibrary.InitiativeList[ndx].Initiative = (int)nudInitTrackInitUpdate.Value;
-
-                RefreshInitiativeList();
-
-                lbInitTrackName.SelectedIndex = ndx;
+                InitiativeTracker.UpdateInitiativeAndHPAtIndex((int)nudInitTrackInitUpdate.Value, (int)nudInitTrackHPUpdate.Value, lbInitTrackName.SelectedIndex);
             }
         }
 
@@ -1053,14 +903,7 @@ namespace DM_Tool
         {
             if (lbInitTrackName.SelectedItem != null && lbInitTrackName.SelectedIndex != 0)
             {
-                int ndx = lbInitTrackName.SelectedIndex;
-                Player temp = InformationLibrary.InitiativeList[ndx - 1];
-                InformationLibrary.InitiativeList[ndx - 1] = InformationLibrary.InitiativeList[ndx];
-                InformationLibrary.InitiativeList[ndx] = temp;
-
-                RefreshInitiativeList();
-
-                lbInitTrackName.SelectedIndex = ndx - 1;
+                InitiativeTracker.UpdateInitiativeUp(lbInitTrackName.SelectedIndex);
             }
         }
 
@@ -1068,56 +911,28 @@ namespace DM_Tool
         {
             if (lbInitTrackName.SelectedItem != null && lbInitTrackName.SelectedIndex != lbInitTrackName.Items.Count - 1)
             {
-                int ndx = lbInitTrackName.SelectedIndex;
-                Player temp = InformationLibrary.InitiativeList[ndx + 1];
-                InformationLibrary.InitiativeList[ndx + 1] = InformationLibrary.InitiativeList[ndx];
-                InformationLibrary.InitiativeList[ndx] = temp;
-
-                RefreshInitiativeList();
-
-                lbInitTrackName.SelectedIndex = ndx + 1;
+                InitiativeTracker.UpdateInitializeDown(lbInitTrackName.SelectedIndex);
             }
         }
 
         private void btnInitTrackHoldAction_Click(object sender, EventArgs e)
         {
-            lbInitTrackName.Items[InitiativeTracker] = lbInitTrackName.Items[InitiativeTracker] + "*";
-
-            btnInitTrackEndTurn_Click(sender, e);
+            InitiativeTracker.HoldAction();
         }
 
         private void btnInitTrackUseHeldAction_Click(object sender, EventArgs e)
         {
-            if (lbInitTrackName.SelectedItem.ToString().Contains("*"))
-            {
-                tbInitTrackSelectedCombatant.Text = string.Empty;
-
-                int selectedNdx = lbInitTrackName.SelectedIndex;
-
-                Player temp = InformationLibrary.InitiativeList[selectedNdx];
-                InformationLibrary.InitiativeList.Remove(InformationLibrary.InitiativeList[selectedNdx]);
-
-                InitiativeTracker--;
-
-                lbInitTrackName.Items[selectedNdx] = lbInitTrackName.Items[selectedNdx].ToString().Replace("*", "");
-
-                InformationLibrary.InitiativeList.Insert(InitiativeTracker, temp);
-                
-                RefreshInitiativeList();
-
-                lblInitTrackTurnName.Text = InformationLibrary.InitiativeList[InitiativeTracker].Name;
-                InitTrackCenterLable(lblInitTrackTurnName);
-                lblInitTrackTurnHP.Text = "HP: " + InformationLibrary.InitiativeList[InitiativeTracker].HPCurrent;
-                InitTrackCenterLable(lblInitTrackTurnHP);
-            }
+            InitiativeTracker.UseHeldAction();
         }
 
         private void btnInitTrackSortInitiative_Click(object sender, EventArgs e)
         {
-            SortInitiativeList();
+            InitiativeTracker.SortInitiativeList();
         }
 
         #endregion
+
+        #region World Map
 
         private void btnMapSetup_Click(object sender, EventArgs e)
         {
@@ -1302,9 +1117,16 @@ namespace DM_Tool
             }
         }
 
-        void pbMap_MouseHover(object sender, EventArgs e)
+        private void pbMap_MouseHover(object sender, EventArgs e)
         {
             spMapPanel.Focus();
+        }
+
+        #endregion
+
+        private void DMToolForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -52,8 +52,8 @@ namespace DM_Tool
             {
                 foreach (var player in players)
                 {
-                    InformationLibrary.Players.Add(player);
-                    InformationLibrary.InitiativeList.Add(player);
+                    InitiativeTracker.Players.Add(player);
+                    InitiativeTracker.InitiativeList.Add(player);
                 }
 
                 SetDate();
@@ -77,8 +77,8 @@ namespace DM_Tool
             {
                 foreach (var player in players)
                 {
-                    InformationLibrary.Players.Add(player);
-                    InformationLibrary.InitiativeList.Add(player);
+                    InitiativeTracker.Players.Add(player);
+                    InitiativeTracker.InitiativeList.Add(player);
                 }
 
                 SeasonalSetDate();
