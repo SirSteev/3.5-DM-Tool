@@ -18,3 +18,14 @@ C:\Users\slamountain\Downloads\3.5-DM-Tool-master\3.5-DM-Tool-master\DM Tool\DM 
 C:\Users\slamountain\Downloads\3.5-DM-Tool-master\3.5-DM-Tool-master\DM Tool\DM Tool\obj\Debug\DM Tool.csproj.CoreCompileInputs.cache
 C:\Users\slamountain\Downloads\3.5-DM-Tool-master\3.5-DM-Tool-master\DM Tool\DM Tool\obj\Debug\DM Tool.exe
 C:\Users\slamountain\Downloads\3.5-DM-Tool-master\3.5-DM-Tool-master\DM Tool\DM Tool\obj\Debug\DM Tool.pdb
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\bin\Debug\DM Tool.exe
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\bin\Debug\DM Tool.pdb
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\obj\Debug\DM Tool.csprojAssemblyReference.cache
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\obj\Debug\DM_Tool.DiceRolls.resources
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\obj\Debug\DM_Tool.StartNewCampaignForm.resources
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\obj\Debug\DM_Tool.DMToolForm.resources
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\obj\Debug\DM_Tool.Properties.Resources.resources
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\obj\Debug\DM Tool.csproj.GenerateResource.cache
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\obj\Debug\DM Tool.csproj.CoreCompileInputs.cache
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\obj\Debug\DM Tool.exe
+P:\GitHub\3.5-DM-Tool\DM Tool\DM Tool\obj\Debug\DM Tool.pdb
