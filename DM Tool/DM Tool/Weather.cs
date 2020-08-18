@@ -130,6 +130,7 @@ namespace DM_Tool
 
 		int tempForDays;
 		int rainForHours;
+		string rainFromTo;
 
 		int tempBaseline;
 		int tempVariation;
@@ -152,10 +153,10 @@ namespace DM_Tool
 			windBlownAwaySize = CharacterSize.None;
 			severeWeatherEvent = SevereWeatherEvent.None;
 
-			RecalculateAll(true);
-
 			inDesert = false;
 			isDay = true;
+
+			RecalculateAll(true);
 		}
 
 		public void RecalculateAll(bool reroll)
@@ -166,7 +167,10 @@ namespace DM_Tool
 			SetSeasonalBaseline();
 			SetPrecipitationAdjustments();
 			SetCloudCover(reroll);
-			if (RollPrecipitationChance(reroll)) GetPrecipitation(reroll);
+
+			if (RollPrecipitationChance(reroll))
+				GetPrecipitation(reroll);
+
 			SetWindStrength(reroll);
 			SetSevereEvents();
 		}
@@ -176,37 +180,152 @@ namespace DM_Tool
 			tempForDays--;
 			SetClimateBaseLine();
 
-			if (tempForDays <= 0) SetTempVariation(true);
+			if (tempForDays <= 0)
+				SetTempVariation(true);
 
 			SetElevationBaseline();
 			SetSeasonalBaseline();
 			SetPrecipitationAdjustments();
 			SetCloudCover(true);
 
-			if (RollPrecipitationChance(true)) GetPrecipitation(true);
+			if (RollPrecipitationChance(true))
+				GetPrecipitation(true);
 
 			SetWindStrength(true);
 			SetSevereEvents();
 
 		}
 
-		public bool ToggleDayNight()
+		#region Sets
+
+		public void SetDayNight(bool isItDay)
 		{
-			isDay = !isDay;
+			isDay = isItDay;
 
 			RecalculateAll(false);
-
-			return isDay;
 		}
 
-		public bool ToggleInDesert()
+		public void SetInDesert(bool isInDesert)
 		{
-			inDesert = !inDesert;
+			inDesert = isInDesert;
 
 			RecalculateAll(false);
-
-			return inDesert;
 		}
+
+		public void SetSeason(Season newSeason)
+		{
+			season = newSeason;
+
+			RecalculateAll(false);
+		}
+
+		public void SetClimate(Climate newClimate)
+		{
+			climate = newClimate;
+
+			RecalculateAll(false);
+		}
+
+		public void SetElevation(Elevation newElevation)
+		{
+			elevation = newElevation;
+
+			RecalculateAll(false);
+		}
+
+		#endregion
+
+		#region Gets
+
+		public string GetCloudCover()
+		{
+			return cloudCover.ToString();
+		}
+
+		public string GetWindStrength()
+		{
+			return windStrength.ToString();
+		}
+
+		public string GetWindSpeed()
+		{
+			return windSpeed.ToString();
+		}
+
+		public string GetCurrentTempature()
+		{
+			return currentTemp.ToString();
+		}
+
+		public string GetTempatureForDays()
+		{
+			return tempForDays.ToString();
+		}
+
+		public string GetRainIntensity()
+		{
+			if (!isRaining)
+				return "-";
+
+			return precipitationIntensity.ToString();
+		}
+
+		public string GetRainFrequency()
+		{
+			if (!isRaining)
+				return "-";
+
+			return precipitationFrequency.ToString();
+		}
+
+		public string GetRainType()
+		{
+			if (severeWeatherEvent != SevereWeatherEvent.None)
+				return severeWeatherEvent.ToString();
+
+			if (!isRaining)
+				return "-";
+
+			return precipitationForm.ToString();
+		}
+
+		public string GetRainForHours()
+		{
+			if (!isRaining)
+				return "-";
+
+			return rainForHours.ToString();
+		}
+
+		public string GetRainFromTo()
+		{
+			if (!isRaining)
+				return "-";
+
+			return rainFromTo;
+		}
+
+		public string GetIsRaining()
+		{
+			return isRaining.ToString();
+		}
+
+		public string GetSizeCheck()
+		{
+			return windCheckSize.ToString();
+		}
+
+		public string GetBlownAway()
+		{
+			return windBlownAwaySize.ToString();
+		}
+
+		public string GetSkillCheck()
+		{
+			return windSkillCheckPenalty.ToString();
+		}
+
+		#endregion
 
 		// all numbers from here out are pulled from tables in a pathfinder book
 
@@ -398,6 +517,27 @@ namespace DM_Tool
 				default:
 					break;
 			}
+
+			if (reroll)
+			{
+				switch (season)
+				{
+					case Season.Spring:
+						tempVariation -= 10;
+						break;
+					case Season.Summer:
+						tempVariation -= 10;
+						break;
+					case Season.Fall:
+						tempVariation += 10;
+						break;
+					case Season.Winter:
+						tempVariation += 10;
+						break;
+					default:
+						break;
+				}
+			}
 		}
 
 		private void SetElevationBaseline()
@@ -547,6 +687,8 @@ namespace DM_Tool
 
 		private bool RollPrecipitationChance(bool reroll)
 		{
+			isRaining = false;
+
 			if (reroll) precipitationChanceRoll = DiceRoller.RollD100();
 
 			switch (precipitationFrequency)
@@ -556,7 +698,6 @@ namespace DM_Tool
 					{
 						cloudCover = CloudCover.Overcast;
 						isRaining = true;
-						return true;
 					}
 					break;
 				case PrecipitationFrequency.Rare:
@@ -564,7 +705,6 @@ namespace DM_Tool
 					{
 						cloudCover = CloudCover.Overcast;
 						isRaining = true;
-						return true;
 					}
 					break;
 				case PrecipitationFrequency.Intermittent:
@@ -572,7 +712,6 @@ namespace DM_Tool
 					{
 						cloudCover = CloudCover.Overcast;
 						isRaining = true;
-						return true;
 					}
 					break;
 				case PrecipitationFrequency.Common:
@@ -580,7 +719,6 @@ namespace DM_Tool
 					{
 						cloudCover = CloudCover.Overcast;
 						isRaining = true;
-						return true;
 					}
 					break;
 				case PrecipitationFrequency.Constant:
@@ -588,41 +726,26 @@ namespace DM_Tool
 					{
 						cloudCover = CloudCover.Overcast;
 						isRaining = true;
-						return true;
 					}
 					break;
 				default:
 					break;
 			}
 
-			switch (season)
-			{
-				case Season.Spring:
-					tempVariation -= 10;
-					break;
-				case Season.Summer:
-					tempVariation -= 10;
-					break;
-				case Season.Fall:
-					tempVariation += 10;
-					break;
-				case Season.Winter:
-					tempVariation += 10;
-					break;
-				default:
-					break;
-			}
-
-			if (!isDay) tempVariation -= DiceRoller.RollD6(2) + 3;
+			if (!isDay)
+				tempVariation -= DiceRoller.RollD6(2) + 3;
 
 			currentTemp = tempBaseline + tempVariation;
 
-			return false;
+			return isRaining;
 		}
 
 		private void GetPrecipitation(bool reroll)
 		{
 			if (reroll) precipitationFormRoll = DiceRoller.RollD100();
+
+			int startTime = DiceRoller.RollD12();
+			string startM = DiceRoller.RollD6() > 3 ? "PM" : "AM";
 
 			if (currentTemp > 32)
 			{
@@ -905,6 +1028,21 @@ namespace DM_Tool
 						break;
 				}
 			}
+
+			int endTime = startTime + rainForHours;
+			string endM = startM;
+
+			while (endTime > 12)
+			{
+				endTime -= 12;
+
+				if (endM == "AM")
+					endM = "PM";
+				else
+					endM = "AM";
+			}
+
+			rainFromTo = $"{startTime}{startM} - {endTime}{endM}";
 		}
 
 		private void SetCloudCover(bool reroll)
@@ -982,31 +1120,28 @@ namespace DM_Tool
 				if (DiceRoller.RollD100() <= 20) rainForHours = DiceRoller.RollD12(2);
 				severeWeatherEvent = SevereWeatherEvent.Blizzard;
 			}
-
-			if ((windStrength == WindStrength.Severe || windStrength == WindStrength.Windstorm) && inDesert)
+			else if ((windStrength == WindStrength.Severe || windStrength == WindStrength.Windstorm) && inDesert)
 			{
 				severeWeatherEvent = SevereWeatherEvent.Sandstorm;
 			}
-
-			if ((windStrength == WindStrength.Severe || windStrength == WindStrength.Windstorm) && inDesert && precipitationForm == PrecipitationForm.Thunderstorm)
+			else if ((windStrength == WindStrength.Severe || windStrength == WindStrength.Windstorm) && inDesert && precipitationForm == PrecipitationForm.Thunderstorm)
 			{
 				severeWeatherEvent = SevereWeatherEvent.Haboob;
 			}
-
-			if (precipitationForm == PrecipitationForm.Thunderstorm)
+			else if (precipitationForm == PrecipitationForm.Thunderstorm)
 			{
 				if (DiceRoller.RollD100() <= 5) severeWeatherEvent = SevereWeatherEvent.Hail;
 			}
-
-			if (precipitationForm == PrecipitationForm.RainHeavy && windStrength == WindStrength.Windstorm && windSpeed >= 75)
+			else if (precipitationForm == PrecipitationForm.RainHeavy && windStrength == WindStrength.Windstorm && windSpeed >= 75)
 			{
 				severeWeatherEvent = SevereWeatherEvent.Hurricane;
 			}
-
-			if (windSpeed >= 174)
+			else if (windSpeed >= 174)
 			{
 				severeWeatherEvent = SevereWeatherEvent.Tornado;
 			}
+			else
+				severeWeatherEvent = SevereWeatherEvent.None;
 		}
 
 		// -- and ++ for PrecipitationFrequency and PrecipitationIntensity
