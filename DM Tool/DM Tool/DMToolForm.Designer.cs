@@ -33,6 +33,34 @@
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.tabControl2 = new System.Windows.Forms.TabControl();
 			this.tabPage17 = new System.Windows.Forms.TabPage();
+			this.btnPlantsFoundClearList = new System.Windows.Forms.Button();
+			this.btnPlantsFoundRollFind = new System.Windows.Forms.Button();
+			this.label136 = new System.Windows.Forms.Label();
+			this.nudPlantsFoundFindRoll = new System.Windows.Forms.NumericUpDown();
+			this.nudPlantsFoundSearchRoll = new System.Windows.Forms.NumericUpDown();
+			this.btnPlantsFoundReset = new System.Windows.Forms.Button();
+			this.btnPlantsFoundFindAll = new System.Windows.Forms.Button();
+			this.label135 = new System.Windows.Forms.Label();
+			this.btnPlantsFoundRollDice = new System.Windows.Forms.Button();
+			this.tbPlantsFoundDiceRoll = new System.Windows.Forms.TextBox();
+			this.label134 = new System.Windows.Forms.Label();
+			this.label133 = new System.Windows.Forms.Label();
+			this.label132 = new System.Windows.Forms.Label();
+			this.panel3 = new System.Windows.Forms.Panel();
+			this.rbPlantsFoundArctic = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundRivers = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundCities = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundSwamps = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundCoastal = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundPlains = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundDesert = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundOceans = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundForests = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundMountains = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundUnderdarkCaves = new System.Windows.Forms.RadioButton();
+			this.rbPlantsFoundJungles = new System.Windows.Forms.RadioButton();
+			this.label131 = new System.Windows.Forms.Label();
+			this.lbPlantsFound = new System.Windows.Forms.ListBox();
 			this.tabPage = new System.Windows.Forms.TabPage();
 			this.tbWeatherCurrentlyRaining = new System.Windows.Forms.TextBox();
 			this.label95 = new System.Windows.Forms.Label();
@@ -428,9 +456,14 @@
 			this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.playersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pbMap = new System.Windows.Forms.PictureBox();
+			this.nudPlantsFoundNumberFound = new System.Windows.Forms.NumericUpDown();
 			this.tcMain.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabControl2.SuspendLayout();
+			this.tabPage17.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.nudPlantsFoundFindRoll)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.nudPlantsFoundSearchRoll)).BeginInit();
+			this.panel3.SuspendLayout();
 			this.tabPage.SuspendLayout();
 			this.panel21.SuspendLayout();
 			this.panel2.SuspendLayout();
@@ -501,6 +534,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.nudMapScale)).BeginInit();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbMap)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.nudPlantsFoundNumberFound)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tcMain
@@ -547,13 +581,349 @@
 			// 
 			// tabPage17
 			// 
+			this.tabPage17.Controls.Add(this.nudPlantsFoundNumberFound);
+			this.tabPage17.Controls.Add(this.btnPlantsFoundClearList);
+			this.tabPage17.Controls.Add(this.btnPlantsFoundRollFind);
+			this.tabPage17.Controls.Add(this.label136);
+			this.tabPage17.Controls.Add(this.nudPlantsFoundFindRoll);
+			this.tabPage17.Controls.Add(this.nudPlantsFoundSearchRoll);
+			this.tabPage17.Controls.Add(this.btnPlantsFoundReset);
+			this.tabPage17.Controls.Add(this.btnPlantsFoundFindAll);
+			this.tabPage17.Controls.Add(this.label135);
+			this.tabPage17.Controls.Add(this.btnPlantsFoundRollDice);
+			this.tabPage17.Controls.Add(this.tbPlantsFoundDiceRoll);
+			this.tabPage17.Controls.Add(this.label134);
+			this.tabPage17.Controls.Add(this.label133);
+			this.tabPage17.Controls.Add(this.label132);
+			this.tabPage17.Controls.Add(this.panel3);
+			this.tabPage17.Controls.Add(this.label131);
+			this.tabPage17.Controls.Add(this.lbPlantsFound);
 			this.tabPage17.Location = new System.Drawing.Point(4, 22);
 			this.tabPage17.Name = "tabPage17";
 			this.tabPage17.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage17.Size = new System.Drawing.Size(296, 569);
 			this.tabPage17.TabIndex = 0;
-			this.tabPage17.Text = "Plants";
+			this.tabPage17.Text = "Plant Finder";
 			this.tabPage17.UseVisualStyleBackColor = true;
+			// 
+			// btnPlantsFoundClearList
+			// 
+			this.btnPlantsFoundClearList.Location = new System.Drawing.Point(159, 283);
+			this.btnPlantsFoundClearList.Name = "btnPlantsFoundClearList";
+			this.btnPlantsFoundClearList.Size = new System.Drawing.Size(131, 23);
+			this.btnPlantsFoundClearList.TabIndex = 29;
+			this.btnPlantsFoundClearList.Text = "Clear Found List";
+			this.btnPlantsFoundClearList.UseVisualStyleBackColor = true;
+			this.btnPlantsFoundClearList.Click += new System.EventHandler(this.btnPlantsFoundClearList_Click);
+			// 
+			// btnPlantsFoundRollFind
+			// 
+			this.btnPlantsFoundRollFind.Enabled = false;
+			this.btnPlantsFoundRollFind.Location = new System.Drawing.Point(159, 249);
+			this.btnPlantsFoundRollFind.Name = "btnPlantsFoundRollFind";
+			this.btnPlantsFoundRollFind.Size = new System.Drawing.Size(131, 23);
+			this.btnPlantsFoundRollFind.TabIndex = 28;
+			this.btnPlantsFoundRollFind.Text = "Find Next";
+			this.btnPlantsFoundRollFind.UseVisualStyleBackColor = true;
+			this.btnPlantsFoundRollFind.Click += new System.EventHandler(this.btnPlantsFoundRollFind_Click);
+			// 
+			// label136
+			// 
+			this.label136.AutoSize = true;
+			this.label136.Location = new System.Drawing.Point(159, 208);
+			this.label136.Name = "label136";
+			this.label136.Size = new System.Drawing.Size(75, 13);
+			this.label136.TabIndex = 27;
+			this.label136.Text = "Find Plant Roll";
+			// 
+			// nudPlantsFoundFindRoll
+			// 
+			this.nudPlantsFoundFindRoll.Location = new System.Drawing.Point(159, 224);
+			this.nudPlantsFoundFindRoll.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.nudPlantsFoundFindRoll.Name = "nudPlantsFoundFindRoll";
+			this.nudPlantsFoundFindRoll.Size = new System.Drawing.Size(131, 20);
+			this.nudPlantsFoundFindRoll.TabIndex = 26;
+			this.nudPlantsFoundFindRoll.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// nudPlantsFoundSearchRoll
+			// 
+			this.nudPlantsFoundSearchRoll.Location = new System.Drawing.Point(159, 49);
+			this.nudPlantsFoundSearchRoll.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+			this.nudPlantsFoundSearchRoll.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.nudPlantsFoundSearchRoll.Name = "nudPlantsFoundSearchRoll";
+			this.nudPlantsFoundSearchRoll.ReadOnly = true;
+			this.nudPlantsFoundSearchRoll.Size = new System.Drawing.Size(131, 20);
+			this.nudPlantsFoundSearchRoll.TabIndex = 25;
+			this.nudPlantsFoundSearchRoll.Value = new decimal(new int[] {
+            9,
+            0,
+            0,
+            0});
+			this.nudPlantsFoundSearchRoll.ValueChanged += new System.EventHandler(this.nudPlantsFoundSearchRoll_ValueChanged);
+			// 
+			// btnPlantsFoundReset
+			// 
+			this.btnPlantsFoundReset.Location = new System.Drawing.Point(159, 6);
+			this.btnPlantsFoundReset.Name = "btnPlantsFoundReset";
+			this.btnPlantsFoundReset.Size = new System.Drawing.Size(131, 23);
+			this.btnPlantsFoundReset.TabIndex = 24;
+			this.btnPlantsFoundReset.Text = "Reset";
+			this.btnPlantsFoundReset.UseVisualStyleBackColor = true;
+			this.btnPlantsFoundReset.Click += new System.EventHandler(this.btnPlantsFoundReset_Click);
+			// 
+			// btnPlantsFoundFindAll
+			// 
+			this.btnPlantsFoundFindAll.Enabled = false;
+			this.btnPlantsFoundFindAll.Location = new System.Drawing.Point(159, 182);
+			this.btnPlantsFoundFindAll.Name = "btnPlantsFoundFindAll";
+			this.btnPlantsFoundFindAll.Size = new System.Drawing.Size(131, 23);
+			this.btnPlantsFoundFindAll.TabIndex = 23;
+			this.btnPlantsFoundFindAll.Text = "Find All";
+			this.btnPlantsFoundFindAll.UseVisualStyleBackColor = true;
+			this.btnPlantsFoundFindAll.Click += new System.EventHandler(this.btnPlantsFoundFindAll_Click);
+			// 
+			// label135
+			// 
+			this.label135.AutoSize = true;
+			this.label135.Location = new System.Drawing.Point(159, 140);
+			this.label135.Name = "label135";
+			this.label135.Size = new System.Drawing.Size(123, 13);
+			this.label135.TabIndex = 21;
+			this.label135.Text = "Number Of Plants Found";
+			// 
+			// btnPlantsFoundRollDice
+			// 
+			this.btnPlantsFoundRollDice.Enabled = false;
+			this.btnPlantsFoundRollDice.Location = new System.Drawing.Point(159, 114);
+			this.btnPlantsFoundRollDice.Name = "btnPlantsFoundRollDice";
+			this.btnPlantsFoundRollDice.Size = new System.Drawing.Size(131, 23);
+			this.btnPlantsFoundRollDice.TabIndex = 20;
+			this.btnPlantsFoundRollDice.Text = "Roll";
+			this.btnPlantsFoundRollDice.UseVisualStyleBackColor = true;
+			this.btnPlantsFoundRollDice.Click += new System.EventHandler(this.btnPlantsFoundRollDice_Click);
+			// 
+			// tbPlantsFoundDiceRoll
+			// 
+			this.tbPlantsFoundDiceRoll.Location = new System.Drawing.Point(159, 88);
+			this.tbPlantsFoundDiceRoll.Name = "tbPlantsFoundDiceRoll";
+			this.tbPlantsFoundDiceRoll.ReadOnly = true;
+			this.tbPlantsFoundDiceRoll.Size = new System.Drawing.Size(131, 20);
+			this.tbPlantsFoundDiceRoll.TabIndex = 19;
+			this.tbPlantsFoundDiceRoll.Text = "None";
+			// 
+			// label134
+			// 
+			this.label134.AutoSize = true;
+			this.label134.Location = new System.Drawing.Point(159, 72);
+			this.label134.Name = "label134";
+			this.label134.Size = new System.Drawing.Size(80, 13);
+			this.label134.TabIndex = 18;
+			this.label134.Text = "Find Plants Roll";
+			// 
+			// label133
+			// 
+			this.label133.AutoSize = true;
+			this.label133.Location = new System.Drawing.Point(156, 33);
+			this.label133.Name = "label133";
+			this.label133.Size = new System.Drawing.Size(62, 13);
+			this.label133.TabIndex = 16;
+			this.label133.Text = "Search Roll";
+			// 
+			// label132
+			// 
+			this.label132.AutoSize = true;
+			this.label132.Location = new System.Drawing.Point(6, 3);
+			this.label132.Name = "label132";
+			this.label132.Size = new System.Drawing.Size(78, 13);
+			this.label132.TabIndex = 15;
+			this.label132.Text = "Search Region";
+			// 
+			// panel3
+			// 
+			this.panel3.Controls.Add(this.rbPlantsFoundArctic);
+			this.panel3.Controls.Add(this.rbPlantsFoundRivers);
+			this.panel3.Controls.Add(this.rbPlantsFoundCities);
+			this.panel3.Controls.Add(this.rbPlantsFoundSwamps);
+			this.panel3.Controls.Add(this.rbPlantsFoundCoastal);
+			this.panel3.Controls.Add(this.rbPlantsFoundPlains);
+			this.panel3.Controls.Add(this.rbPlantsFoundDesert);
+			this.panel3.Controls.Add(this.rbPlantsFoundOceans);
+			this.panel3.Controls.Add(this.rbPlantsFoundForests);
+			this.panel3.Controls.Add(this.rbPlantsFoundMountains);
+			this.panel3.Controls.Add(this.rbPlantsFoundUnderdarkCaves);
+			this.panel3.Controls.Add(this.rbPlantsFoundJungles);
+			this.panel3.Location = new System.Drawing.Point(6, 19);
+			this.panel3.Name = "panel3";
+			this.panel3.Size = new System.Drawing.Size(147, 275);
+			this.panel3.TabIndex = 14;
+			// 
+			// rbPlantsFoundArctic
+			// 
+			this.rbPlantsFoundArctic.AutoSize = true;
+			this.rbPlantsFoundArctic.Location = new System.Drawing.Point(3, 3);
+			this.rbPlantsFoundArctic.Name = "rbPlantsFoundArctic";
+			this.rbPlantsFoundArctic.Size = new System.Drawing.Size(52, 17);
+			this.rbPlantsFoundArctic.TabIndex = 2;
+			this.rbPlantsFoundArctic.Text = "Arctic";
+			this.rbPlantsFoundArctic.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundArctic.CheckedChanged += new System.EventHandler(this.rbPlantsFoundArctic_CheckedChanged);
+			// 
+			// rbPlantsFoundRivers
+			// 
+			this.rbPlantsFoundRivers.AutoSize = true;
+			this.rbPlantsFoundRivers.Location = new System.Drawing.Point(3, 210);
+			this.rbPlantsFoundRivers.Name = "rbPlantsFoundRivers";
+			this.rbPlantsFoundRivers.Size = new System.Drawing.Size(55, 17);
+			this.rbPlantsFoundRivers.TabIndex = 13;
+			this.rbPlantsFoundRivers.Text = "Rivers";
+			this.rbPlantsFoundRivers.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundRivers.CheckedChanged += new System.EventHandler(this.rbPlantsFoundRivers_CheckedChanged);
+			// 
+			// rbPlantsFoundCities
+			// 
+			this.rbPlantsFoundCities.AutoSize = true;
+			this.rbPlantsFoundCities.Location = new System.Drawing.Point(3, 26);
+			this.rbPlantsFoundCities.Name = "rbPlantsFoundCities";
+			this.rbPlantsFoundCities.Size = new System.Drawing.Size(50, 17);
+			this.rbPlantsFoundCities.TabIndex = 3;
+			this.rbPlantsFoundCities.Text = "Cities";
+			this.rbPlantsFoundCities.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundCities.CheckedChanged += new System.EventHandler(this.rbPlantsFoundCities_CheckedChanged);
+			// 
+			// rbPlantsFoundSwamps
+			// 
+			this.rbPlantsFoundSwamps.AutoSize = true;
+			this.rbPlantsFoundSwamps.Location = new System.Drawing.Point(3, 233);
+			this.rbPlantsFoundSwamps.Name = "rbPlantsFoundSwamps";
+			this.rbPlantsFoundSwamps.Size = new System.Drawing.Size(65, 17);
+			this.rbPlantsFoundSwamps.TabIndex = 12;
+			this.rbPlantsFoundSwamps.Text = "Swamps";
+			this.rbPlantsFoundSwamps.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundSwamps.CheckedChanged += new System.EventHandler(this.rbPlantsFoundSwamps_CheckedChanged);
+			// 
+			// rbPlantsFoundCoastal
+			// 
+			this.rbPlantsFoundCoastal.AutoSize = true;
+			this.rbPlantsFoundCoastal.Location = new System.Drawing.Point(3, 49);
+			this.rbPlantsFoundCoastal.Name = "rbPlantsFoundCoastal";
+			this.rbPlantsFoundCoastal.Size = new System.Drawing.Size(60, 17);
+			this.rbPlantsFoundCoastal.TabIndex = 4;
+			this.rbPlantsFoundCoastal.Text = "Coastal";
+			this.rbPlantsFoundCoastal.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundCoastal.CheckedChanged += new System.EventHandler(this.rbPlantsFoundCoastal_CheckedChanged);
+			// 
+			// rbPlantsFoundPlains
+			// 
+			this.rbPlantsFoundPlains.AutoSize = true;
+			this.rbPlantsFoundPlains.Location = new System.Drawing.Point(3, 187);
+			this.rbPlantsFoundPlains.Name = "rbPlantsFoundPlains";
+			this.rbPlantsFoundPlains.Size = new System.Drawing.Size(53, 17);
+			this.rbPlantsFoundPlains.TabIndex = 11;
+			this.rbPlantsFoundPlains.Text = "Plains";
+			this.rbPlantsFoundPlains.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundPlains.CheckedChanged += new System.EventHandler(this.rbPlantsFoundPlains_CheckedChanged);
+			// 
+			// rbPlantsFoundDesert
+			// 
+			this.rbPlantsFoundDesert.AutoSize = true;
+			this.rbPlantsFoundDesert.Location = new System.Drawing.Point(3, 72);
+			this.rbPlantsFoundDesert.Name = "rbPlantsFoundDesert";
+			this.rbPlantsFoundDesert.Size = new System.Drawing.Size(56, 17);
+			this.rbPlantsFoundDesert.TabIndex = 5;
+			this.rbPlantsFoundDesert.Text = "Desert";
+			this.rbPlantsFoundDesert.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundDesert.CheckedChanged += new System.EventHandler(this.rbPlantsFoundDesert_CheckedChanged);
+			// 
+			// rbPlantsFoundOceans
+			// 
+			this.rbPlantsFoundOceans.AutoSize = true;
+			this.rbPlantsFoundOceans.Location = new System.Drawing.Point(3, 164);
+			this.rbPlantsFoundOceans.Name = "rbPlantsFoundOceans";
+			this.rbPlantsFoundOceans.Size = new System.Drawing.Size(62, 17);
+			this.rbPlantsFoundOceans.TabIndex = 10;
+			this.rbPlantsFoundOceans.Text = "Oceans";
+			this.rbPlantsFoundOceans.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundOceans.CheckedChanged += new System.EventHandler(this.rbPlantsFoundOceans_CheckedChanged);
+			// 
+			// rbPlantsFoundForests
+			// 
+			this.rbPlantsFoundForests.AutoSize = true;
+			this.rbPlantsFoundForests.Checked = true;
+			this.rbPlantsFoundForests.Location = new System.Drawing.Point(3, 95);
+			this.rbPlantsFoundForests.Name = "rbPlantsFoundForests";
+			this.rbPlantsFoundForests.Size = new System.Drawing.Size(59, 17);
+			this.rbPlantsFoundForests.TabIndex = 6;
+			this.rbPlantsFoundForests.TabStop = true;
+			this.rbPlantsFoundForests.Text = "Forests";
+			this.rbPlantsFoundForests.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundForests.CheckedChanged += new System.EventHandler(this.rbPlantsFoundForests_CheckedChanged);
+			// 
+			// rbPlantsFoundMountains
+			// 
+			this.rbPlantsFoundMountains.AutoSize = true;
+			this.rbPlantsFoundMountains.Location = new System.Drawing.Point(3, 141);
+			this.rbPlantsFoundMountains.Name = "rbPlantsFoundMountains";
+			this.rbPlantsFoundMountains.Size = new System.Drawing.Size(74, 17);
+			this.rbPlantsFoundMountains.TabIndex = 9;
+			this.rbPlantsFoundMountains.Text = "Mountains";
+			this.rbPlantsFoundMountains.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundMountains.CheckedChanged += new System.EventHandler(this.rbPlantsFoundMountains_CheckedChanged);
+			// 
+			// rbPlantsFoundUnderdarkCaves
+			// 
+			this.rbPlantsFoundUnderdarkCaves.AutoSize = true;
+			this.rbPlantsFoundUnderdarkCaves.Location = new System.Drawing.Point(3, 256);
+			this.rbPlantsFoundUnderdarkCaves.Name = "rbPlantsFoundUnderdarkCaves";
+			this.rbPlantsFoundUnderdarkCaves.Size = new System.Drawing.Size(116, 17);
+			this.rbPlantsFoundUnderdarkCaves.TabIndex = 7;
+			this.rbPlantsFoundUnderdarkCaves.Text = "Underdark / Caves";
+			this.rbPlantsFoundUnderdarkCaves.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundUnderdarkCaves.CheckedChanged += new System.EventHandler(this.rbPlantsFoundUnderdarkCaves_CheckedChanged);
+			// 
+			// rbPlantsFoundJungles
+			// 
+			this.rbPlantsFoundJungles.AutoSize = true;
+			this.rbPlantsFoundJungles.Location = new System.Drawing.Point(3, 118);
+			this.rbPlantsFoundJungles.Name = "rbPlantsFoundJungles";
+			this.rbPlantsFoundJungles.Size = new System.Drawing.Size(61, 17);
+			this.rbPlantsFoundJungles.TabIndex = 8;
+			this.rbPlantsFoundJungles.Text = "Jungles";
+			this.rbPlantsFoundJungles.UseVisualStyleBackColor = true;
+			this.rbPlantsFoundJungles.CheckedChanged += new System.EventHandler(this.rbPlantsFoundJungles_CheckedChanged);
+			// 
+			// label131
+			// 
+			this.label131.AutoSize = true;
+			this.label131.Location = new System.Drawing.Point(6, 297);
+			this.label131.Name = "label131";
+			this.label131.Size = new System.Drawing.Size(69, 13);
+			this.label131.TabIndex = 1;
+			this.label131.Text = "Plants Found";
+			// 
+			// lbPlantsFound
+			// 
+			this.lbPlantsFound.FormattingEnabled = true;
+			this.lbPlantsFound.Location = new System.Drawing.Point(6, 312);
+			this.lbPlantsFound.Name = "lbPlantsFound";
+			this.lbPlantsFound.Size = new System.Drawing.Size(284, 251);
+			this.lbPlantsFound.TabIndex = 0;
+			this.lbPlantsFound.SelectedIndexChanged += new System.EventHandler(this.lbPlantsFound_SelectedIndexChanged);
 			// 
 			// tabPage
 			// 
@@ -598,7 +968,7 @@
 			this.tabPage.Padding = new System.Windows.Forms.Padding(3);
 			this.tabPage.Size = new System.Drawing.Size(296, 569);
 			this.tabPage.TabIndex = 1;
-			this.tabPage.Text = "Weather";
+			this.tabPage.Text = "Weather Creator";
 			this.tabPage.UseVisualStyleBackColor = true;
 			// 
 			// tbWeatherCurrentlyRaining
@@ -765,6 +1135,7 @@
 			this.cbWeatherIsDay.TabIndex = 5;
 			this.cbWeatherIsDay.Text = "Is Day";
 			this.cbWeatherIsDay.UseVisualStyleBackColor = true;
+			this.cbWeatherIsDay.CheckedChanged += new System.EventHandler(this.cbWeatherIsDay_CheckedChanged);
 			// 
 			// cbWeatherIsDesert
 			// 
@@ -1186,7 +1557,7 @@
 			// cbPlantSearchUnknown
 			// 
 			this.cbPlantSearchUnknown.AutoSize = true;
-			this.cbPlantSearchUnknown.Location = new System.Drawing.Point(171, 214);
+			this.cbPlantSearchUnknown.Location = new System.Drawing.Point(171, 191);
 			this.cbPlantSearchUnknown.Name = "cbPlantSearchUnknown";
 			this.cbPlantSearchUnknown.Size = new System.Drawing.Size(72, 17);
 			this.cbPlantSearchUnknown.TabIndex = 30;
@@ -1206,7 +1577,7 @@
 			// cbPlantSearchUnderdarkCave
 			// 
 			this.cbPlantSearchUnderdarkCave.AutoSize = true;
-			this.cbPlantSearchUnderdarkCave.Location = new System.Drawing.Point(112, 191);
+			this.cbPlantSearchUnderdarkCave.Location = new System.Drawing.Point(112, 214);
 			this.cbPlantSearchUnderdarkCave.Name = "cbPlantSearchUnderdarkCave";
 			this.cbPlantSearchUnderdarkCave.Size = new System.Drawing.Size(117, 17);
 			this.cbPlantSearchUnderdarkCave.TabIndex = 29;
@@ -1326,7 +1697,7 @@
 			// cbPlantSearchJungles
 			// 
 			this.cbPlantSearchJungles.AutoSize = true;
-			this.cbPlantSearchJungles.Location = new System.Drawing.Point(112, 214);
+			this.cbPlantSearchJungles.Location = new System.Drawing.Point(112, 191);
 			this.cbPlantSearchJungles.Name = "cbPlantSearchJungles";
 			this.cbPlantSearchJungles.Size = new System.Drawing.Size(62, 17);
 			this.cbPlantSearchJungles.TabIndex = 23;
@@ -4685,6 +5056,20 @@
 			this.pbMap.TabIndex = 0;
 			this.pbMap.TabStop = false;
 			// 
+			// nudPlantsFoundNumberFound
+			// 
+			this.nudPlantsFoundNumberFound.Location = new System.Drawing.Point(159, 157);
+			this.nudPlantsFoundNumberFound.Maximum = new decimal(new int[] {
+            16,
+            0,
+            0,
+            0});
+			this.nudPlantsFoundNumberFound.Name = "nudPlantsFoundNumberFound";
+			this.nudPlantsFoundNumberFound.ReadOnly = true;
+			this.nudPlantsFoundNumberFound.Size = new System.Drawing.Size(131, 20);
+			this.nudPlantsFoundNumberFound.TabIndex = 30;
+			this.nudPlantsFoundNumberFound.ValueChanged += new System.EventHandler(this.nudPlantsFoundNumberFound_ValueChanged);
+			// 
 			// DMToolForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -4695,12 +5080,17 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
 			this.Name = "DMToolForm";
-			this.Text = "3.5 DM Tool";
-			this.Load += new System.EventHandler(this.DMToolForm_Load);
+			this.Text = "DM Tool";
 			this.tcMain.ResumeLayout(false);
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage1.PerformLayout();
 			this.tabControl2.ResumeLayout(false);
+			this.tabPage17.ResumeLayout(false);
+			this.tabPage17.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.nudPlantsFoundFindRoll)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.nudPlantsFoundSearchRoll)).EndInit();
+			this.panel3.ResumeLayout(false);
+			this.panel3.PerformLayout();
 			this.tabPage.ResumeLayout(false);
 			this.tabPage.PerformLayout();
 			this.panel21.ResumeLayout(false);
@@ -4802,6 +5192,7 @@
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.pbMap)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.nudPlantsFoundNumberFound)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -5209,5 +5600,34 @@
 		private System.Windows.Forms.Label label23;
 		private System.Windows.Forms.Label label97;
 		private System.Windows.Forms.Label label20;
+		private System.Windows.Forms.Button btnPlantsFoundReset;
+		private System.Windows.Forms.Button btnPlantsFoundFindAll;
+		private System.Windows.Forms.Label label135;
+		private System.Windows.Forms.Button btnPlantsFoundRollDice;
+		private System.Windows.Forms.TextBox tbPlantsFoundDiceRoll;
+		private System.Windows.Forms.Label label134;
+		private System.Windows.Forms.Label label133;
+		private System.Windows.Forms.Label label132;
+		private System.Windows.Forms.Panel panel3;
+		private System.Windows.Forms.RadioButton rbPlantsFoundArctic;
+		private System.Windows.Forms.RadioButton rbPlantsFoundRivers;
+		private System.Windows.Forms.RadioButton rbPlantsFoundCities;
+		private System.Windows.Forms.RadioButton rbPlantsFoundSwamps;
+		private System.Windows.Forms.RadioButton rbPlantsFoundCoastal;
+		private System.Windows.Forms.RadioButton rbPlantsFoundPlains;
+		private System.Windows.Forms.RadioButton rbPlantsFoundDesert;
+		private System.Windows.Forms.RadioButton rbPlantsFoundOceans;
+		private System.Windows.Forms.RadioButton rbPlantsFoundForests;
+		private System.Windows.Forms.RadioButton rbPlantsFoundMountains;
+		private System.Windows.Forms.RadioButton rbPlantsFoundUnderdarkCaves;
+		private System.Windows.Forms.RadioButton rbPlantsFoundJungles;
+		private System.Windows.Forms.Label label131;
+		private System.Windows.Forms.ListBox lbPlantsFound;
+		private System.Windows.Forms.Button btnPlantsFoundRollFind;
+		private System.Windows.Forms.Label label136;
+		private System.Windows.Forms.NumericUpDown nudPlantsFoundFindRoll;
+		private System.Windows.Forms.NumericUpDown nudPlantsFoundSearchRoll;
+		private System.Windows.Forms.Button btnPlantsFoundClearList;
+		private System.Windows.Forms.NumericUpDown nudPlantsFoundNumberFound;
 	}
 }

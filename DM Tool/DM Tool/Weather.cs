@@ -2,9 +2,6 @@
 
 namespace DM_Tool
 {
-	// masive finite state mechine still working on it
-	// ment to be givin limited input and spit out a ton of information
-
 	public enum Climate
 	{
 		Cold,
@@ -126,6 +123,7 @@ namespace DM_Tool
 
 		bool inDesert;
 		bool isDay;
+		int nightTempDrop;
 		bool isRaining;
 
 		int tempForDays;
@@ -155,6 +153,7 @@ namespace DM_Tool
 
 			inDesert = false;
 			isDay = true;
+			nightTempDrop = 0;
 
 			RecalculateAll(true);
 		}
@@ -201,8 +200,6 @@ namespace DM_Tool
 		public void SetDayNight(bool isItDay)
 		{
 			isDay = isItDay;
-
-			RecalculateAll(false);
 		}
 
 		public void SetInDesert(bool isInDesert)
@@ -254,6 +251,9 @@ namespace DM_Tool
 
 		public string GetCurrentTempature()
 		{
+			if (!isDay)
+				return (currentTemp - nightTempDrop).ToString();
+
 			return currentTemp.ToString();
 		}
 
@@ -537,6 +537,8 @@ namespace DM_Tool
 					default:
 						break;
 				}
+
+				nightTempDrop = DiceRoller.RollD6(2) + 3;
 			}
 		}
 
@@ -731,9 +733,6 @@ namespace DM_Tool
 				default:
 					break;
 			}
-
-			if (!isDay)
-				tempVariation -= DiceRoller.RollD6(2) + 3;
 
 			currentTemp = tempBaseline + tempVariation;
 

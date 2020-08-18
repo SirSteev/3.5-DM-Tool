@@ -263,7 +263,7 @@ namespace DM_Tool
 		{
 			lbPlants.Items.Clear();
 
-			foreach (Plant plant in InformationLibrary.PlantSearchByCategory(GetPlantSearchCatagories()))
+			foreach (Plant plant in InformationLibrary.PlantOpenSearchByCategory(GetPlantSearchCatagories()))
 				lbPlants.Items.Add(plant.Name);
 		}
 
@@ -316,9 +316,14 @@ namespace DM_Tool
 
 		private void lbPlants_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			SearchPlants(lbPlants);
+		}
+
+		private void SearchPlants(ListBox searchList)
+		{
 			string lineBreaker = Environment.NewLine + "--------------------------------------------" + Environment.NewLine;
 			int ndx = 0;
-			Plant plnt = InformationLibrary.PlantEntries.Find(entry => entry.Name == lbPlants.SelectedItem.ToString());
+			Plant plnt = InformationLibrary.PlantEntries.Find(entry => entry.Name == searchList.SelectedItem.ToString());
 			string rarity = "Rarity: ";
 			string regions = "Region: ";
 
@@ -1127,6 +1132,7 @@ namespace DM_Tool
 		private void cbWeatherIsDay_CheckedChanged(object sender, EventArgs e)
 		{
 			Weather.SetDayNight(cbWeatherIsDay.Checked);
+			UpdateWeatherUI();
 		}
 
 		private void cbWeatherIsDesert_CheckedChanged(object sender, EventArgs e)
@@ -1209,9 +1215,157 @@ namespace DM_Tool
 
 		#endregion
 
-		private void DMToolForm_Load(object sender, EventArgs e)
-		{
+		#region Plants
 
+		Plants Plants = new Plants();
+
+		private void lbPlantsFound_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			SearchPlants(lbPlantsFound);
 		}
+
+		private void btnPlantsFoundReset_Click(object sender, EventArgs e)
+		{
+			nudPlantsFoundSearchRoll.Value = 9;
+			tbPlantsFoundDiceRoll.Text = string.Empty;
+			tbPlantsFoundDiceRoll.Text = "None";
+			nudPlantsFoundNumberFound.Value = 0;
+			nudPlantsFoundFindRoll.Value = 1;
+			lbPlantsFound.Items.Clear();
+		}
+
+		private void nudPlantsFoundSearchRoll_ValueChanged(object sender, EventArgs e)
+		{
+			tbPlantsFoundDiceRoll.Text = Plants.GetDiceRollFromSearchRoll((int)nudPlantsFoundSearchRoll.Value);
+
+			if (nudPlantsFoundSearchRoll.Value < 10)
+			{
+				btnPlantsFoundFindAll.Enabled = false;
+				btnPlantsFoundRollFind.Enabled = false;
+				btnPlantsFoundRollDice.Enabled = false;
+			}
+			else if (Plants.CanSearch)
+			{
+				btnPlantsFoundFindAll.Enabled = true;
+				btnPlantsFoundRollFind.Enabled = true;
+			}
+			else
+				btnPlantsFoundRollDice.Enabled = true;
+		}
+
+		private void btnPlantsFoundRollDice_Click(object sender, EventArgs e)
+		{
+			lbPlantsFound.Items.Clear();
+			nudPlantsFoundNumberFound.Value = Plants.RollNumberOnPlantsFound();
+			btnPlantsFoundFindAll.Enabled = true;
+			btnPlantsFoundRollFind.Enabled = true;
+		}
+
+		private void btnPlantsFoundFindAll_Click(object sender, EventArgs e)
+		{
+			lbPlantsFound.Items.Clear();
+			List<string> plants = Plants.RollFindAllPlants();
+
+			foreach (string plant in plants)
+				lbPlantsFound.Items.Add(plant);
+
+			nudPlantsFoundNumberFound.Value = 0;
+
+			btnPlantsFoundRollFind.Enabled = false;
+			btnPlantsFoundFindAll.Enabled = false;
+		}
+
+		private void btnPlantsFoundRollFind_Click(object sender, EventArgs e)
+		{
+			lbPlantsFound.Items.Add(Plants.RollFindPlant((int)nudPlantsFoundFindRoll.Value));
+
+			nudPlantsFoundNumberFound.Value = Plants.NumberOfPlants;
+
+			if (!Plants.CanSearch)
+				btnPlantsFoundRollFind.Enabled = false;
+		}
+
+		private void btnPlantsFoundClearList_Click(object sender, EventArgs e)
+		{
+			lbPlantsFound.Items.Clear();
+		}
+
+		private void nudPlantsFoundNumberFound_ValueChanged(object sender, EventArgs e)
+		{
+			Plants.SetNumberOfPlantsFound((int)nudPlantsFoundNumberFound.Value);
+
+			if (Plants.CanSearch)
+			{
+				btnPlantsFoundRollFind.Enabled = true;
+				btnPlantsFoundFindAll.Enabled = true;
+			}
+			else
+			{
+				btnPlantsFoundRollFind.Enabled = false;
+				btnPlantsFoundFindAll.Enabled = false;
+			}
+		}
+
+		private void rbPlantsFoundArctic_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Arctic);
+		}
+
+		private void rbPlantsFoundCities_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Cities);
+		}
+
+		private void rbPlantsFoundCoastal_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Coastal);
+		}
+
+		private void rbPlantsFoundDesert_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Deserts);
+		}
+
+		private void rbPlantsFoundForests_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Forests);
+		}
+
+		private void rbPlantsFoundJungles_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Jungles);
+		}
+
+		private void rbPlantsFoundMountains_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Mountains);
+		}
+
+		private void rbPlantsFoundOceans_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Oceans);
+		}
+
+		private void rbPlantsFoundPlains_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Plains);
+		}
+
+		private void rbPlantsFoundRivers_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Rivers);
+		}
+
+		private void rbPlantsFoundSwamps_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.Swamps);
+		}
+
+		private void rbPlantsFoundUnderdarkCaves_CheckedChanged(object sender, EventArgs e)
+		{
+			Plants.SetSearchRegion(RegionSubTypes.UnderdarkCaves);
+		}
+
+		#endregion
 	}
 }

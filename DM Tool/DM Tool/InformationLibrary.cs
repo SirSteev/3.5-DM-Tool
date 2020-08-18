@@ -833,7 +833,7 @@ namespace DM_Tool
 			return PlantEntries.FindAll(plnt => plnt.Description.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0);
 		}
 
-		public static List<Plant> PlantSearchByCategory(PlantCategories categories)
+		public static List<Plant> PlantOpenSearchByCategory(PlantCategories categories)
 		{
 			List<Plant> plants = new List<Plant>();
 			bool add = false;
@@ -859,6 +859,33 @@ namespace DM_Tool
 				{
 					plants.Add(plant);
 					add = false;
+				}
+			}
+
+			return plants;
+		}
+
+		public static List<Plant> PlantClosedSearchByCategory(PlantCategories categories)
+		{
+			List<Plant> plants = new List<Plant>();
+
+			foreach (Plant plant in PlantEntries)
+			{
+				foreach (RarityType rarity in categories.Rarities)
+				{
+					if (plant.Rarity == rarity)
+					{
+						foreach (RegionSubTypes region in categories.Regions)
+						{
+							if (plant.Regions.Contains(region))
+							{
+								plants.Add(plant);
+								break;
+							}
+						}
+
+						break;
+					}
 				}
 			}
 
